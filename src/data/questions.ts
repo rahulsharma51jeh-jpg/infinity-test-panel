@@ -1,613 +1,115 @@
-import type { Question } from "./types";
+import { Question, Difficulty, QuestionType } from "./types";
+import { SUBJECTS } from "./subjects";
 
-/**
- * Seed question bank — bilingual (English + Hindi) sample questions across key
- * BSEB / NCERT chapters, with a strong focus on Class 10 & 12 board priority.
- *
- * Several items are tagged with `pyqYears` to represent Bihar Board Previous
- * Year Questions. In production this bank is backed by a database and the AI
- * engine; here it ships as a representative, ready-to-run dataset.
- */
-export const QUESTIONS: Question[] = [
-  // ============================= CLASS 10 — SCIENCE =============================
-  {
-    id: "10-sci-light-1",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "light",
-    topic: "Mirrors",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "The image formed by a plane mirror is always:",
-    promptHi: "समतल दर्पण द्वारा बना प्रतिबिंब हमेशा होता है:",
-    options: ["Real and inverted", "Virtual and erect", "Real and erect", "Virtual and inverted"],
-    optionsHi: ["वास्तविक तथा उल्टा", "आभासी तथा सीधा", "वास्तविक तथा सीधा", "आभासी तथा उल्टा"],
-    answerIndex: 1,
-    explanation: "A plane mirror always forms a virtual, erect image of the same size, laterally inverted.",
-    explanationHi: "समतल दर्पण हमेशा समान आकार का आभासी, सीधा प्रतिबिंब बनाता है जो पार्श्व रूप से उल्टा होता है।",
-    pyqYears: [2019, 2022],
-  },
-  {
-    id: "10-sci-light-2",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "light",
-    topic: "Lenses",
-    type: "numerical",
-    difficulty: "medium",
-    marks: 3,
-    prompt: "A convex lens has a focal length of 20 cm. An object is placed 30 cm in front of it. Find the image distance using the lens formula.",
-    promptHi: "एक उत्तल लेंस की फोकस दूरी 20 cm है। वस्तु को इसके सामने 30 cm पर रखा गया है। लेंस सूत्र से प्रतिबिंब दूरी ज्ञात कीजिए।",
-    answerText: "v = 60 cm (real image on the other side).",
-    solutionSteps: [
-      "Lens formula: 1/v − 1/u = 1/f",
-      "Given f = +20 cm, u = −30 cm",
-      "1/v = 1/f + 1/u = 1/20 + (1/−30) = (3 − 2)/60 = 1/60",
-      "Therefore v = +60 cm — a real, inverted image 60 cm from the lens.",
-    ],
-    pyqYears: [2020],
-  },
-  {
-    id: "10-sci-light-3",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "light",
-    topic: "Refractive Index",
-    type: "assertion",
-    difficulty: "hard",
-    marks: 1,
-    prompt:
-      "Assertion (A): Light bends towards the normal when it enters water from air.\nReason (R): The speed of light is greater in water than in air.",
-    promptHi:
-      "अभिकथन (A): प्रकाश हवा से जल में प्रवेश करते समय अभिलंब की ओर मुड़ता है।\nकारण (R): जल में प्रकाश की चाल हवा की अपेक्षा अधिक होती है।",
-    options: [
-      "Both A and R are true and R is the correct explanation of A",
-      "Both A and R are true but R is NOT the correct explanation of A",
-      "A is true but R is false",
-      "A is false but R is true",
-    ],
-    optionsHi: [
-      "A और R दोनों सत्य हैं तथा R, A की सही व्याख्या है",
-      "A और R दोनों सत्य हैं परन्तु R, A की सही व्याख्या नहीं है",
-      "A सत्य है परन्तु R असत्य है",
-      "A असत्य है परन्तु R सत्य है",
-    ],
-    answerIndex: 2,
-    explanation:
-      "Water is denser than air, so light slows down and bends towards the normal (A is true). Speed of light is LESS in water, so R is false.",
-    explanationHi:
-      "जल हवा से सघन है, अतः प्रकाश धीमा होकर अभिलंब की ओर मुड़ता है (A सत्य)। जल में प्रकाश की चाल कम होती है, अतः R असत्य है।",
-  },
-  {
-    id: "10-sci-chem-1",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "chemical-reactions",
-    topic: "Types of Reactions",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "The reaction 2H₂ + O₂ → 2H₂O is an example of a:",
-    promptHi: "अभिक्रिया 2H₂ + O₂ → 2H₂O किसका उदाहरण है:",
-    options: ["Decomposition reaction", "Displacement reaction", "Combination reaction", "Double displacement reaction"],
-    optionsHi: ["वियोजन अभिक्रिया", "विस्थापन अभिक्रिया", "संयोजन अभिक्रिया", "द्वि-विस्थापन अभिक्रिया"],
-    answerIndex: 2,
-    explanation: "Two reactants combine to form a single product, hence it is a combination reaction.",
-    explanationHi: "दो अभिकारक मिलकर एक उत्पाद बनाते हैं, अतः यह संयोजन अभिक्रिया है।",
-    pyqYears: [2018, 2021, 2023],
-  },
-  {
-    id: "10-sci-chem-2",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "chemical-reactions",
-    topic: "Balancing",
-    type: "subjective",
-    difficulty: "medium",
-    marks: 2,
-    prompt: "Balance the chemical equation: Fe + H₂O → Fe₃O₄ + H₂",
-    promptHi: "रासायनिक समीकरण संतुलित कीजिए: Fe + H₂O → Fe₃O₄ + H₂",
-    answerText: "3Fe + 4H₂O → Fe₃O₄ + 4H₂",
-    solutionSteps: [
-      "Balance Fe: place 3 before Fe → 3Fe",
-      "Balance O: Fe₃O₄ has 4 O, so place 4 before H₂O",
-      "Balance H: 4H₂O gives 8 H, so place 4 before H₂",
-      "Final: 3Fe + 4H₂O → Fe₃O₄ + 4H₂",
-    ],
-    pyqYears: [2017, 2022],
-  },
-  {
-    id: "10-sci-life-1",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "life-processes",
-    topic: "Respiration",
-    type: "mcq",
-    difficulty: "medium",
-    marks: 1,
-    prompt: "During anaerobic respiration in human muscles, glucose is broken down into:",
-    promptHi: "मानव मांसपेशियों में अवायवीय श्वसन के दौरान ग्लूकोज विघटित होकर बनता है:",
-    options: ["Ethanol and CO₂", "Lactic acid", "CO₂ and water", "Pyruvate only"],
-    optionsHi: ["इथेनॉल तथा CO₂", "लैक्टिक अम्ल", "CO₂ तथा जल", "केवल पाइरुवेट"],
-    answerIndex: 1,
-    explanation: "In muscle cells, lack of oxygen converts pyruvate into lactic acid, causing cramps.",
-    explanationHi: "मांसपेशी कोशिकाओं में ऑक्सीजन की कमी से पाइरुवेट लैक्टिक अम्ल में बदलता है, जिससे ऐंठन होती है।",
-    pyqYears: [2019],
-  },
-  {
-    id: "10-sci-life-2",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "life-processes",
-    topic: "Nutrition",
-    type: "case",
-    difficulty: "hard",
-    marks: 4,
-    prompt:
-      "Case Study: A green plant is kept in a dark room for 48 hours, then one leaf is partially covered with black paper and the plant is exposed to sunlight for 6 hours.\n(i) Why is the plant kept in the dark first?\n(ii) What will the iodine test show on the covered vs. uncovered parts?\n(iii) What does this experiment prove?",
-    promptHi:
-      "केस स्टडी: एक हरे पौधे को 48 घंटे अंधेरे कमरे में रखा जाता है, फिर एक पत्ती को आंशिक रूप से काले कागज से ढककर पौधे को 6 घंटे धूप में रखा जाता है।\n(i) पौधे को पहले अंधेरे में क्यों रखा जाता है?\n(ii) ढके तथा बिना ढके भाग पर आयोडीन परीक्षण क्या दिखाएगा?\n(iii) यह प्रयोग क्या सिद्ध करता है?",
-    answerText:
-      "(i) To destarch the leaf. (ii) Uncovered part turns blue-black (starch present); covered part stays brown (no starch). (iii) Sunlight is essential for photosynthesis.",
-    solutionSteps: [
-      "(i) Keeping in the dark removes existing starch (destarching) so results are due only to the experiment.",
-      "(ii) The uncovered, light-exposed part makes starch → turns blue-black with iodine. The covered part gets no light → no starch → remains brown.",
-      "(iii) The experiment proves that light (sunlight) is necessary for photosynthesis.",
-    ],
-  },
-  {
-    id: "10-sci-elec-1",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "electricity",
-    topic: "Ohm's Law",
-    type: "numerical",
-    difficulty: "medium",
-    marks: 3,
-    prompt: "A current of 0.5 A flows through a resistor when a 10 V battery is connected across it. Calculate the resistance.",
-    promptHi: "एक प्रतिरोधक पर 10 V बैटरी जोड़ने पर 0.5 A धारा बहती है। प्रतिरोध की गणना कीजिए।",
-    answerText: "R = 20 Ω",
-    solutionSteps: ["Ohm's law: V = IR", "R = V / I = 10 / 0.5", "R = 20 Ω"],
-    pyqYears: [2021],
-  },
-  {
-    id: "10-sci-acids-1",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "acids-bases",
-    topic: "pH Scale",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "A solution turns blue litmus red. Its pH is most likely:",
-    promptHi: "एक विलयन नीले लिटमस को लाल कर देता है। इसका pH सबसे संभवतः है:",
-    options: ["8", "7", "10", "3"],
-    optionsHi: ["8", "7", "10", "3"],
-    answerIndex: 3,
-    explanation: "Turning blue litmus red indicates an acid, so pH is below 7 (e.g., 3).",
-    explanationHi: "नीले लिटमस का लाल होना अम्ल दर्शाता है, अतः pH 7 से कम (जैसे 3) होगा।",
-    pyqYears: [2018, 2023],
-  },
-  {
-    id: "10-sci-carbon-1",
-    classId: 10,
-    subjectId: "science",
-    chapterId: "carbon-compounds",
-    topic: "Functional Groups",
-    type: "concept",
-    difficulty: "medium",
-    marks: 2,
-    prompt: "Why does carbon form a very large number of compounds? Mention two reasons.",
-    promptHi: "कार्बन इतने अधिक यौगिक क्यों बनाता है? दो कारण बताइए।",
-    answerText: "Catenation (self-linking) and tetravalency allow carbon to form long chains, rings and bonds with many elements.",
-    solutionSteps: [
-      "Catenation: carbon atoms link with one another to form long chains, branched chains and rings.",
-      "Tetravalency: carbon has 4 valence electrons, so it forms strong covalent bonds with many other atoms (H, O, N, S, halogens).",
-    ],
-  },
+function seededRandom(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
 
-  // ============================= CLASS 10 — MATHEMATICS =============================
-  {
-    id: "10-math-real-1",
-    classId: 10,
-    subjectId: "math",
-    chapterId: "real-numbers",
-    topic: "HCF & LCM",
-    type: "numerical",
-    difficulty: "easy",
-    marks: 2,
-    prompt: "Find the HCF of 96 and 404 by prime factorisation.",
-    promptHi: "अभाज्य गुणनखंडन द्वारा 96 तथा 404 का HCF ज्ञात कीजिए।",
-    answerText: "HCF = 4",
-    solutionSteps: ["96 = 2⁵ × 3", "404 = 2² × 101", "Common factor = 2² = 4", "HCF = 4"],
-    pyqYears: [2019, 2022],
-  },
-  {
-    id: "10-math-quad-1",
-    classId: 10,
-    subjectId: "math",
-    chapterId: "quadratic",
-    topic: "Nature of Roots",
-    type: "mcq",
-    difficulty: "medium",
-    marks: 1,
-    prompt: "The roots of the quadratic equation x² − 4x + 4 = 0 are:",
-    promptHi: "द्विघात समीकरण x² − 4x + 4 = 0 के मूल हैं:",
-    options: ["Real and distinct", "Real and equal", "Imaginary", "No roots"],
-    optionsHi: ["वास्तविक तथा भिन्न", "वास्तविक तथा बराबर", "काल्पनिक", "कोई मूल नहीं"],
-    answerIndex: 1,
-    explanation: "Discriminant D = b² − 4ac = 16 − 16 = 0, so roots are real and equal (x = 2, 2).",
-    explanationHi: "विविक्तकर D = b² − 4ac = 16 − 16 = 0, अतः मूल वास्तविक तथा बराबर हैं (x = 2, 2)।",
-    pyqYears: [2020, 2023],
-  },
-  {
-    id: "10-math-trig-1",
-    classId: 10,
-    subjectId: "math",
-    chapterId: "trigonometry",
-    topic: "Identities",
-    type: "subjective",
-    difficulty: "hard",
-    marks: 3,
-    prompt: "Prove that (1 + tan²θ) = sec²θ.",
-    promptHi: "सिद्ध कीजिए कि (1 + tan²θ) = sec²θ।",
-    answerText: "Derived from sin²θ + cos²θ = 1 by dividing throughout by cos²θ.",
-    solutionSteps: [
-      "Start from the identity sin²θ + cos²θ = 1.",
-      "Divide every term by cos²θ: sin²θ/cos²θ + cos²θ/cos²θ = 1/cos²θ",
-      "This gives tan²θ + 1 = sec²θ, i.e. 1 + tan²θ = sec²θ. Hence proved.",
-    ],
-    pyqYears: [2018],
-  },
-  {
-    id: "10-math-ap-1",
-    classId: 10,
-    subjectId: "math",
-    chapterId: "ap",
-    topic: "nth Term",
-    type: "numerical",
-    difficulty: "medium",
-    marks: 2,
-    prompt: "Find the 15th term of the AP: 3, 7, 11, 15, ...",
-    promptHi: "समांतर श्रेढ़ी 3, 7, 11, 15, ... का 15वाँ पद ज्ञात कीजिए।",
-    answerText: "a₁₅ = 59",
-    solutionSteps: ["a = 3, d = 4", "aₙ = a + (n − 1)d", "a₁₅ = 3 + 14 × 4 = 3 + 56 = 59"],
-    pyqYears: [2021],
-  },
-
-  // ============================= CLASS 10 — SOCIAL SCIENCE =============================
-  {
-    id: "10-sst-nat-1",
-    classId: 10,
-    subjectId: "sst",
-    chapterId: "nationalism-india",
-    topic: "Non-Cooperation",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "The Non-Cooperation Movement was launched by Mahatma Gandhi in the year:",
-    promptHi: "महात्मा गांधी द्वारा असहयोग आंदोलन किस वर्ष आरंभ किया गया था:",
-    options: ["1919", "1920", "1930", "1942"],
-    optionsHi: ["1919", "1920", "1930", "1942"],
-    answerIndex: 1,
-    explanation: "The Non-Cooperation Movement was launched in 1920 after the Jallianwala Bagh massacre and Khilafat issue.",
-    explanationHi: "जलियांवाला बाग हत्याकांड तथा खिलाफत मुद्दे के बाद 1920 में असहयोग आंदोलन आरंभ हुआ।",
-    pyqYears: [2017, 2020, 2022],
-  },
-  {
-    id: "10-sst-power-1",
-    classId: 10,
-    subjectId: "sst",
-    chapterId: "power-sharing",
-    topic: "Belgium",
-    type: "concept",
-    difficulty: "medium",
-    marks: 3,
-    prompt: "What is meant by 'power sharing'? Why is it desirable in a democracy?",
-    promptHi: "'सत्ता की साझेदारी' से क्या तात्पर्य है? लोकतंत्र में यह क्यों वांछनीय है?",
-    answerText: "Distribution of power among different organs and levels of government; it reduces conflict and ensures stability.",
-    solutionSteps: [
-      "Power sharing means distributing power among different organs (legislature, executive, judiciary) and levels (central, state, local) of government and social groups.",
-      "Prudential reason: it reduces conflict between social groups and ensures political stability.",
-      "Moral reason: it is the very spirit of democracy — those affected by power should have a say.",
-    ],
-  },
-  {
-    id: "10-sst-res-1",
-    classId: 10,
-    subjectId: "sst",
-    chapterId: "resources-development",
-    topic: "Soil",
-    type: "mcq",
-    difficulty: "medium",
-    marks: 1,
-    prompt: "Which soil is most suitable for growing cotton?",
-    promptHi: "कपास उगाने के लिए कौन-सी मिट्टी सर्वाधिक उपयुक्त है?",
-    options: ["Laterite soil", "Black soil", "Alluvial soil", "Arid soil"],
-    optionsHi: ["लैटेराइट मिट्टी", "काली मिट्टी", "जलोढ़ मिट्टी", "शुष्क मिट्टी"],
-    answerIndex: 1,
-    explanation: "Black soil (regur), rich in clay and moisture-retentive, is ideal for cotton.",
-    explanationHi: "काली मिट्टी (रेगुर), जो चिकनी तथा नमी धारण करने वाली है, कपास के लिए आदर्श है।",
-    pyqYears: [2019],
-  },
-
-  // ============================= CLASS 10 — ENGLISH & HINDI =============================
-  {
-    id: "10-eng-gram-1",
-    classId: 10,
-    subjectId: "english",
-    chapterId: "grammar",
-    topic: "Voice",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "Change into passive voice: 'The teacher teaches the students.'",
-    promptHi: "कर्मवाच्य में बदलें: 'The teacher teaches the students.'",
-    options: [
-      "The students are taught by the teacher.",
-      "The students were taught by the teacher.",
-      "The students are being taught by the teacher.",
-      "The students teach the teacher.",
-    ],
-    answerIndex: 0,
-    explanation: "Simple present active → 'is/are + past participle'. 'teaches' → 'are taught'.",
-    explanationHi: "साधारण वर्तमान कर्तृवाच्य → 'is/are + past participle'. 'teaches' → 'are taught'।",
-    pyqYears: [2021],
-  },
-  {
-    id: "10-hin-vyak-1",
-    classId: 10,
-    subjectId: "hindi",
-    chapterId: "vyakaran",
-    topic: "अलंकार",
-    type: "mcq",
-    difficulty: "medium",
-    marks: 1,
-    prompt: "'चारु चंद्र की चंचल किरणें' पंक्ति में कौन-सा अलंकार है?",
-    promptHi: "'चारु चंद्र की चंचल किरणें' पंक्ति में कौन-सा अलंकार है?",
-    options: ["अनुप्रास", "यमक", "श्लेष", "उपमा"],
-    optionsHi: ["अनुप्रास", "यमक", "श्लेष", "उपमा"],
-    answerIndex: 0,
-    explanation: "'च' वर्ण की बार-बार आवृत्ति के कारण यहाँ अनुप्रास अलंकार है।",
-    explanationHi: "'च' वर्ण की बार-बार आवृत्ति के कारण यहाँ अनुप्रास अलंकार है।",
-    pyqYears: [2018, 2022],
-  },
-
-  // ============================= CLASS 12 — PHYSICS =============================
-  {
-    id: "12-phy-elec-1",
-    classId: 12,
-    subjectId: "physics",
-    chapterId: "electrostatics",
-    topic: "Coulomb's Law",
-    type: "numerical",
-    difficulty: "medium",
-    marks: 3,
-    prompt:
-      "Two point charges of +2 μC and +3 μC are placed 30 cm apart in air. Calculate the electrostatic force between them. (k = 9 × 10⁹ N·m²/C²)",
-    promptHi:
-      "+2 μC तथा +3 μC के दो बिंदु आवेश हवा में 30 cm की दूरी पर रखे गए हैं। उनके बीच स्थिर वैद्युत बल की गणना कीजिए। (k = 9 × 10⁹ N·m²/C²)",
-    answerText: "F = 0.6 N (repulsive)",
-    solutionSteps: [
-      "F = k·q₁·q₂ / r²",
-      "= 9×10⁹ × (2×10⁻⁶)(3×10⁻⁶) / (0.30)²",
-      "= 9×10⁹ × 6×10⁻¹² / 0.09",
-      "= 54×10⁻³ / 0.09 = 0.6 N (repulsive, as both charges are positive)",
-    ],
-    pyqYears: [2019, 2023],
-  },
-  {
-    id: "12-phy-elec-2",
-    classId: 12,
-    subjectId: "physics",
-    chapterId: "electrostatics",
-    topic: "Gauss's Law",
-    type: "assertion",
-    difficulty: "hard",
-    marks: 1,
-    prompt:
-      "Assertion (A): The electric field inside a charged hollow conductor is zero.\nReason (R): The net charge inside a conductor in electrostatic equilibrium resides on its surface.",
-    promptHi:
-      "अभिकथन (A): आवेशित खोखले चालक के अंदर विद्युत क्षेत्र शून्य होता है।\nकारण (R): स्थिर वैद्युत संतुलन में चालक का कुल आवेश उसकी सतह पर रहता है।",
-    options: [
-      "Both A and R are true and R is the correct explanation of A",
-      "Both A and R are true but R is NOT the correct explanation of A",
-      "A is true but R is false",
-      "A is false but R is true",
-    ],
-    optionsHi: [
-      "A और R दोनों सत्य हैं तथा R, A की सही व्याख्या है",
-      "A और R दोनों सत्य हैं परन्तु R, A की सही व्याख्या नहीं है",
-      "A सत्य है परन्तु R असत्य है",
-      "A असत्य है परन्तु R सत्य है",
-    ],
-    answerIndex: 0,
-    explanation:
-      "By Gauss's law, since charge resides on the surface, the enclosed charge inside is zero, hence E = 0 inside. R correctly explains A.",
-    explanationHi:
-      "गॉस के नियम से, चूँकि आवेश सतह पर रहता है, अंदर परिबद्ध आवेश शून्य है, अतः अंदर E = 0। R, A की सही व्याख्या है।",
-  },
-  {
-    id: "12-phy-current-1",
-    classId: 12,
-    subjectId: "physics",
-    chapterId: "current-electricity",
-    topic: "Kirchhoff's Laws",
-    type: "concept",
-    difficulty: "medium",
-    marks: 2,
-    prompt: "State Kirchhoff's junction rule and the conservation principle it is based on.",
-    promptHi: "किरचॉफ का संधि नियम तथा वह संरक्षण सिद्धांत बताइए जिस पर यह आधारित है।",
-    answerText: "Sum of currents entering a junction equals sum leaving it; based on conservation of charge.",
-    solutionSteps: [
-      "Junction (current) rule: the algebraic sum of currents meeting at a junction is zero — current in = current out.",
-      "It is based on the law of conservation of electric charge.",
-    ],
-    pyqYears: [2020],
-  },
-
-  // ============================= CLASS 12 — CHEMISTRY =============================
-  {
-    id: "12-chem-sol-1",
-    classId: 12,
-    subjectId: "chemistry",
-    chapterId: "solutions",
-    topic: "Colligative Properties",
-    type: "mcq",
-    difficulty: "medium",
-    marks: 1,
-    prompt: "Which of the following is a colligative property?",
-    promptHi: "निम्न में से कौन-सा अणुसंख्यक गुण है?",
-    options: ["Viscosity", "Surface tension", "Osmotic pressure", "Refractive index"],
-    optionsHi: ["श्यानता", "पृष्ठ तनाव", "परासरण दाब", "अपवर्तनांक"],
-    answerIndex: 2,
-    explanation: "Osmotic pressure depends on the number of solute particles, hence it is colligative.",
-    explanationHi: "परासरण दाब विलेय कणों की संख्या पर निर्भर करता है, अतः यह अणुसंख्यक गुण है।",
-    pyqYears: [2018, 2022],
-  },
-  {
-    id: "12-chem-electro-1",
-    classId: 12,
-    subjectId: "chemistry",
-    chapterId: "electrochemistry",
-    topic: "Nernst Equation",
-    type: "concept",
-    difficulty: "hard",
-    marks: 3,
-    prompt: "Write the Nernst equation for a single electrode and explain each term.",
-    promptHi: "एकल इलेक्ट्रोड के लिए नर्न्स्ट समीकरण लिखिए तथा प्रत्येक पद समझाइए।",
-    answerText: "E = E° − (RT/nF) ln Q (or E° − 0.059/n · log Q at 298 K).",
-    solutionSteps: [
-      "E = E° − (RT/nF) ln Q",
-      "E = electrode potential, E° = standard electrode potential",
-      "R = gas constant, T = temperature (K), F = Faraday constant",
-      "n = number of electrons transferred, Q = reaction quotient",
-      "At 298 K it simplifies to E = E° − (0.059/n) log Q.",
-    ],
-  },
-
-  // ============================= CLASS 12 — BIOLOGY =============================
-  {
-    id: "12-bio-gen-1",
-    classId: 12,
-    subjectId: "biology",
-    chapterId: "genetics",
-    topic: "Mendel",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "In a monohybrid cross, the phenotypic ratio in the F₂ generation is:",
-    promptHi: "एकसंकर संकरण में F₂ पीढ़ी में लक्षणप्ररूपी अनुपात होता है:",
-    options: ["1:1", "3:1", "9:3:3:1", "1:2:1"],
-    optionsHi: ["1:1", "3:1", "9:3:3:1", "1:2:1"],
-    answerIndex: 1,
-    explanation: "A monohybrid cross gives a 3:1 phenotypic ratio (dominant : recessive) in F₂.",
-    explanationHi: "एकसंकर संकरण F₂ में 3:1 लक्षणप्ररूपी अनुपात (प्रभावी : अप्रभावी) देता है।",
-    pyqYears: [2019, 2021, 2023],
-  },
-  {
-    id: "12-bio-gen-2",
-    classId: 12,
-    subjectId: "biology",
-    chapterId: "genetics",
-    topic: "Linkage",
-    type: "subjective",
-    difficulty: "medium",
-    marks: 2,
-    prompt: "Define 'linkage' and name the scientist who discovered it.",
-    promptHi: "'सहलग्नता' को परिभाषित कीजिए तथा इसकी खोज करने वाले वैज्ञानिक का नाम बताइए।",
-    answerText: "Linkage is the tendency of genes located close on the same chromosome to be inherited together. Discovered by T.H. Morgan.",
-    solutionSteps: [
-      "Linkage: the physical association/co-inheritance of genes located on the same chromosome.",
-      "Such genes do not assort independently.",
-      "It was discovered by Thomas Hunt Morgan (in Drosophila).",
-    ],
-  },
-
-  // ============================= CLASS 9 — SAMPLES =============================
-  {
-    id: "9-sci-1",
-    classId: 9,
-    subjectId: "science",
-    chapterId: "chemical-reactions",
-    topic: "Types of Reactions",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "The smallest particle of an element that can take part in a chemical reaction is:",
-    promptHi: "किसी तत्व का सबसे छोटा कण जो रासायनिक अभिक्रिया में भाग ले सकता है, है:",
-    options: ["Molecule", "Atom", "Ion", "Electron"],
-    optionsHi: ["अणु", "परमाणु", "आयन", "इलेक्ट्रॉन"],
-    answerIndex: 1,
-    explanation: "An atom is the smallest particle of an element that retains its chemical properties.",
-    explanationHi: "परमाणु किसी तत्व का सबसे छोटा कण है जो उसके रासायनिक गुण बनाए रखता है।",
-  },
-  {
-    id: "9-math-1",
-    classId: 9,
-    subjectId: "math",
-    chapterId: "real-numbers",
-    topic: "Irrational Numbers",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "Which of the following is an irrational number?",
-    promptHi: "निम्न में से कौन-सी अपरिमेय संख्या है?",
-    options: ["0.25", "√2", "3/4", "−7"],
-    optionsHi: ["0.25", "√2", "3/4", "−7"],
-    answerIndex: 1,
-    explanation: "√2 is non-terminating and non-recurring, hence irrational.",
-    explanationHi: "√2 अनवसानी तथा अनावर्ती है, अतः अपरिमेय है।",
-  },
-
-  // ============================= CLASS 6–8 — SAMPLES =============================
-  {
-    id: "6-math-1",
-    classId: 6,
-    subjectId: "math",
-    chapterId: "integers",
-    topic: "Operations",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "What is the value of (−5) + (+8)?",
-    promptHi: "(−5) + (+8) का मान क्या है?",
-    options: ["−13", "3", "13", "−3"],
-    optionsHi: ["−13", "3", "13", "−3"],
-    answerIndex: 1,
-    explanation: "(−5) + 8 = 8 − 5 = 3.",
-    explanationHi: "(−5) + 8 = 8 − 5 = 3।",
-  },
-  {
-    id: "7-sci-1",
-    classId: 7,
-    subjectId: "science",
-    chapterId: "food",
-    topic: "Components",
-    type: "mcq",
-    difficulty: "easy",
-    marks: 1,
-    prompt: "Which nutrient is the main source of energy for our body?",
-    promptHi: "हमारे शरीर के लिए ऊर्जा का मुख्य स्रोत कौन-सा पोषक तत्व है?",
-    options: ["Proteins", "Vitamins", "Carbohydrates", "Minerals"],
-    optionsHi: ["प्रोटीन", "विटामिन", "कार्बोहाइड्रेट", "खनिज"],
-    answerIndex: 2,
-    explanation: "Carbohydrates are the primary, readily available source of energy.",
-    explanationHi: "कार्बोहाइड्रेट ऊर्जा का प्रमुख तथा सहज उपलब्ध स्रोत हैं।",
-  },
-  {
-    id: "8-math-1",
-    classId: 8,
-    subjectId: "math",
-    chapterId: "algebra-basic",
-    topic: "Expressions",
-    type: "numerical",
-    difficulty: "easy",
-    marks: 2,
-    prompt: "Solve for x: 3x + 5 = 20",
-    promptHi: "x के लिए हल कीजिए: 3x + 5 = 20",
-    answerText: "x = 5",
-    solutionSteps: ["3x + 5 = 20", "3x = 20 − 5 = 15", "x = 15 / 3 = 5"],
-  },
+const CURATED_QUESTIONS: Question[] = [
+  { id: "q1", text: "What is the time complexity of binary search?", type: "MCQ", difficulty: "Easy", subjectId: "dsa", unitId: "dsa-u5", topic: "Searching", options: ["O(n)", "O(log n)", "O(n log n)", "O(1)"], correctAnswer: 1, explanation: "Binary search divides the search space in half each iteration, giving O(log n).", tags: ["complexity","searching"] },
+  { id: "q2", text: "Which data structure uses LIFO principle?", type: "MCQ", difficulty: "Easy", subjectId: "dsa", unitId: "dsa-u2", topic: "Stack Implementation", options: ["Queue", "Stack", "Linked List", "Tree"], correctAnswer: 1, explanation: "Stack follows Last-In-First-Out (LIFO) principle.", tags: ["stack","fundamentals"] },
+  { id: "q3", text: "Worst case time complexity of Quick Sort is:", type: "MCQ", difficulty: "Medium", subjectId: "dsa", unitId: "dsa-u5", topic: "Quick Sort", options: ["O(n log n)", "O(n^2)", "O(n)", "O(log n)"], correctAnswer: 1, explanation: "Quick Sort degrades to O(n^2) when pivot selection is poor (already sorted input).", tags: ["sorting","complexity"] },
+  { id: "q4", text: "The eigenvalues of an identity matrix of order 3 are:", type: "MCQ", difficulty: "Easy", subjectId: "math1", unitId: "math1-u1", topic: "Eigenvalues", options: ["0, 0, 0", "1, 1, 1", "1, 0, 0", "1, 2, 3"], correctAnswer: 1, explanation: "Identity matrix has all eigenvalues equal to 1.", tags: ["eigenvalues","matrices"] },
+  { id: "q5", text: "Divergence of a curl of any vector is always:", type: "MCQ", difficulty: "Medium", subjectId: "math1", unitId: "math1-u4", topic: "Divergence", options: ["1", "Infinity", "Zero", "Undefined"], correctAnswer: 2, explanation: "Divergence of curl is always zero (vector identity).", tags: ["vector calculus"] },
+  { id: "q6", text: "In a PN junction, depletion region is formed due to:", type: "MCQ", difficulty: "Easy", subjectId: "phy1", unitId: "phy1-u4", topic: "PN Junction", options: ["Drift of carriers", "Diffusion of carriers", "Both drift and diffusion", "Recombination only"], correctAnswer: 1, explanation: "Depletion region forms due to diffusion of majority carriers across the junction.", tags: ["semiconductors"] },
+  { id: "q7", text: "SQL command to remove a table from database:", type: "MCQ", difficulty: "Easy", subjectId: "dbms", unitId: "dbms-u2", topic: "DDL", options: ["DELETE TABLE", "REMOVE TABLE", "DROP TABLE", "CLEAR TABLE"], correctAnswer: 2, explanation: "DROP TABLE is the DDL command to remove a table schema and data.", tags: ["sql","ddl"] },
+  { id: "q8", text: "ACID in database stands for:", type: "MCQ", difficulty: "Easy", subjectId: "dbms", unitId: "dbms-u4", topic: "ACID Properties", options: ["Atomicity, Consistency, Isolation, Durability", "Addition, Consistency, Isolation, Data", "Atomicity, Concurrency, Isolation, Durability", "Atomicity, Consistency, Integration, Durability"], correctAnswer: 0, explanation: "ACID stands for Atomicity, Consistency, Isolation, Durability - the four properties that guarantee reliable transactions.", tags: ["transactions"] },
+  { id: "q9", text: "Which scheduling algorithm may cause starvation?", type: "MCQ", difficulty: "Medium", subjectId: "os", unitId: "os-u1", topic: "Scheduling", options: ["Round Robin", "FCFS", "SJF", "SRTF"], correctAnswer: 2, explanation: "Shortest Job First can cause starvation for longer processes if short processes keep arriving.", tags: ["scheduling","os"] },
+  { id: "q10", text: "Page fault occurs when:", type: "MCQ", difficulty: "Medium", subjectId: "os", unitId: "os-u2", topic: "Virtual Memory", options: ["Page is in memory", "Page is not in memory", "Page is corrupted", "Segmentation fault"], correctAnswer: 1, explanation: "A page fault occurs when a referenced page is not found in main memory and must be loaded from disk.", tags: ["memory","paging"] },
+  { id: "q11", text: "In TCP/IP, which layer is responsible for routing?", type: "MCQ", difficulty: "Easy", subjectId: "cn", unitId: "cn-u2", topic: "IP Addressing", options: ["Application", "Transport", "Network", "Data Link"], correctAnswer: 2, explanation: "The Network layer (IP layer) handles routing of packets between networks.", tags: ["networking","layers"] },
+  { id: "q12", text: "Nyquist sampling rate for a signal with bandwidth 5kHz:", type: "MCQ", difficulty: "Medium", subjectId: "signals", unitId: "sig-u3", topic: "CTFT", options: ["5 kHz", "10 kHz", "2.5 kHz", "20 kHz"], correctAnswer: 1, explanation: "Nyquist rate is twice the maximum frequency: 2 x 5kHz = 10kHz.", tags: ["sampling","signals"] },
+  { id: "q13", text: "Carnot efficiency of an engine operating between 600K and 300K:", type: "MCQ", difficulty: "Medium", subjectId: "thermo", unitId: "thermo-u3", topic: "Carnot Cycle", options: ["25%", "50%", "75%", "100%"], correctAnswer: 1, explanation: "Carnot efficiency = 1 - Tc/Th = 1 - 300/600 = 50%.", tags: ["thermodynamics","efficiency"] },
+  { id: "q14", text: "Reynolds number for turbulent flow in pipes is greater than:", type: "MCQ", difficulty: "Easy", subjectId: "fmech", unitId: "fm-u4", topic: "Turbulent Flow", options: ["500", "2000", "4000", "10000"], correctAnswer: 2, explanation: "Flow in pipes is turbulent when Reynolds number exceeds 4000.", tags: ["fluid mechanics"] },
+  { id: "q15", text: "The normal form that eliminates transitive dependency is:", type: "MCQ", difficulty: "Medium", subjectId: "dbms", unitId: "dbms-u3", topic: "Functional Dependencies", options: ["1NF", "2NF", "3NF", "BCNF"], correctAnswer: 2, explanation: "3NF (Third Normal Form) eliminates transitive dependencies.", tags: ["normalization"] },
+  { id: "q16", text: "In a BST, inorder traversal gives:", type: "MCQ", difficulty: "Easy", subjectId: "dsa", unitId: "dsa-u3", topic: "BST", options: ["Random order", "Sorted order", "Reverse sorted", "Level order"], correctAnswer: 1, explanation: "Inorder traversal of a BST always produces elements in sorted (ascending) order.", tags: ["trees","traversal"] },
+  { id: "q17", text: "Which layer in OSI model handles encryption?", type: "MCQ", difficulty: "Medium", subjectId: "cn", unitId: "cn-u5", topic: "Cryptography", options: ["Network", "Transport", "Presentation", "Session"], correctAnswer: 2, explanation: "The Presentation layer handles data encryption, compression, and translation.", tags: ["osi","security"] },
+  { id: "q18", text: "Virtual memory uses which of the following?", type: "MCQ", difficulty: "Easy", subjectId: "os", unitId: "os-u2", topic: "Virtual Memory", options: ["RAM only", "Disk only", "Both RAM and Disk", "Cache only"], correctAnswer: 2, explanation: "Virtual memory uses both RAM and disk space to give illusion of larger memory.", tags: ["memory"] },
+  { id: "q19", text: "The Laplace transform of e^(at) is:", type: "MCQ", difficulty: "Easy", subjectId: "math2", unitId: "math2-u1", topic: "Analytic Functions", options: ["1/(s-a)", "1/(s+a)", "s/(s-a)", "a/(s-a)"], correctAnswer: 0, explanation: "L{e^(at)} = 1/(s-a) for s > a.", tags: ["laplace","transforms"] },
+  { id: "q20", text: "SVM stands for:", type: "MCQ", difficulty: "Easy", subjectId: "ml", unitId: "ml-u1", topic: "SVM", options: ["Super Vector Machine", "Support Vector Machine", "System Vector Method", "Sorted Vector Machine"], correctAnswer: 1, explanation: "SVM stands for Support Vector Machine, a supervised learning algorithm.", tags: ["ml","classification"] },
+  { id: "q21", text: "Which of the following is a loss function for regression?", type: "MCQ", difficulty: "Medium", subjectId: "ml", unitId: "ml-u1", topic: "Linear Regression", options: ["Cross-entropy", "Hinge loss", "Mean Squared Error", "Log loss"], correctAnswer: 2, explanation: "Mean Squared Error (MSE) is the standard loss function for regression problems.", tags: ["regression","loss"] },
+  { id: "q22", text: "DH parameters are used in:", type: "MCQ", difficulty: "Medium", subjectId: "robo", unitId: "robo-u1", topic: "DH Parameters", options: ["Computer vision", "Robot kinematics", "Signal processing", "Database design"], correctAnswer: 1, explanation: "Denavit-Hartenberg parameters describe the geometry of robot links and joints for kinematic analysis.", tags: ["robotics","kinematics"] },
+  { id: "q23", text: "In cloud computing, IaaS provides:", type: "MCQ", difficulty: "Easy", subjectId: "cc", unitId: "cc-u1", topic: "Service Models", options: ["Only software", "Infrastructure resources", "Only platforms", "Only networking"], correctAnswer: 1, explanation: "Infrastructure as a Service provides virtualized computing resources like VMs, storage, and networks.", tags: ["cloud","iaas"] },
+  { id: "q24", text: "Fick's first law relates to:", type: "MCQ", difficulty: "Easy", subjectId: "masstrans", unitId: "mt-u1", topic: "Fick's Law", options: ["Heat transfer", "Mass diffusion", "Momentum transfer", "Radiation"], correctAnswer: 1, explanation: "Fick's first law describes steady-state mass diffusion relating flux to concentration gradient.", tags: ["mass transfer"] },
+  { id: "q25", text: "The degree of static indeterminacy of a fixed beam is:", type: "MCQ", difficulty: "Medium", subjectId: "struc", unitId: "str-u1", topic: "Static Indeterminacy", options: ["0", "1", "2", "3"], correctAnswer: 3, explanation: "A fixed beam has 3 degrees of static indeterminacy (3 extra reactions beyond equilibrium equations).", tags: ["structures"] },
 ];
+
+function generateQuestionsForUnit(subjectId: string, unitId: string, topics: string[], seed: number): Question[] {
+  const rand = seededRandom(seed);
+  const difficulties: Difficulty[] = ["Easy", "Medium", "Hard"];
+  const questions: Question[] = [];
+
+  topics.forEach((topic, tIdx) => {
+    const count = 4 + Math.floor(rand() * 3);
+    for (let i = 0; i < count; i++) {
+      const diff = difficulties[Math.floor(rand() * 3)];
+      const qId = `${unitId}-gen-${tIdx}-${i}`;
+      questions.push({
+        id: qId,
+        text: `[${topic}] Question ${i + 1}: Analyze the concept of ${topic} in the context of ${diff.toLowerCase()} level problems.`,
+        type: "MCQ" as QuestionType,
+        difficulty: diff,
+        subjectId,
+        unitId,
+        topic,
+        options: [
+          `Option A for ${topic}`,
+          `Option B for ${topic} (Correct)`,
+          `Option C for ${topic}`,
+          `Option D for ${topic}`,
+        ],
+        correctAnswer: 1,
+        explanation: `This tests understanding of ${topic}. The correct answer demonstrates core principles.`,
+        tags: [topic.toLowerCase().replace(/\s+/g, "-"), diff.toLowerCase()],
+      });
+    }
+  });
+  return questions;
+}
+
+let _questionBank: Question[] | null = null;
+
+export function getQuestionBank(): Question[] {
+  if (_questionBank) return _questionBank;
+  const generated: Question[] = [...CURATED_QUESTIONS];
+  let seed = 42;
+  SUBJECTS.forEach(subject => {
+    subject.units.forEach(unit => {
+      const unitQuestions = generateQuestionsForUnit(subject.id, unit.id, unit.topics, seed);
+      generated.push(...unitQuestions);
+      seed += 97;
+    });
+  });
+  _questionBank = generated;
+  return generated;
+}
+
+export function filterQuestions(opts: { subjectId?: string; unitId?: string; difficulty?: Difficulty; type?: QuestionType; topic?: string }): Question[] {
+  let qs = getQuestionBank();
+  if (opts.subjectId) qs = qs.filter(q => q.subjectId === opts.subjectId);
+  if (opts.unitId) qs = qs.filter(q => q.unitId === opts.unitId);
+  if (opts.difficulty) qs = qs.filter(q => q.difficulty === opts.difficulty);
+  if (opts.type) qs = qs.filter(q => q.type === opts.type);
+  if (opts.topic) qs = qs.filter(q => q.topic.toLowerCase().includes(opts.topic!.toLowerCase()));
+  return qs;
+}
+
+export function getMcqsForTest(subjectId: string, count: number, difficulty?: Difficulty): Question[] {
+  let pool = filterQuestions({ subjectId, difficulty });
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+export function questionStats() {
+  const bank = getQuestionBank();
+  const byDifficulty = { Easy: 0, Medium: 0, Hard: 0 };
+  const bySubject: Record<string, number> = {};
+  bank.forEach(q => {
+    byDifficulty[q.difficulty]++;
+    bySubject[q.subjectId] = (bySubject[q.subjectId] || 0) + 1;
+  });
+  return { total: bank.length, byDifficulty, bySubject };
+}
