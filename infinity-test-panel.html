@@ -43,8 +43,13 @@ background:rgba(255,255,255,.7);backdrop-filter:blur(20px);border-bottom:1px sol
 .nav-btn{padding:8px 16px;border:none;background:transparent;color:var(--text2);border-radius:var(--radius-full);cursor:pointer;font-size:14px;font-weight:500;transition:all .2s}
 .nav-btn:hover{background:var(--surface2);color:var(--text)}
 .nav-btn.active{background:var(--gradient);color:#fff}
-.theme-toggle{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s}
-.theme-toggle:hover{border-color:var(--primary);transform:scale(1.1)}
+.theme-toggle,.lang-toggle{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s}
+.theme-toggle:hover,.lang-toggle:hover{border-color:var(--primary);transform:scale(1.1)}
+.lang-toggle{font-size:13px;font-weight:700;width:auto;padding:0 12px;border-radius:var(--radius-full)}
+.user-info{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--surface2);border-radius:var(--radius-full);font-size:13px;font-weight:500;color:var(--text2)}
+.user-info .user-avatar{width:28px;height:28px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
+.logout-btn{padding:6px 12px;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-full);cursor:pointer;font-size:12px;color:var(--text2);transition:all .2s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
 
 /* MOBILE NAV */
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;padding:8px 16px;
@@ -53,7 +58,18 @@ background:rgba(255,255,255,.9);backdrop-filter:blur(20px);border-top:1px solid 
 .mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;color:var(--text3);font-size:10px;cursor:pointer;padding:4px 8px;border-radius:8px;transition:all .2s}
 .mobile-nav button.active{color:var(--primary)}
 .mobile-nav button span{font-size:20px}
-@media(max-width:768px){.navbar .nav-links{display:none}.mobile-nav{display:flex}body{padding-bottom:70px}}
+@media(max-width:768px){.navbar .nav-links{display:none}.mobile-nav{display:flex}body{padding-bottom:70px}.user-info .user-name-text{display:none}}
+
+/* LOGIN PAGE */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--gradient);padding:24px}
+.login-card{background:var(--surface);border-radius:var(--radius);padding:40px;width:100%;max-width:420px;box-shadow:var(--shadow-lg)}
+.login-card .login-logo{text-align:center;margin-bottom:24px}
+.login-card .login-logo .logo-icon{width:56px;height:56px;font-size:28px;margin:0 auto 12px}
+.login-card .login-logo h2{font-size:22px;font-weight:700}
+.login-card .login-logo p{font-size:14px;color:var(--text2);margin-top:4px}
+.login-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--surface2);border-radius:var(--radius-sm);padding:4px}
+.login-tab{flex:1;padding:10px;border:none;background:transparent;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .2s}
+.login-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
 
 /* CONTAINERS */
 .container{max-width:1200px;margin:0 auto;padding:24px}
@@ -211,51 +227,82 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;hei
 </style>
 </head>
 <body>
-<!-- NAVBAR -->
-<nav class="navbar">
-<div class="logo"><div class="logo-icon">&#8734;</div>Infinity Test Panel</div>
-<div class="nav-links">
-<button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
-<button class="nav-btn" onclick="showPage('generator')">AI Test</button>
-<button class="nav-btn" onclick="showPage('pyq')">PYQ</button>
-<button class="nav-btn" onclick="showPage('analytics')">Analytics</button>
-<button class="nav-btn" onclick="showPage('admin')">Admin</button>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-page">
+<div class="login-card">
+<div class="login-logo">
+<div class="logo-icon">&#8734;</div>
+<h2>Infinity Test Panel</h2>
+<p id="loginSubtitle">AI-Powered Test Preparation</p>
 </div>
+<div class="login-tabs">
+<button class="login-tab active" onclick="switchLoginTab('student')" id="tabStudent">Student</button>
+<button class="login-tab" onclick="switchLoginTab('admin')" id="tabAdmin">Admin</button>
+</div>
+<div id="loginStudentForm">
+<div class="input-group"><label id="lblName">Name</label><input id="loginName" placeholder="Enter your name"></div>
+<div class="input-group"><label id="lblClass">Class</label><select id="loginClass"><option value="">Select Class</option><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select></div>
+<div class="input-group"><label id="lblRoll">Roll Number</label><input id="loginRoll" placeholder="Enter roll number" type="number"></div>
+<button class="btn btn-primary btn-lg" style="width:100%" onclick="loginAsStudent()" id="btnStartLearning">Start Learning &#8594;</button>
+</div>
+<div id="loginAdminForm" class="hidden">
+<div class="input-group"><label>Username</label><input id="loginUsername" placeholder="Enter username"></div>
+<div class="input-group"><label>Password</label><input id="loginPassword" type="password" placeholder="Enter password"></div>
+<button class="btn btn-primary btn-lg" style="width:100%" onclick="loginAsAdmin()" id="btnAdminLogin">Login &#8594;</button>
+</div>
+<p id="loginError" style="color:var(--red);font-size:13px;margin-top:12px;text-align:center"></p>
+</div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar hidden" id="mainNavbar">
+<div class="logo"><div class="logo-icon">&#8734;</div>Infinity Test Panel</div>
+<div class="nav-links" id="navLinksContainer">
+<button class="nav-btn active" onclick="showPage('dashboard')" data-nav="dashboard" data-i18n="nav_dashboard">Dashboard</button>
+<button class="nav-btn" onclick="showPage('generator')" data-nav="generator" data-i18n="nav_ai_test">AI Test</button>
+<button class="nav-btn" onclick="showPage('pyq')" data-nav="pyq" data-i18n="nav_pyq">PYQ</button>
+<button class="nav-btn" onclick="showPage('analytics')" data-nav="analytics" data-i18n="nav_analytics">Analytics</button>
+<button class="nav-btn" onclick="showPage('admin')" data-nav="admin" data-i18n="nav_admin">Admin</button>
+</div>
+<div class="user-info" id="userInfoBar"><div class="user-avatar" id="userAvatar">S</div><span class="user-name-text" id="userNameDisplay">Student</span></div>
+<button class="lang-toggle" onclick="toggleLanguage()" id="langToggleBtn" title="Switch Language">EN</button>
 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">&#9790;</button>
+<button class="logout-btn" onclick="logout()" id="logoutBtn">Logout</button>
 </nav>
 
 <!-- MOBILE NAV -->
-<div class="mobile-nav">
-<button class="active" onclick="showPage('dashboard')"><span>&#9679;</span>Home</button>
-<button onclick="showPage('generator')"><span>&#9733;</span>AI Test</button>
-<button onclick="showPage('pyq')"><span>&#9830;</span>PYQ</button>
-<button onclick="showPage('analytics')"><span>&#9650;</span>Stats</button>
-<button onclick="showPage('admin')"><span>&#9881;</span>Admin</button>
+<div class="mobile-nav hidden" id="mobileNav">
+<button class="active" onclick="showPage('dashboard')"><span>&#9679;</span><span data-i18n="nav_home">Home</span></button>
+<button onclick="showPage('generator')"><span>&#9733;</span><span data-i18n="nav_ai_test">AI Test</span></button>
+<button onclick="showPage('pyq')"><span>&#9830;</span><span data-i18n="nav_pyq">PYQ</span></button>
+<button onclick="showPage('analytics')"><span>&#9650;</span><span data-i18n="nav_stats">Stats</span></button>
+<button onclick="showPage('admin')"><span>&#9881;</span><span data-i18n="nav_admin">Admin</span></button>
 </div>
 
 <!-- LOADING OVERLAY -->
 <div id="loadingOverlay" class="loading-overlay hidden">
 <div class="spinner"></div>
-<div class="loading-text">AI is composing your paper...</div>
+<div class="loading-text" data-i18n="loading_text">AI is composing your paper...</div>
 </div>
 
 <!-- DASHBOARD PAGE -->
-<div id="page-dashboard" class="page active">
+<div id="page-dashboard" class="page">
 <div class="container">
 <div class="hero">
-<h1>Welcome back, Scholar!</h1>
-<p>Your personalized test preparation platform powered by AI</p>
-<button class="btn btn-lg" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3)" onclick="showPage('generator')">Start a New Test &#8594;</button>
+<h1 id="heroTitle">Welcome back, Scholar!</h1>
+<p data-i18n="hero_subtitle">Your personalized test preparation platform powered by AI</p>
+<button class="btn btn-lg" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3)" onclick="showPage('generator')" data-i18n="start_new_test">Start a New Test &#8594;</button>
 </div>
 <div class="grid-4 mb-24" id="statCards"></div>
 <div class="grid-2">
 <div class="card-static">
-<h3 class="section-title">Recent Tests</h3>
-<div id="recentTests"><p style="color:var(--text3)">No tests taken yet. Start your first test!</p></div>
+<h3 class="section-title" data-i18n="recent_tests">Recent Tests</h3>
+<div id="recentTests"><p style="color:var(--text3)" data-i18n="no_tests_yet">No tests taken yet. Start your first test!</p></div>
 </div>
 <div class="card-static">
-<h3 class="section-title">Weak Chapters</h3>
-<div id="weakChapters"><p style="color:var(--text3)">Take a few tests to see your weak areas.</p></div>
+<h3 class="section-title" data-i18n="weak_chapters">Weak Chapters</h3>
+<div id="weakChapters"><p style="color:var(--text3)" data-i18n="take_tests_weak">Take a few tests to see your weak areas.</p></div>
 </div>
 </div>
 </div>
@@ -264,8 +311,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;hei
 <!-- GENERATOR PAGE -->
 <div id="page-generator" class="page">
 <div class="container">
-<h2 class="section-title">AI Test Generator</h2>
-<p class="section-sub">Configure your personalized test in a few steps</p>
+<h2 class="section-title" data-i18n="ai_test_generator">AI Test Generator</h2>
+<p class="section-sub" data-i18n="configure_test">Configure your personalized test in a few steps</p>
 <div class="wizard-steps" id="wizardSteps"></div>
 <div class="card-static" id="generatorContent"></div>
 </div>
@@ -279,18 +326,18 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;hei
 <span id="examQCount" style="font-size:14px;color:var(--text2)"></span>
 </div>
 <div class="timer" id="examTimer">00:00</div>
-<button class="btn btn-danger" onclick="submitExam()">Submit</button>
+<button class="btn btn-danger" onclick="submitExam()" data-i18n="submit">Submit</button>
 </div>
 <div class="exam-body">
 <div class="exam-main" id="examMainContent"></div>
 <div class="exam-sidebar">
 <div class="card-static">
-<p style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text2)">Question Palette</p>
+<p style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text2)" data-i18n="question_palette">Question Palette</p>
 <div class="palette-grid" id="examPalette"></div>
 <div class="flex gap-8 mt-16" style="font-size:11px;flex-wrap:wrap">
-<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--green);vertical-align:middle"></span> Answered</span>
-<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--orange);vertical-align:middle"></span> Marked</span>
-<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--border);vertical-align:middle"></span> Not Visited</span>
+<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--green);vertical-align:middle"></span> <span data-i18n="answered">Answered</span></span>
+<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--orange);vertical-align:middle"></span> <span data-i18n="marked">Marked</span></span>
+<span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--border);vertical-align:middle"></span> <span data-i18n="not_visited">Not Visited</span></span>
 </div>
 </div>
 </div>
@@ -307,8 +354,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;hei
 <!-- PYQ PAGE -->
 <div id="page-pyq" class="page">
 <div class="container">
-<h2 class="section-title">Previous Year Questions</h2>
-<p class="section-sub">Practice questions from board exams</p>
+<h2 class="section-title" data-i18n="pyq_title">Previous Year Questions</h2>
+<p class="section-sub" data-i18n="pyq_subtitle">Practice questions from board exams</p>
 <div class="flex gap-12 mb-24 flex-wrap">
 <div class="input-group" style="min-width:150px;margin-bottom:0">
 <select id="pyqClass" onchange="updatePyqSubjects()"><option value="">Select Class</option></select>
@@ -324,8 +371,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;hei
 <!-- ANALYTICS PAGE -->
 <div id="page-analytics" class="page">
 <div class="container">
-<h2 class="section-title">Analytics</h2>
-<p class="section-sub">Track your progress and identify improvement areas</p>
+<h2 class="section-title" data-i18n="analytics_title">Analytics</h2>
+<p class="section-sub" data-i18n="analytics_subtitle">Track your progress and identify improvement areas</p>
 <div id="analyticsContent"></div>
 </div>
 </div>
@@ -333,8 +380,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;hei
 <!-- ADMIN PAGE -->
 <div id="page-admin" class="page">
 <div class="container">
-<h2 class="section-title">Admin Panel</h2>
-<p class="section-sub">Manage question bank</p>
+<h2 class="section-title" data-i18n="admin_title">Admin Panel</h2>
+<p class="section-sub" data-i18n="admin_subtitle">Manage question bank and monitor students</p>
 <div id="adminContent"></div>
 </div>
 </div>
@@ -343,8 +390,246 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;hei
 <svg width="0" height="0"><defs><linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs></svg>
 
 <script>
+// ============== LANGUAGE SYSTEM ==============
+var currentLang = localStorage.getItem('itp_lang') || 'en';
+
+var LANG = {
+en: {
+  nav_dashboard:'Dashboard', nav_ai_test:'AI Test', nav_pyq:'PYQ', nav_analytics:'Analytics', nav_admin:'Admin',
+  nav_home:'Home', nav_stats:'Stats',
+  hero_welcome:'Welcome back, ', hero_subtitle:'Your personalized test preparation platform powered by AI',
+  start_new_test:'Start a New Test', recent_tests:'Recent Tests', weak_chapters:'Weak Chapters',
+  no_tests_yet:'No tests taken yet. Start your first test!', take_tests_weak:'Take a few tests to see your weak areas.',
+  tests_taken:'Tests Taken', avg_accuracy:'Avg Accuracy', questions_solved:'Questions Solved', day_streak:'Day Streak',
+  ai_test_generator:'AI Test Generator', configure_test:'Configure your personalized test in a few steps',
+  select_class:'Select Your Class', choose_subject:'Choose Subject', select_chapters:'Select Chapters',
+  chapters_hint:'Click to toggle. Leave empty to include all chapters.',
+  test_settings:'Test Settings', difficulty:'Difficulty', test_mode:'Test Mode', num_questions:'Number of Questions',
+  estimated_time:'Estimated Time', timer_minutes:'Timer (minutes)', ready_to_generate:'Ready to Generate',
+  generate_test:'Generate Test', back:'Back', next:'Next', back_to_settings:'Back to Settings',
+  loading_text:'AI is composing your paper...', submit:'Submit', question_palette:'Question Palette',
+  answered:'Answered', marked:'Marked', not_visited:'Not Visited', previous:'Previous', clear:'Clear',
+  mark_review:'Mark', score:'Score', correct:'Correct', incorrect:'Incorrect', skipped:'Skipped',
+  marks:'Marks', time_taken:'Time Taken', avg_per_question:'Avg/Question',
+  review_answers:'Review Answers', retake_test:'Retake Test', home:'Home', detailed_review:'Detailed Review',
+  pyq_title:'Previous Year Questions', pyq_subtitle:'Practice questions from board exams',
+  start_pyq_practice:'Start PYQ Practice', analytics_title:'Analytics',
+  analytics_subtitle:'Track your progress and identify improvement areas',
+  accuracy_trend:'Accuracy Trend', subject_accuracy:'Subject-wise Accuracy', no_data_yet:'No Data Yet',
+  take_tests_analytics:'Take some tests to see your analytics here.',
+  study_streak:'Study Streak', reset_all_data:'Reset All Data',
+  admin_title:'Admin Panel', admin_subtitle:'Manage question bank and monitor students',
+  total_questions:'Total Questions', teacher_added:'Teacher Added', classes_covered:'Classes Covered',
+  add_question:'Add Question', bank_summary:'Bank Summary by Class', save_question:'Save Question',
+  question_text:'Question Text', correct_option:'Correct Option',
+  student_overview:'Student Overview', platform_stats:'Platform Stats',
+  total_students:'Total Students', total_tests_platform:'Total Tests Taken', avg_platform_accuracy:'Avg Accuracy',
+  student_name:'Name', student_class:'Class', student_tests:'Tests', student_accuracy:'Accuracy',
+  student_last_active:'Last Active', view_details:'View Details', student_details:'Student Details',
+  back_to_overview:'Back to Overview', subjects_attempted:'Subjects Attempted',
+  logout:'Logout', login:'Login', student:'Student', admin:'Admin',
+  name:'Name', class_label:'Class', roll_number:'Roll Number', start_learning:'Start Learning',
+  username:'Username', password:'Password', login_btn:'Login',
+  fill_all_fields:'Please fill in all fields.', invalid_credentials:'Invalid username or password.',
+  question_saved:'Question saved successfully!', confirm_leave:'Leave the test? Your progress will be lost.',
+  confirm_submit:'Are you sure you want to submit? You still have time remaining.',
+  confirm_reset:'This will delete all your test history and progress. Are you sure?',
+  chapters:'chapters', questions:'Questions', easy:'Easy', medium:'Medium', hard:'Hard', mixed:'Mixed',
+  chapter_mode:'Chapter', full_syllabus:'Full Syllabus', board_mock:'Board Mock', pyq_mode:'Pyq', revision:'Revision',
+  select_class_dropdown:'Select Class', select_subject_dropdown:'Select Subject'
+},
+hi: {
+  nav_dashboard:'\u0921\u0948\u0936\u092C\u094B\u0930\u094D\u0921', nav_ai_test:'AI \u091F\u0947\u0938\u094D\u091F', nav_pyq:'PYQ', nav_analytics:'\u0935\u093F\u0936\u094D\u0932\u0947\u0937\u0923', nav_admin:'\u090F\u0921\u092E\u093F\u0928',
+  nav_home:'\u0939\u094B\u092E', nav_stats:'\u0938\u094D\u091F\u0948\u091F\u094D\u0938',
+  hero_welcome:'\u0938\u094D\u0935\u093E\u0917\u0924 \u0939\u0948, ', hero_subtitle:'AI \u0926\u094D\u0935\u093E\u0930\u093E \u0938\u0902\u091A\u093E\u0932\u093F\u0924 \u0906\u092A\u0915\u093E \u0935\u094D\u092F\u0915\u094D\u0924\u093F\u0917\u0924 \u092A\u0930\u0940\u0915\u094D\u0937\u093E \u092E\u0902\u091A',
+  start_new_test:'\u0928\u092F\u093E \u091F\u0947\u0938\u094D\u091F \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902', recent_tests:'\u0939\u093E\u0932 \u0915\u0947 \u091F\u0947\u0938\u094D\u091F', weak_chapters:'\u0915\u092E\u091C\u094B\u0930 \u0905\u0927\u094D\u092F\u093E\u092F',
+  no_tests_yet:'\u0905\u092D\u0940 \u0924\u0915 \u0915\u094B\u0908 \u091F\u0947\u0938\u094D\u091F \u0928\u0939\u0940\u0902 \u0926\u093F\u092F\u093E\u0964 \u092A\u0939\u0932\u093E \u091F\u0947\u0938\u094D\u091F \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902!',
+  take_tests_weak:'\u0905\u092A\u0928\u0947 \u0915\u092E\u091C\u094B\u0930 \u0915\u094D\u0937\u0947\u0924\u094D\u0930 \u0926\u0947\u0916\u0928\u0947 \u0915\u0947 \u0932\u093F\u090F \u0915\u0941\u091B \u091F\u0947\u0938\u094D\u091F \u0926\u0947\u0902\u0964',
+  tests_taken:'\u091F\u0947\u0938\u094D\u091F \u0926\u093F\u090F', avg_accuracy:'\u0914\u0938\u0924 \u0938\u091F\u0940\u0915\u0924\u093E', questions_solved:'\u092A\u094D\u0930\u0936\u094D\u0928 \u0939\u0932 \u0915\u093F\u090F', day_streak:'\u0926\u093F\u0928 \u0938\u094D\u091F\u094D\u0930\u0940\u0915',
+  ai_test_generator:'AI \u091F\u0947\u0938\u094D\u091F \u091C\u0928\u0930\u0947\u091F\u0930', configure_test:'\u0915\u0941\u091B \u091A\u0930\u0923\u094B\u0902 \u092E\u0947\u0902 \u0905\u092A\u0928\u093E \u091F\u0947\u0938\u094D\u091F \u0924\u0948\u092F\u093E\u0930 \u0915\u0930\u0947\u0902',
+  select_class:'\u0905\u092A\u0928\u0940 \u0915\u0915\u094D\u0937\u093E \u091A\u0941\u0928\u0947\u0902', choose_subject:'\u0935\u093F\u0937\u092F \u091A\u0941\u0928\u0947\u0902', select_chapters:'\u0905\u0927\u094D\u092F\u093E\u092F \u091A\u0941\u0928\u0947\u0902',
+  chapters_hint:'\u091F\u0949\u0917\u0932 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093F\u090F \u0915\u094D\u0932\u093F\u0915 \u0915\u0930\u0947\u0902\u0964 \u0938\u092D\u0940 \u0905\u0927\u094D\u092F\u093E\u092F \u0936\u093E\u092E\u093F\u0932 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093F\u090F \u0916\u093E\u0932\u0940 \u091B\u094B\u0921\u093C\u0947\u0902\u0964',
+  test_settings:'\u091F\u0947\u0938\u094D\u091F \u0938\u0947\u091F\u093F\u0902\u0917\u094D\u0938', difficulty:'\u0915\u0920\u093F\u0928\u093E\u0908', test_mode:'\u091F\u0947\u0938\u094D\u091F \u092E\u094B\u0921', num_questions:'\u092A\u094D\u0930\u0936\u094D\u0928\u094B\u0902 \u0915\u0940 \u0938\u0902\u0916\u094D\u092F\u093E',
+  estimated_time:'\u0905\u0928\u0941\u092E\u093E\u0928\u093F\u0924 \u0938\u092E\u092F', timer_minutes:'\u091F\u093E\u0907\u092E\u0930 (\u092E\u093F\u0928\u091F)', ready_to_generate:'\u0924\u0948\u092F\u093E\u0930 \u0939\u0948',
+  generate_test:'\u091F\u0947\u0938\u094D\u091F \u092C\u0928\u093E\u090F\u0902', back:'\u092A\u0940\u091B\u0947', next:'\u0906\u0917\u0947', back_to_settings:'\u0938\u0947\u091F\u093F\u0902\u0917\u094D\u0938 \u092A\u0930 \u0935\u093E\u092A\u0938',
+  loading_text:'AI \u0906\u092A\u0915\u093E \u092A\u0947\u092A\u0930 \u0924\u0948\u092F\u093E\u0930 \u0915\u0930 \u0930\u0939\u093E \u0939\u0948...', submit:'\u091C\u092E\u093E \u0915\u0930\u0947\u0902', question_palette:'\u092A\u094D\u0930\u0936\u094D\u0928 \u092A\u0948\u0932\u0947\u091F',
+  answered:'\u0909\u0924\u094D\u0924\u0930 \u0926\u093F\u092F\u093E', marked:'\u091A\u093F\u0939\u094D\u0928\u093F\u0924', not_visited:'\u0928\u0939\u0940\u0902 \u0926\u0947\u0916\u093E', previous:'\u092A\u093F\u091B\u0932\u093E', clear:'\u0938\u093E\u092B\u093C \u0915\u0930\u0947\u0902',
+  mark_review:'\u092E\u093E\u0930\u094D\u0915', score:'\u0938\u094D\u0915\u094B\u0930', correct:'\u0938\u0939\u0940', incorrect:'\u0917\u0932\u0924', skipped:'\u091B\u094B\u0921\u093C\u093E',
+  marks:'\u0905\u0902\u0915', time_taken:'\u0938\u092E\u092F \u0932\u093F\u092F\u093E', avg_per_question:'\u0914\u0938\u0924/\u092A\u094D\u0930\u0936\u094D\u0928',
+  review_answers:'\u0909\u0924\u094D\u0924\u0930 \u0938\u092E\u0940\u0915\u094D\u0937\u093E', retake_test:'\u092B\u093F\u0930 \u0938\u0947 \u0926\u0947\u0902', home:'\u0939\u094B\u092E', detailed_review:'\u0935\u093F\u0938\u094D\u0924\u0943\u0924 \u0938\u092E\u0940\u0915\u094D\u0937\u093E',
+  pyq_title:'\u092A\u093F\u091B\u0932\u0947 \u0935\u0930\u094D\u0937 \u0915\u0947 \u092A\u094D\u0930\u0936\u094D\u0928', pyq_subtitle:'\u092C\u094B\u0930\u094D\u0921 \u092A\u0930\u0940\u0915\u094D\u0937\u093E \u0915\u0947 \u092A\u094D\u0930\u0936\u094D\u0928 \u0905\u092D\u094D\u092F\u093E\u0938 \u0915\u0930\u0947\u0902',
+  start_pyq_practice:'PYQ \u0905\u092D\u094D\u092F\u093E\u0938 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902', analytics_title:'\u0935\u093F\u0936\u094D\u0932\u0947\u0937\u0923',
+  analytics_subtitle:'\u0905\u092A\u0928\u0940 \u092A\u094D\u0930\u0917\u0924\u093F \u091F\u094D\u0930\u0948\u0915 \u0915\u0930\u0947\u0902 \u0914\u0930 \u0938\u0941\u0927\u093E\u0930 \u0915\u0947 \u0915\u094D\u0937\u0947\u0924\u094D\u0930 \u092A\u0939\u091A\u093E\u0928\u0947\u0902',
+  accuracy_trend:'\u0938\u091F\u0940\u0915\u0924\u093E \u0930\u0941\u091D\u093E\u0928', subject_accuracy:'\u0935\u093F\u0937\u092F-\u0935\u093E\u0930 \u0938\u091F\u0940\u0915\u0924\u093E', no_data_yet:'\u0905\u092D\u0940 \u0915\u094B\u0908 \u0921\u0947\u091F\u093E \u0928\u0939\u0940\u0902',
+  take_tests_analytics:'\u092F\u0939\u093E\u0902 \u0935\u093F\u0936\u094D\u0932\u0947\u0937\u0923 \u0926\u0947\u0916\u0928\u0947 \u0915\u0947 \u0932\u093F\u090F \u0915\u0941\u091B \u091F\u0947\u0938\u094D\u091F \u0926\u0947\u0902\u0964',
+  study_streak:'\u0905\u0927\u094D\u092F\u092F\u0928 \u0938\u094D\u091F\u094D\u0930\u0940\u0915', reset_all_data:'\u0938\u092C \u0921\u0947\u091F\u093E \u0930\u0940\u0938\u0947\u091F \u0915\u0930\u0947\u0902',
+  admin_title:'\u090F\u0921\u092E\u093F\u0928 \u092A\u0948\u0928\u0932', admin_subtitle:'\u092A\u094D\u0930\u0936\u094D\u0928 \u092C\u0948\u0902\u0915 \u092A\u094D\u0930\u092C\u0902\u0927\u093F\u0924 \u0915\u0930\u0947\u0902 \u0914\u0930 \u091B\u093E\u0924\u094D\u0930\u094B\u0902 \u0915\u0940 \u0928\u093F\u0917\u0930\u093E\u0928\u0940 \u0915\u0930\u0947\u0902',
+  total_questions:'\u0915\u0941\u0932 \u092A\u094D\u0930\u0936\u094D\u0928', teacher_added:'\u0936\u093F\u0915\u094D\u0937\u0915 \u0926\u094D\u0935\u093E\u0930\u093E \u091C\u094B\u0921\u093C\u0947', classes_covered:'\u0915\u0915\u094D\u0937\u093E\u090F\u0902',
+  add_question:'\u092A\u094D\u0930\u0936\u094D\u0928 \u091C\u094B\u0921\u093C\u0947\u0902', bank_summary:'\u0915\u0915\u094D\u0937\u093E \u0905\u0928\u0941\u0938\u093E\u0930 \u092C\u0948\u0902\u0915 \u0938\u093E\u0930\u093E\u0902\u0936', save_question:'\u092A\u094D\u0930\u0936\u094D\u0928 \u0938\u0939\u0947\u091C\u0947\u0902',
+  question_text:'\u092A\u094D\u0930\u0936\u094D\u0928 \u092A\u093E\u0920', correct_option:'\u0938\u0939\u0940 \u0935\u093F\u0915\u0932\u094D\u092A',
+  student_overview:'\u091B\u093E\u0924\u094D\u0930 \u0905\u0935\u0932\u094B\u0915\u0928', platform_stats:'\u092A\u094D\u0932\u0947\u091F\u092B\u0949\u0930\u094D\u092E \u0906\u0902\u0915\u0921\u093C\u0947',
+  total_students:'\u0915\u0941\u0932 \u091B\u093E\u0924\u094D\u0930', total_tests_platform:'\u0915\u0941\u0932 \u091F\u0947\u0938\u094D\u091F', avg_platform_accuracy:'\u0914\u0938\u0924 \u0938\u091F\u0940\u0915\u0924\u093E',
+  student_name:'\u0928\u093E\u092E', student_class:'\u0915\u0915\u094D\u0937\u093E', student_tests:'\u091F\u0947\u0938\u094D\u091F', student_accuracy:'\u0938\u091F\u0940\u0915\u0924\u093E',
+  student_last_active:'\u0905\u0902\u0924\u093F\u092E \u0938\u0915\u094D\u0930\u093F\u092F', view_details:'\u0935\u093F\u0935\u0930\u0923 \u0926\u0947\u0916\u0947\u0902', student_details:'\u091B\u093E\u0924\u094D\u0930 \u0935\u093F\u0935\u0930\u0923',
+  back_to_overview:'\u0935\u093E\u092A\u0938 \u091C\u093E\u090F\u0902', subjects_attempted:'\u0935\u093F\u0937\u092F \u092A\u094D\u0930\u092F\u093E\u0938',
+  logout:'\u0932\u0949\u0917\u0906\u0909\u091F', login:'\u0932\u0949\u0917\u093F\u0928', student:'\u091B\u093E\u0924\u094D\u0930', admin:'\u090F\u0921\u092E\u093F\u0928',
+  name:'\u0928\u093E\u092E', class_label:'\u0915\u0915\u094D\u0937\u093E', roll_number:'\u0930\u094B\u0932 \u0928\u0902\u092C\u0930', start_learning:'\u0938\u0940\u0916\u0928\u093E \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902',
+  username:'\u092F\u0942\u091C\u0930\u0928\u0947\u092E', password:'\u092A\u093E\u0938\u0935\u0930\u094D\u0921', login_btn:'\u0932\u0949\u0917\u093F\u0928',
+  fill_all_fields:'\u0915\u0943\u092A\u092F\u093E \u0938\u092D\u0940 \u092B\u0940\u0932\u094D\u0921 \u092D\u0930\u0947\u0902\u0964', invalid_credentials:'\u0917\u0932\u0924 \u092F\u0942\u091C\u0930\u0928\u0947\u092E \u092F\u093E \u092A\u093E\u0938\u0935\u0930\u094D\u0921\u0964',
+  question_saved:'\u092A\u094D\u0930\u0936\u094D\u0928 \u0938\u092B\u0932\u0924\u093E\u092A\u0942\u0930\u094D\u0935\u0915 \u0938\u0939\u0947\u091C\u093E \u0917\u092F\u093E!',
+  confirm_leave:'\u091F\u0947\u0938\u094D\u091F \u091B\u094B\u0921\u093C\u0947\u0902? \u0906\u092A\u0915\u0940 \u092A\u094D\u0930\u0917\u0924\u093F \u0916\u094B \u091C\u093E\u090F\u0917\u0940\u0964',
+  confirm_submit:'\u0915\u094D\u092F\u093E \u0906\u092A \u091C\u092E\u093E \u0915\u0930\u0928\u093E \u091A\u093E\u0939\u0924\u0947 \u0939\u0948\u0902? \u0905\u092D\u0940 \u0938\u092E\u092F \u092C\u093E\u0915\u0940 \u0939\u0948\u0964',
+  confirm_reset:'\u092F\u0939 \u0906\u092A\u0915\u0940 \u0938\u092D\u0940 \u091F\u0947\u0938\u094D\u091F \u0939\u093F\u0938\u094D\u091F\u094D\u0930\u0940 \u0921\u093F\u0932\u0940\u091F \u0915\u0930 \u0926\u0947\u0917\u093E\u0964 \u0915\u094D\u092F\u093E \u0906\u092A \u0938\u0941\u0928\u093F\u0936\u094D\u091A\u093F\u0924 \u0939\u0948\u0902?',
+  chapters:'chapters', questions:'\u092A\u094D\u0930\u0936\u094D\u0928', easy:'\u0906\u0938\u093E\u0928', medium:'\u092E\u0927\u094D\u092F\u092E', hard:'\u0915\u0920\u093F\u0928', mixed:'\u092E\u093F\u0936\u094D\u0930\u093F\u0924',
+  chapter_mode:'\u0905\u0927\u094D\u092F\u093E\u092F', full_syllabus:'\u092A\u0942\u0930\u093E \u092A\u093E\u0920\u094D\u092F\u0915\u094D\u0930\u092E', board_mock:'\u092C\u094B\u0930\u094D\u0921 \u092E\u0949\u0915', pyq_mode:'PYQ', revision:'\u0930\u093F\u0935\u093F\u091C\u0928',
+  select_class_dropdown:'\u0915\u0915\u094D\u0937\u093E \u091A\u0941\u0928\u0947\u0902', select_subject_dropdown:'\u0935\u093F\u0937\u092F \u091A\u0941\u0928\u0947\u0902'
+}
+};
+
+function t(key){
+  return (LANG[currentLang] && LANG[currentLang][key]) || (LANG['en'][key]) || key;
+}
+
+function applyLanguage(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    if(LANG[currentLang] && LANG[currentLang][key]){
+      el.textContent = LANG[currentLang][key];
+    }else if(LANG['en'][key]){
+      el.textContent = LANG['en'][key];
+    }
+  });
+  var langBtn = document.getElementById('langToggleBtn');
+  if(langBtn) langBtn.textContent = currentLang === 'en' ? 'HI' : 'EN';
+  var logoutBtn = document.getElementById('logoutBtn');
+  if(logoutBtn) logoutBtn.textContent = t('logout');
+}
+
+function toggleLanguage(){
+  currentLang = currentLang === 'en' ? 'hi' : 'en';
+  localStorage.setItem('itp_lang', currentLang);
+  applyLanguage();
+  if(state.currentPage === 'dashboard') renderDashboard();
+  else if(state.currentPage === 'analytics') renderAnalytics();
+  else if(state.currentPage === 'admin') renderAdmin();
+}
+
+// ============== LOGIN / AUTH SYSTEM ==============
+var currentUser = JSON.parse(localStorage.getItem('itp_current_user') || 'null');
+
+function switchLoginTab(tab){
+  document.getElementById('loginStudentForm').classList.toggle('hidden', tab !== 'student');
+  document.getElementById('loginAdminForm').classList.toggle('hidden', tab !== 'admin');
+  document.getElementById('tabStudent').classList.toggle('active', tab === 'student');
+  document.getElementById('tabAdmin').classList.toggle('active', tab === 'admin');
+  document.getElementById('loginError').textContent = '';
+}
+
+function loginAsStudent(){
+  var name = document.getElementById('loginName').value.trim();
+  var cls = document.getElementById('loginClass').value;
+  var roll = document.getElementById('loginRoll').value.trim();
+  if(!name || !cls || !roll){
+    document.getElementById('loginError').textContent = t('fill_all_fields');
+    return;
+  }
+  currentUser = {role:'student', name:name, class:cls, roll:roll};
+  localStorage.setItem('itp_current_user', JSON.stringify(currentUser));
+  // Register student in students list
+  registerStudent(currentUser);
+  enterApp();
+}
+
+function loginAsAdmin(){
+  var username = document.getElementById('loginUsername').value.trim();
+  var password = document.getElementById('loginPassword').value;
+  if(username === 'admin' && password === 'admin123'){
+    currentUser = {role:'admin', name:'Admin'};
+    localStorage.setItem('itp_current_user', JSON.stringify(currentUser));
+    enterApp();
+  }else{
+    document.getElementById('loginError').textContent = t('invalid_credentials');
+  }
+}
+
+function registerStudent(user){
+  var students = JSON.parse(localStorage.getItem('itp_students') || '[]');
+  var key = user.name + '_' + user.roll;
+  var existing = students.find(function(s){ return s.key === key; });
+  if(!existing){
+    students.push({key:key, name:user.name, class:user.class, roll:user.roll, registeredAt:new Date().toISOString()});
+    localStorage.setItem('itp_students', JSON.stringify(students));
+  }
+  // Update last active
+  var activity = JSON.parse(localStorage.getItem('itp_activity') || '{}');
+  activity[key] = new Date().toISOString();
+  localStorage.setItem('itp_activity', JSON.stringify(activity));
+}
+
+function getStudentKey(){
+  if(!currentUser || currentUser.role !== 'student') return null;
+  return currentUser.name + '_' + currentUser.roll;
+}
+
+function getStudentResultsKey(){
+  var key = getStudentKey();
+  return key ? 'itp_results_' + key : 'itp_results';
+}
+
+function logout(){
+  currentUser = null;
+  localStorage.removeItem('itp_current_user');
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('mainNavbar').classList.add('hidden');
+  document.getElementById('mobileNav').classList.add('hidden');
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  clearInterval(state.timerInterval);
+}
+
+function enterApp(){
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('mainNavbar').classList.remove('hidden');
+  document.getElementById('mobileNav').classList.remove('hidden');
+  // Update user display
+  var avatar = document.getElementById('userAvatar');
+  var nameEl = document.getElementById('userNameDisplay');
+  if(currentUser.role === 'admin'){
+    avatar.textContent = 'A';
+    nameEl.textContent = 'Admin';
+  }else{
+    avatar.textContent = currentUser.name.charAt(0).toUpperCase();
+    nameEl.textContent = currentUser.name + ' (Class ' + currentUser.class + ')';
+  }
+  // Load student-specific data
+  loadUserData();
+  showPage('dashboard');
+  applyLanguage();
+}
+
+function loadUserData(){
+  if(currentUser && currentUser.role === 'student'){
+    var key = getStudentResultsKey();
+    state.testResults = JSON.parse(localStorage.getItem(key) || '[]');
+  }else{
+    state.testResults = [];
+  }
+  state.teacherQuestions = JSON.parse(localStorage.getItem('itp_teacher_q') || '[]');
+}
+
+// Check login on page load
+function checkAuth(){
+  if(currentUser){
+    if(currentUser.role === 'student'){
+      registerStudent(currentUser);
+    }
+    enterApp();
+  }else{
+    document.getElementById('loginPage').style.display = 'flex';
+  }
+}
+
 // ============== CURRICULUM DATA ==============
-const CURRICULUM = {
+var CURRICULUM = {
 6:{name:'Class 6',subjects:{math:{name:'Mathematics',icon:'&#215;',color:'#4f46e5',chapters:['Number System','Whole Numbers','Playing with Numbers','Basic Geometrical Ideas','Understanding Elementary Shapes','Integers','Fractions','Decimals','Data Handling','Mensuration','Algebra','Ratio and Proportion','Symmetry','Practical Geometry']},science:{name:'Science',icon:'&#9883;',color:'#10b981',chapters:['Food: Where Does It Come From','Components of Food','Fibre to Fabric','Sorting Materials','Separation of Substances','Changes Around Us','Getting to Know Plants','Body Movements','Living Organisms and Surroundings','Motion and Measurement','Light Shadows Reflections','Electricity and Circuits','Fun with Magnets','Water','Air Around Us','Garbage In Garbage Out']},sst:{name:'Social Studies',icon:'&#9881;',color:'#f59e0b',chapters:['What Where How When','On the Trail of the Earliest People','From Gathering to Growing Food','Early States','New Ideas','Ashoka and His Empire','The Earth','Globe Latitudes Longitudes','Maps','India Physical Features','India Climate Vegetation Wildlife','Understanding Diversity','Diversity and Discrimination','Government','Local Government','Rural Livelihoods','Urban Livelihoods']},english:{name:'English',icon:'&#9998;',color:'#3b82f6',chapters:['Nouns and Pronouns','Verbs and Tenses','Adjectives and Adverbs','Prepositions','Conjunctions','Subject Verb Agreement','Active Passive Voice','Direct Indirect Speech','Comprehension Passages','Essay Writing','Letter Writing','Story Writing']}}},
 7:{name:'Class 7',subjects:{math:{name:'Mathematics',icon:'&#215;',color:'#4f46e5',chapters:['Integers','Fractions and Decimals','Data Handling','Simple Equations','Lines and Angles','Triangles and Properties','Congruence of Triangles','Comparing Quantities','Rational Numbers','Practical Geometry','Perimeter and Area','Algebraic Expressions','Exponents and Powers','Symmetry','Visualizing Solid Shapes']},science:{name:'Science',icon:'&#9883;',color:'#10b981',chapters:['Nutrition in Plants','Nutrition in Animals','Fibre to Fabric','Heat','Acids Bases Salts','Physical Chemical Changes','Weather Climate Adaptation','Winds Storms Cyclones','Soil','Respiration in Organisms','Transportation in Plants Animals','Reproduction in Plants','Motion and Time','Electric Current','Light','Water A Precious Resource','Forests Our Lifeline','Wastewater Story']},sst:{name:'Social Studies',icon:'&#9881;',color:'#f59e0b',chapters:['Tracing Changes Through Thousand Years','New Kings and Kingdoms','Delhi Sultanate','Mughal Empire','Tribes Nomads Settled Communities','Devotional Paths','Medieval Architecture','Environment','Inside Our Earth','Our Changing Earth','Air','Water','Natural Vegetation','Human Environment Settlement','Life in Temperate Grasslands','Life in Deserts','Democracy','Role of Government Health','Growing Up as Boys and Girls','Women Change the World','Media and Democracy','Markets']},english:{name:'English',icon:'&#9998;',color:'#3b82f6',chapters:['Nouns and Pronouns','Verbs Tenses','Modal Auxiliaries','Adjectives Adverbs','Prepositions Conjunctions','Active Passive Voice','Direct Indirect Speech','Clauses','Comprehension','Essay Writing','Letter Writing','Dialogue Writing']}}},
 8:{name:'Class 8',subjects:{math:{name:'Mathematics',icon:'&#215;',color:'#4f46e5',chapters:['Rational Numbers','Linear Equations in One Variable','Understanding Quadrilaterals','Practical Geometry','Data Handling','Squares and Square Roots','Cubes and Cube Roots','Comparing Quantities','Algebraic Expressions and Identities','Visualizing Solid Shapes','Mensuration','Exponents and Powers','Direct and Inverse Proportions','Factorisation','Introduction to Graphs','Playing with Numbers']},science:{name:'Science',icon:'&#9883;',color:'#10b981',chapters:['Crop Production and Management','Microorganisms','Synthetic Fibres and Plastics','Materials Metals Non-Metals','Coal and Petroleum','Combustion and Flame','Conservation of Plants Animals','Cell Structure','Reproduction in Animals','Reaching the Age of Adolescence','Force and Pressure','Friction','Sound','Chemical Effects of Electric Current','Some Natural Phenomena','Light','Stars and Solar System','Pollution']},sst:{name:'Social Studies',icon:'&#9881;',color:'#f59e0b',chapters:['How When Where','From Trade to Territory','Ruling the Countryside','Tribals Dikus and Vision','When People Rebel','Weavers Iron Smelters','Civilising the Native','Women Caste Reform','The Making of National Movement','India After Independence','Resources','Land Soil Water','Mineral and Power Resources','Agriculture','Industries','Human Resources','The Indian Constitution','Understanding Secularism','Parliament and Making of Laws','Judiciary','Understanding Marginalization','Confronting Marginalization','Public Facilities','Law and Social Justice']},english:{name:'English',icon:'&#9998;',color:'#3b82f6',chapters:['Tenses Review','Modals','Passive Voice','Reported Speech','Conditionals','Relative Clauses','Conjunctions and Connectors','Comprehension','Formal Letters','Informal Letters','Essay Writing','Paragraph Writing']}}},
@@ -357,418 +642,355 @@ const CURRICULUM = {
 // ============== QUESTION GENERATORS ==============
 function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
-function shuffle(arr){let a=[...arr];for(let i=a.length-1;i>0;i--){let j=randInt(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffle(arr){var a=[].concat(arr);for(var i=a.length-1;i>0;i--){var j=randInt(0,i);var tmp=a[i];a[i]=a[j];a[j]=tmp}return a}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%t;a=t}return a}
 
-const GENERATORS = {
-// === MATH GENERATORS ===
+var GENERATORS = {
 math_arithmetic:function(ch){
-  let a=randInt(10,999),b=randInt(10,999),ops=['+','-','*'];
-  let op=pick(ops),ans=op==='+'?a+b:op==='-'?a-b:a*b;
-  let wrong=[ans+randInt(1,10),ans-randInt(1,10),ans+randInt(11,30)];
-  return{prompt:'Calculate: '+a+' '+op+' '+b+' = ?',options:shuffle([String(ans),...wrong.map(String)]),correct:String(ans),explanation:'Direct calculation: '+a+' '+op+' '+b+' = '+ans,difficulty:op==='*'?'medium':'easy',type:'MCQ',chapter:ch};
+  var a=randInt(10,999),b=randInt(10,999),ops=['+','-','*'];
+  var op=pick(ops),ans=op==='+'?a+b:op==='-'?a-b:a*b;
+  var wrong=[ans+randInt(1,10),ans-randInt(1,10),ans+randInt(11,30)];
+  return{prompt:'Calculate: '+a+' '+op+' '+b+' = ?',options:shuffle([String(ans)].concat(wrong.map(String))),correct:String(ans),explanation:'Direct calculation: '+a+' '+op+' '+b+' = '+ans,difficulty:op==='*'?'medium':'easy',type:'MCQ',chapter:ch};
 },
 math_fraction:function(ch){
-  let n1=randInt(1,9),d1=randInt(2,12),n2=randInt(1,9),d2=randInt(2,12);
-  let num=n1*d2+n2*d1,den=d1*d2;
-  let g=gcd(num,den);num/=g;den/=g;
-  let ans=num+'/'+den;
-  let opts=[ans,randInt(1,20)+'/'+randInt(2,15),randInt(1,20)+'/'+randInt(2,15),randInt(1,20)+'/'+randInt(2,15)];
-  return{prompt:'Simplify: '+n1+'/'+d1+' + '+n2+'/'+d2,options:shuffle([...new Set(opts)]).slice(0,4),correct:ans,explanation:'LCM of '+d1+' and '+d2+' is '+den*g+'. Sum = '+n1*d2+'/'+den*g+' + '+n2*d1+'/'+den*g+' = '+(n1*d2+n2*d1)+'/'+den*g+' = '+ans,difficulty:'medium',type:'MCQ',chapter:ch};
+  var n1=randInt(1,9),d1=randInt(2,12),n2=randInt(1,9),d2=randInt(2,12);
+  var num=n1*d2+n2*d1,den=d1*d2;
+  var g2=gcd(num,den);num/=g2;den/=g2;
+  var ans=num+'/'+den;
+  var opts=[ans,randInt(1,20)+'/'+randInt(2,15),randInt(1,20)+'/'+randInt(2,15),randInt(1,20)+'/'+randInt(2,15)];
+  return{prompt:'Simplify: '+n1+'/'+d1+' + '+n2+'/'+d2,options:shuffle(opts),correct:ans,explanation:'LCM of '+d1+' and '+d2+'. Sum simplifies to '+ans,difficulty:'medium',type:'MCQ',chapter:ch};
 },
 math_percentage:function(ch){
-  let p=randInt(5,95),n=randInt(20,500);
-  let ans=p*n/100;
-  let wrong=[ans+randInt(1,20),ans-randInt(1,15),p+n];
-  return{prompt:'Find '+p+'% of '+n,options:shuffle([ans,...wrong].map(String)),correct:String(ans),explanation:p+'% of '+n+' = ('+p+'/100) x '+n+' = '+ans,difficulty:'easy',type:'MCQ',chapter:ch};
+  var p=randInt(5,95),n=randInt(20,500);
+  var ans=p*n/100;
+  var wrong=[ans+randInt(1,20),ans-randInt(1,15),p+n];
+  return{prompt:'Find '+p+'% of '+n,options:shuffle([ans].concat(wrong).map(String)),correct:String(ans),explanation:p+'% of '+n+' = ('+p+'/100) x '+n+' = '+ans,difficulty:'easy',type:'MCQ',chapter:ch};
 },
 math_algebra:function(ch){
-  let a=randInt(2,10),b=randInt(1,20),x=randInt(1,15);
-  let rhs=a*x+b;
-  let wrong=[x+randInt(1,5),x-randInt(1,3),x*2];
-  return{prompt:'Solve for x: '+a+'x + '+b+' = '+rhs,options:shuffle([x,...wrong].map(String)),correct:String(x),explanation:a+'x = '+rhs+' - '+b+' = '+(rhs-b)+', so x = '+(rhs-b)+'/'+a+' = '+x,difficulty:'medium',type:'MCQ',chapter:ch,steps:[a+'x + '+b+' = '+rhs,a+'x = '+rhs+' - '+b+' = '+(rhs-b),'x = '+(rhs-b)+' / '+a+' = '+x]};
+  var a=randInt(2,10),b=randInt(1,20),x=randInt(1,15);
+  var rhs=a*x+b;
+  var wrong=[x+randInt(1,5),x-randInt(1,3),x*2];
+  return{prompt:'Solve for x: '+a+'x + '+b+' = '+rhs,options:shuffle([x].concat(wrong).map(String)),correct:String(x),explanation:a+'x = '+rhs+' - '+b+' = '+(rhs-b)+', so x = '+(rhs-b)+'/'+a+' = '+x,difficulty:'medium',type:'MCQ',chapter:ch,steps:[a+'x + '+b+' = '+rhs,a+'x = '+(rhs-b),'x = '+(rhs-b)+'/'+a+' = '+x]};
 },
 math_quadratic:function(ch){
-  let r1=randInt(1,10),r2=randInt(1,10);
-  let a=1,b=-(r1+r2),c=r1*r2;
-  let bStr=b>=0?'+ '+b:'- '+(-b),cStr=c>=0?'+ '+c:'- '+(-c);
-  let ans='x = '+r1+', x = '+r2;
-  let w1='x = '+(r1+1)+', x = '+(r2-1);
-  let w2='x = '+(r1*2)+', x = '+r2;
-  let w3='x = '+(-r1)+', x = '+(-r2);
-  return{prompt:'Find the roots of: x^2 '+bStr+'x '+cStr+' = 0',options:shuffle([ans,w1,w2,w3]),correct:ans,explanation:'Factoring: (x-'+r1+')(x-'+r2+') = 0, so x = '+r1+' or x = '+r2,difficulty:'medium',type:'MCQ',chapter:ch,steps:['x^2 '+bStr+'x '+cStr+' = 0','Factor as (x - '+r1+')(x - '+r2+') = 0','x = '+r1+' or x = '+r2]};
+  var r1=randInt(1,10),r2=randInt(1,10);
+  var b=-(r1+r2),c=r1*r2;
+  var bStr=b>=0?'+ '+b:'- '+(-b),cStr=c>=0?'+ '+c:'- '+(-c);
+  var ans='x = '+r1+', x = '+r2;
+  var w1='x = '+(r1+1)+', x = '+(r2-1);
+  var w2='x = '+(r1*2)+', x = '+r2;
+  var w3='x = '+(-r1)+', x = '+(-r2);
+  return{prompt:'Find the roots of: x^2 '+bStr+'x '+cStr+' = 0',options:shuffle([ans,w1,w2,w3]),correct:ans,explanation:'Factoring: (x-'+r1+')(x-'+r2+') = 0, so x = '+r1+' or x = '+r2,difficulty:'medium',type:'MCQ',chapter:ch};
 },
 math_geometry:function(ch){
-  let types=['triangle_area','rectangle_perimeter','circle_area'];
-  let t=pick(types);
-  if(t==='triangle_area'){
-    let base=randInt(4,20),height=randInt(3,15);
-    let area=0.5*base*height;
-    let wrong=[base*height,area+randInt(1,10),area-randInt(1,5)];
-    return{prompt:'Find the area of a triangle with base '+base+' cm and height '+height+' cm.',options:shuffle([area,...wrong].map(v=>v+' sq cm')),correct:area+' sq cm',explanation:'Area = 1/2 x base x height = 1/2 x '+base+' x '+height+' = '+area+' sq cm',difficulty:'easy',type:'MCQ',chapter:ch};
-  }else if(t==='rectangle_perimeter'){
-    let l=randInt(5,30),w=randInt(3,20);
-    let p=2*(l+w);
-    let wrong=[l*w,p+randInt(2,10),l+w];
-    return{prompt:'Find the perimeter of a rectangle with length '+l+' cm and width '+w+' cm.',options:shuffle([p,...wrong].map(v=>v+' cm')),correct:p+' cm',explanation:'Perimeter = 2(l+w) = 2('+l+'+'+w+') = '+p+' cm',difficulty:'easy',type:'MCQ',chapter:ch};
+  var types=['triangle_area','rectangle_perimeter','circle_area'];
+  var ty=pick(types);
+  if(ty==='triangle_area'){
+    var base=randInt(4,20),height=randInt(3,15);
+    var area=0.5*base*height;
+    var wrong2=[base*height,area+randInt(1,10),area-randInt(1,5)];
+    return{prompt:'Find the area of a triangle with base '+base+' cm and height '+height+' cm.',options:shuffle([area].concat(wrong2).map(function(v){return v+' sq cm'})),correct:area+' sq cm',explanation:'Area = 1/2 x base x height = 1/2 x '+base+' x '+height+' = '+area+' sq cm',difficulty:'easy',type:'MCQ',chapter:ch};
+  }else if(ty==='rectangle_perimeter'){
+    var l=randInt(5,30),w=randInt(3,20);
+    var p2=2*(l+w);
+    var wrong3=[l*w,p2+randInt(2,10),l+w];
+    return{prompt:'Find the perimeter of a rectangle with length '+l+' cm and width '+w+' cm.',options:shuffle([p2].concat(wrong3).map(function(v){return v+' cm'})),correct:p2+' cm',explanation:'Perimeter = 2(l+w) = 2('+l+'+'+w+') = '+p2+' cm',difficulty:'easy',type:'MCQ',chapter:ch};
   }else{
-    let r=randInt(2,14);
-    let area=Math.round(Math.PI*r*r*100)/100;
-    let wrong=[Math.round(2*Math.PI*r*100)/100,Math.round(Math.PI*r*100)/100,Math.round(area+randInt(5,20)*100)/100];
-    return{prompt:'Find the area of a circle with radius '+r+' cm. (Use pi = 3.14)',options:shuffle([String(Math.round(3.14*r*r*100)/100),...wrong.map(String)].map(v=>v+' sq cm')),correct:Math.round(3.14*r*r*100)/100+' sq cm',explanation:'Area = pi x r^2 = 3.14 x '+r+'^2 = '+Math.round(3.14*r*r*100)/100+' sq cm',difficulty:'medium',type:'MCQ',chapter:ch};
+    var r=randInt(2,14);
+    var areaC=Math.round(3.14*r*r*100)/100;
+    var wrong4=[Math.round(2*3.14*r*100)/100,Math.round(3.14*r*100)/100,areaC+randInt(5,20)];
+    return{prompt:'Find the area of a circle with radius '+r+' cm. (Use pi = 3.14)',options:shuffle([areaC].concat(wrong4).map(function(v){return v+' sq cm'})),correct:areaC+' sq cm',explanation:'Area = pi x r^2 = 3.14 x '+r+'^2 = '+areaC+' sq cm',difficulty:'medium',type:'MCQ',chapter:ch};
   }
 },
 math_ap:function(ch){
-  let a=randInt(1,20),d=randInt(1,10),n=randInt(5,20);
-  let an=a+(n-1)*d;
-  let wrong=[a+n*d,an+d,an-randInt(1,5)];
-  return{prompt:'Find the '+n+'th term of AP: '+a+', '+(a+d)+', '+(a+2*d)+', ...',options:shuffle([an,...wrong].map(String)),correct:String(an),explanation:'a_n = a + (n-1)d = '+a+' + '+(n-1)+' x '+d+' = '+an,difficulty:'medium',type:'MCQ',chapter:ch,steps:['First term a = '+a+', common difference d = '+d,'a_n = a + (n-1)d','a_'+n+' = '+a+' + ('+(n-1)+')'+d+' = '+an]};
+  var a=randInt(1,20),d=randInt(1,10),n=randInt(5,20);
+  var an=a+(n-1)*d;
+  var wrong5=[a+n*d,an+d,an-randInt(1,5)];
+  return{prompt:'Find the '+n+'th term of AP: '+a+', '+(a+d)+', '+(a+2*d)+', ...',options:shuffle([an].concat(wrong5).map(String)),correct:String(an),explanation:'a_n = a + (n-1)d = '+a+' + '+(n-1)+' x '+d+' = '+an,difficulty:'medium',type:'MCQ',chapter:ch,steps:['First term a = '+a+', common difference d = '+d,'a_n = a + (n-1)d','a_'+n+' = '+a+' + ('+(n-1)+')x'+d+' = '+an]};
 },
 math_trigonometry:function(ch){
-  let angles=[{a:30,sin:'1/2',cos:'sqrt(3)/2',tan:'1/sqrt(3)'},{a:45,sin:'1/sqrt(2)',cos:'1/sqrt(2)',tan:'1'},{a:60,sin:'sqrt(3)/2',cos:'1/2',tan:'sqrt(3)'}];
-  let ang=pick(angles);
-  let funcs=[{f:'sin',v:ang.sin},{f:'cos',v:ang.cos},{f:'tan',v:ang.tan}];
-  let fn=pick(funcs);
-  let others=funcs.filter(x=>x.f!==fn.f).map(x=>x.v);
+  var angles=[{a:30,sin:'1/2',cos:'sqrt(3)/2',tan:'1/sqrt(3)'},{a:45,sin:'1/sqrt(2)',cos:'1/sqrt(2)',tan:'1'},{a:60,sin:'sqrt(3)/2',cos:'1/2',tan:'sqrt(3)'}];
+  var ang=pick(angles);
+  var funcs=[{f:'sin',v:ang.sin},{f:'cos',v:ang.cos},{f:'tan',v:ang.tan}];
+  var fn=pick(funcs);
+  var others=funcs.filter(function(x){return x.f!==fn.f}).map(function(x){return x.v});
   others.push(pick(['2','0','sqrt(2)']));
-  return{prompt:'What is the value of '+fn.f+'('+ang.a+')?',options:shuffle([fn.v,...others]),correct:fn.v,explanation:fn.f+'('+ang.a+') = '+fn.v+' (standard trigonometric value)',difficulty:'easy',type:'MCQ',chapter:ch};
+  return{prompt:'What is the value of '+fn.f+'('+ang.a+')?',options:shuffle([fn.v].concat(others)),correct:fn.v,explanation:fn.f+'('+ang.a+') = '+fn.v+' (standard trigonometric value)',difficulty:'easy',type:'MCQ',chapter:ch};
 },
 math_probability:function(ch){
-  let total=randInt(6,20),favorable=randInt(1,total-1);
-  let p=favorable+'/'+total;
-  let g=gcd(favorable,total);
-  let simplified=(favorable/g)+'/'+(total/g);
-  let wrong=[(favorable+1)+'/'+total,(total-favorable)+'/'+total,favorable+'/'+(total+1)];
-  return{prompt:'A bag contains '+total+' balls. '+favorable+' are red. What is the probability of drawing a red ball?',options:shuffle([simplified,...wrong]),correct:simplified,explanation:'P(red) = favorable/total = '+favorable+'/'+total+' = '+simplified,difficulty:'easy',type:'MCQ',chapter:ch};
+  var total=randInt(6,20),favorable=randInt(1,total-1);
+  var g3=gcd(favorable,total);
+  var simplified=(favorable/g3)+'/'+(total/g3);
+  var wrong6=[(favorable+1)+'/'+total,(total-favorable)+'/'+total,favorable+'/'+(total+1)];
+  return{prompt:'A bag contains '+total+' balls. '+favorable+' are red. What is the probability of drawing a red ball?',options:shuffle([simplified].concat(wrong6)),correct:simplified,explanation:'P(red) = favorable/total = '+favorable+'/'+total+' = '+simplified,difficulty:'easy',type:'MCQ',chapter:ch};
 },
 math_statistics:function(ch){
-  let nums=Array.from({length:5},()=>randInt(10,50));
-  let sum=nums.reduce((a,b)=>a+b,0);
-  let mean=sum/5;
-  let wrong=[mean+randInt(1,5),mean-randInt(1,3),sum];
-  return{prompt:'Find the mean of: '+nums.join(', '),options:shuffle([mean,...wrong].map(String)),correct:String(mean),explanation:'Mean = ('+nums.join('+')+') / 5 = '+sum+'/5 = '+mean,difficulty:'easy',type:'MCQ',chapter:ch};
+  var nums=[];for(var i=0;i<5;i++)nums.push(randInt(10,50));
+  var sum=nums.reduce(function(a2,b2){return a2+b2},0);
+  var mean=sum/5;
+  var wrong7=[mean+randInt(1,5),mean-randInt(1,3),sum];
+  return{prompt:'Find the mean of: '+nums.join(', '),options:shuffle([mean].concat(wrong7).map(String)),correct:String(mean),explanation:'Mean = ('+nums.join('+')+') / 5 = '+sum+'/5 = '+mean,difficulty:'easy',type:'MCQ',chapter:ch};
 },
 math_hcf_lcm:function(ch){
-  let a=randInt(12,100),b=randInt(12,100);
-  let h=gcd(a,b),l=a*b/h;
-  let isHcf=Math.random()>0.5;
-  let ans=isHcf?h:l;
-  let wrong=[ans+randInt(1,10),ans-randInt(1,5),isHcf?l:h];
-  return{prompt:'Find the '+(isHcf?'HCF':'LCM')+' of '+a+' and '+b,options:shuffle([ans,...wrong].map(String)),correct:String(ans),explanation:(isHcf?'HCF':'LCM')+'('+a+', '+b+') = '+ans,difficulty:'medium',type:'MCQ',chapter:ch};
+  var a=randInt(12,100),b=randInt(12,100);
+  var h=gcd(a,b),l2=a*b/h;
+  var isHcf=Math.random()>0.5;
+  var ans2=isHcf?h:l2;
+  var wrong8=[ans2+randInt(1,10),ans2-randInt(1,5),isHcf?l2:h];
+  return{prompt:'Find the '+(isHcf?'HCF':'LCM')+' of '+a+' and '+b,options:shuffle([ans2].concat(wrong8).map(String)),correct:String(ans2),explanation:(isHcf?'HCF':'LCM')+'('+a+', '+b+') = '+ans2,difficulty:'medium',type:'MCQ',chapter:ch};
 },
-
-// === SCIENCE GENERATORS ===
 science_mcq:function(ch){
-  let pools=getSciencePool(ch);
-  let q=pick(pools);
+  var pools=getSciencePool(ch);
+  var q=pick(pools);
   return{prompt:q.prompt,options:q.options,correct:q.options[q.correct],explanation:q.explanation||'The correct answer is: '+q.options[q.correct],difficulty:q.difficulty||'medium',type:'MCQ',chapter:ch};
 },
-
-// === PHYSICS GENERATORS ===
 physics_numerical:function(ch){
-  let generators=[
-    function(){let m=randInt(2,20),a=randInt(1,10);let f=m*a;let wrong=[f+randInt(1,5),m+a,f*2];return{prompt:'A body of mass '+m+' kg is accelerating at '+a+' m/s^2. Find the force applied.',options:shuffle([f,...wrong].map(v=>v+' N')),correct:f+' N',explanation:'F = ma = '+m+' x '+a+' = '+f+' N',difficulty:'easy',steps:['Given: m = '+m+' kg, a = '+a+' m/s^2','Using F = ma','F = '+m+' x '+a+' = '+f+' N']}},
-    function(){let u=randInt(0,20),a=randInt(1,10),t=randInt(2,10);let v=u+a*t;let wrong=[v+randInt(1,10),u*t,a*t];return{prompt:'An object starts with velocity '+u+' m/s and accelerates at '+a+' m/s^2 for '+t+' seconds. Find final velocity.',options:shuffle([v,...wrong].map(v2=>v2+' m/s')),correct:v+' m/s',explanation:'v = u + at = '+u+' + '+a+'x'+t+' = '+v+' m/s',difficulty:'medium',steps:['Given: u = '+u+' m/s, a = '+a+' m/s^2, t = '+t+' s','Using v = u + at','v = '+u+' + '+a+' x '+t+' = '+v+' m/s']}},
-    function(){let v=randInt(5,30),r=randInt(1,10);let w=v/r;let wR=Math.round(w*100)/100;let wrong=[wR+1,v*r,v-r].map(x=>Math.round(x*100)/100);return{prompt:'A wheel of radius '+r+' m has linear speed '+v+' m/s. Find angular velocity.',options:shuffle([wR,...wrong].map(x=>x+' rad/s')),correct:wR+' rad/s',explanation:'omega = v/r = '+v+'/'+r+' = '+wR+' rad/s',difficulty:'hard',steps:['Given: v = '+v+' m/s, r = '+r+' m','omega = v/r','omega = '+v+'/'+r+' = '+wR+' rad/s']}},
-    function(){let m=randInt(1,10),h=randInt(2,20);let pe=m*10*h;let wrong=[pe+randInt(5,30),m*h,pe/2];return{prompt:'Find the potential energy of a '+m+' kg object at height '+h+' m. (g = 10 m/s^2)',options:shuffle([pe,...wrong].map(v=>v+' J')),correct:pe+' J',explanation:'PE = mgh = '+m+' x 10 x '+h+' = '+pe+' J',difficulty:'easy',steps:['Given: m = '+m+' kg, h = '+h+' m, g = 10 m/s^2','PE = mgh','PE = '+m+' x 10 x '+h+' = '+pe+' J']}},
-    function(){let r=randInt(1,100),i=randInt(1,10);let v2=i*r;let wrong=[v2+randInt(1,20),r/i,r+i];return{prompt:'A resistor of '+r+' ohms carries a current of '+i+' A. Find the voltage.',options:shuffle([v2,...wrong].map(x=>x+' V')),correct:v2+' V',explanation:'V = IR = '+i+' x '+r+' = '+v2+' V',difficulty:'easy',steps:['Given: R = '+r+' ohms, I = '+i+' A','Using Ohms law: V = IR','V = '+i+' x '+r+' = '+v2+' V']}}
+  var generators2=[
+    function(){var m=randInt(2,20),a2=randInt(1,10);var f=m*a2;var w=[f+randInt(1,5),m+a2,f*2];return{prompt:'A body of mass '+m+' kg is accelerating at '+a2+' m/s^2. Find the force applied.',options:shuffle([f].concat(w).map(function(v){return v+' N'})),correct:f+' N',explanation:'F = ma = '+m+' x '+a2+' = '+f+' N',difficulty:'easy',steps:['Given: m = '+m+' kg, a = '+a2+' m/s^2','Using F = ma','F = '+m+' x '+a2+' = '+f+' N']}},
+    function(){var u=randInt(0,20),a3=randInt(1,10),t2=randInt(2,10);var v=u+a3*t2;var w=[v+randInt(1,10),u*t2,a3*t2];return{prompt:'An object starts with velocity '+u+' m/s and accelerates at '+a3+' m/s^2 for '+t2+' seconds. Find final velocity.',options:shuffle([v].concat(w).map(function(v2){return v2+' m/s'})),correct:v+' m/s',explanation:'v = u + at = '+u+' + '+a3+'x'+t2+' = '+v+' m/s',difficulty:'medium',steps:['Given: u = '+u+', a = '+a3+', t = '+t2,'v = u + at','v = '+v+' m/s']}},
+    function(){var m=randInt(1,10),h=randInt(2,20);var pe=m*10*h;var w=[pe+randInt(5,30),m*h,pe/2];return{prompt:'Find the potential energy of a '+m+' kg object at height '+h+' m. (g = 10 m/s^2)',options:shuffle([pe].concat(w).map(function(v){return v+' J'})),correct:pe+' J',explanation:'PE = mgh = '+m+' x 10 x '+h+' = '+pe+' J',difficulty:'easy',steps:['Given: m = '+m+', h = '+h+', g = 10','PE = mgh','PE = '+pe+' J']}},
+    function(){var r2=randInt(1,100),i2=randInt(1,10);var v2=i2*r2;var w=[v2+randInt(1,20),r2/i2,r2+i2];return{prompt:'A resistor of '+r2+' ohms carries current of '+i2+' A. Find the voltage.',options:shuffle([v2].concat(w).map(function(x){return x+' V'})),correct:v2+' V',explanation:'V = IR = '+i2+' x '+r2+' = '+v2+' V',difficulty:'easy',steps:['Given: R = '+r2+', I = '+i2,'V = IR','V = '+v2+' V']}}
   ];
-  let gen=pick(generators);
-  let result=gen();
+  var gen=pick(generators2);
+  var result=gen();
   return{prompt:result.prompt,options:result.options,correct:result.correct,explanation:result.explanation,difficulty:result.difficulty,type:'Numerical',chapter:ch,steps:result.steps};
 },
-
-// === CHEMISTRY GENERATORS ===
 chemistry_mcq:function(ch){
-  let pools=getChemistryPool(ch);
-  let q=pick(pools);
+  var pools=getChemistryPool(ch);
+  var q=pick(pools);
   return{prompt:q.prompt,options:q.options,correct:q.options[q.correct],explanation:q.explanation,difficulty:q.difficulty||'medium',type:'MCQ',chapter:ch};
 },
-
-// === CONCEPT QUESTIONS ===
 concept_question:function(ch,subject){
-  let pools=getConceptPool(ch,subject);
-  let q=pick(pools);
+  var pools=getConceptPool(ch,subject);
+  var q=pick(pools);
   return{prompt:q.prompt,options:q.options,correct:q.options[q.correct],explanation:q.explanation,difficulty:q.difficulty||'medium',type:'Concept',chapter:ch};
 },
-
-// === ASSERTION REASON ===
 assertion_reason:function(ch,subject){
-  let pools=getAssertionPool(ch,subject);
-  let q=pick(pools);
-  let arOptions=['Both A and R are true and R explains A','Both A and R are true but R does not explain A','A is true but R is false','A is false but R is true'];
+  var pools=getAssertionPool(ch,subject);
+  var q=pick(pools);
+  var arOptions=['Both A and R are true and R explains A','Both A and R are true but R does not explain A','A is true but R is false','A is false but R is true'];
   return{prompt:'Assertion (A): '+q.assertion+'\nReason (R): '+q.reason,options:arOptions,correct:arOptions[q.correct],explanation:q.explanation,difficulty:'hard',type:'Assertion-Reason',chapter:ch};
 }
 };
 
-function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a}
-
-
 // === SCIENCE QUESTION POOLS ===
 function getSciencePool(chapter){
-  const pools={
+  var pools={
 'Matter in Our Surroundings':[
 {prompt:'Which state of matter has fixed shape and volume?',options:['Solid','Liquid','Gas','Plasma'],correct:0,explanation:'Solids have fixed shape and volume due to strong intermolecular forces.'},
 {prompt:'The process of changing from liquid to gas is called:',options:['Evaporation','Condensation','Sublimation','Freezing'],correct:0,explanation:'Evaporation is the process where liquid turns to gas at the surface.'},
 {prompt:'Which has the highest kinetic energy?',options:['Gas particles','Liquid particles','Solid particles','All equal'],correct:0,explanation:'Gas particles have highest KE due to maximum freedom of movement.'},
-{prompt:'Dry ice is an example of:',options:['Sublimation','Evaporation','Melting','Boiling'],correct:0,explanation:'Dry ice (solid CO2) directly converts from solid to gas (sublimation).'},
+{prompt:'Dry ice is an example of:',options:['Sublimation','Evaporation','Melting','Boiling'],correct:0,explanation:'Dry ice (solid CO2) directly converts from solid to gas.'},
 {prompt:'The temperature at which a liquid boils is called:',options:['Boiling point','Melting point','Freezing point','Dew point'],correct:0,explanation:'Boiling point is the temperature at which vapor pressure equals atmospheric pressure.'}
 ],
 'Atoms and Molecules':[
 {prompt:'What is the atomic number of Carbon?',options:['6','12','8','4'],correct:0,explanation:'Carbon has 6 protons, so its atomic number is 6.'},
 {prompt:'The formula of water is:',options:['H2O','HO2','H2O2','HO'],correct:0,explanation:'Water molecule has 2 hydrogen atoms and 1 oxygen atom: H2O.'},
-{prompt:'One mole of any substance contains:',options:['6.022 x 10^23 particles','6.022 x 10^22 particles','6.022 x 10^24 particles','3.011 x 10^23 particles'],correct:0,explanation:'Avogadro number = 6.022 x 10^23 is the number of particles in one mole.'},
-{prompt:'The molecular mass of CO2 is:',options:['44 u','28 u','32 u','16 u'],correct:0,explanation:'CO2 = 12 + 2(16) = 12 + 32 = 44 u'},
+{prompt:'One mole of any substance contains:',options:['6.022 x 10^23 particles','6.022 x 10^22 particles','6.022 x 10^24 particles','3.011 x 10^23 particles'],correct:0,explanation:'Avogadro number = 6.022 x 10^23.'},
+{prompt:'The molecular mass of CO2 is:',options:['44 u','28 u','32 u','16 u'],correct:0,explanation:'CO2 = 12 + 2(16) = 44 u'},
 {prompt:'An atom is electrically:',options:['Neutral','Positive','Negative','Varies'],correct:0,explanation:'Atoms have equal protons and electrons, making them electrically neutral.'}
 ],
 'Force and Laws of Motion':[
-{prompt:'Newton\'s first law is also called:',options:['Law of inertia','Law of acceleration','Law of action-reaction','Law of gravitation'],correct:0,explanation:'First law states objects remain in their state unless acted upon by force (inertia).'},
-{prompt:'The SI unit of force is:',options:['Newton','Joule','Watt','Pascal'],correct:0,explanation:'Force is measured in Newtons (N) in SI system.'},
-{prompt:'Action and reaction forces act on:',options:['Different bodies','Same body','Same point','Nowhere'],correct:0,explanation:'Newton\'s third law: action and reaction act on different bodies.'},
+{prompt:"Newton's first law is also called:",options:['Law of inertia','Law of acceleration','Law of action-reaction','Law of gravitation'],correct:0,explanation:'First law states objects remain in their state unless acted upon by force.'},
+{prompt:'The SI unit of force is:',options:['Newton','Joule','Watt','Pascal'],correct:0,explanation:'Force is measured in Newtons (N).'},
+{prompt:'Action and reaction forces act on:',options:['Different bodies','Same body','Same point','Nowhere'],correct:0,explanation:'Newton third law: action and reaction act on different bodies.'},
 {prompt:'A body at rest has:',options:['Zero momentum','Maximum momentum','Infinite momentum','Negative momentum'],correct:0,explanation:'Momentum = mv. If v=0, momentum is zero.'},
-{prompt:'Inertia depends on:',options:['Mass','Velocity','Acceleration','Force'],correct:0,explanation:'Greater the mass, greater the inertia (resistance to change in motion).'}
+{prompt:'Inertia depends on:',options:['Mass','Velocity','Acceleration','Force'],correct:0,explanation:'Greater the mass, greater the inertia.'}
 ],
 'Motion':[
-{prompt:'The SI unit of velocity is:',options:['m/s','km/h','cm/s','m/s^2'],correct:0,explanation:'Velocity is measured in meters per second (m/s) in SI.'},
-{prompt:'Distance-time graph for uniform motion is:',options:['Straight line','Curve','Parabola','Circle'],correct:0,explanation:'Uniform motion means constant speed, giving a straight line on d-t graph.'},
-{prompt:'Acceleration is the rate of change of:',options:['Velocity','Distance','Displacement','Force'],correct:0,explanation:'Acceleration = change in velocity / time taken.'},
-{prompt:'A body moving in a circle has:',options:['Changing velocity','Constant velocity','Zero acceleration','No force acting'],correct:0,explanation:'Direction changes in circular motion, so velocity is not constant.'},
-{prompt:'The area under velocity-time graph gives:',options:['Displacement','Acceleration','Speed','Force'],correct:0,explanation:'Area under v-t graph equals displacement of the object.'}
+{prompt:'The SI unit of velocity is:',options:['m/s','km/h','cm/s','m/s^2'],correct:0,explanation:'Velocity is measured in meters per second (m/s).'},
+{prompt:'Distance-time graph for uniform motion is:',options:['Straight line','Curve','Parabola','Circle'],correct:0,explanation:'Uniform motion means constant speed, giving a straight line.'},
+{prompt:'Acceleration is the rate of change of:',options:['Velocity','Distance','Displacement','Force'],correct:0,explanation:'Acceleration = change in velocity / time.'},
+{prompt:'A body moving in a circle has:',options:['Changing velocity','Constant velocity','Zero acceleration','No force'],correct:0,explanation:'Direction changes in circular motion, so velocity is not constant.'},
+{prompt:'The area under velocity-time graph gives:',options:['Displacement','Acceleration','Speed','Force'],correct:0,explanation:'Area under v-t graph equals displacement.'}
 ],
 'Light Reflection Refraction':[
 {prompt:'The angle of incidence equals the angle of:',options:['Reflection','Refraction','Diffraction','Dispersion'],correct:0,explanation:'Law of reflection: angle of incidence = angle of reflection.'},
 {prompt:'A concave mirror converges light at its:',options:['Focus','Center','Pole','Infinity'],correct:0,explanation:'Parallel rays converge at the focal point of a concave mirror.'},
-{prompt:'Snell\'s law relates to:',options:['Refraction','Reflection','Diffraction','Interference'],correct:0,explanation:'Snell\'s law: n1 sin(i) = n2 sin(r) describes refraction.'},
+{prompt:"Snell's law relates to:",options:['Refraction','Reflection','Diffraction','Interference'],correct:0,explanation:'Snell law describes refraction of light.'},
 {prompt:'Total internal reflection occurs when light goes from:',options:['Denser to rarer medium','Rarer to denser medium','Same medium','Vacuum to glass'],correct:0,explanation:'TIR occurs when light travels from denser to rarer medium at angle > critical angle.'},
-{prompt:'The speed of light in vacuum is approximately:',options:['3 x 10^8 m/s','3 x 10^6 m/s','3 x 10^10 m/s','3 x 10^5 m/s'],correct:0,explanation:'Speed of light in vacuum c = 3 x 10^8 m/s.'}
+{prompt:'The speed of light in vacuum is approximately:',options:['3 x 10^8 m/s','3 x 10^6 m/s','3 x 10^10 m/s','3 x 10^5 m/s'],correct:0,explanation:'Speed of light c = 3 x 10^8 m/s.'}
 ],
 'Electricity':[
 {prompt:'The SI unit of electric current is:',options:['Ampere','Volt','Ohm','Watt'],correct:0,explanation:'Electric current is measured in Amperes (A).'},
-{prompt:'Ohm\'s law states V equals:',options:['IR','I/R','R/I','I+R'],correct:0,explanation:'Ohm\'s law: V = IR (voltage = current x resistance).'},
-{prompt:'Resistors in series have:',options:['Same current','Same voltage','Same power','Same resistance'],correct:0,explanation:'In series combination, same current flows through all resistors.'},
+{prompt:"Ohm's law states V equals:",options:['IR','I/R','R/I','I+R'],correct:0,explanation:'V = IR (voltage = current x resistance).'},
+{prompt:'Resistors in series have:',options:['Same current','Same voltage','Same power','Same resistance'],correct:0,explanation:'In series, same current flows through all resistors.'},
 {prompt:'The unit of electrical resistance is:',options:['Ohm','Volt','Ampere','Watt'],correct:0,explanation:'Resistance is measured in Ohms.'},
 {prompt:'Electric power P equals:',options:['VI','V/I','I/V','V+I'],correct:0,explanation:'Power = Voltage x Current = VI watts.'}
 ],
 'Chemical Reactions and Equations':[
-{prompt:'A chemical equation is balanced to satisfy:',options:['Law of conservation of mass','Law of constant proportions','Law of multiple proportions','Avogadro law'],correct:0,explanation:'Balancing ensures mass is conserved (atoms equal on both sides).'},
-{prompt:'Rust formation is an example of:',options:['Oxidation','Reduction','Decomposition','Displacement'],correct:0,explanation:'Rusting is oxidation of iron: Fe reacts with O2 and moisture.'},
-{prompt:'In a decomposition reaction, one reactant forms:',options:['Two or more products','One product','No products','Same substance'],correct:0,explanation:'Decomposition: one compound breaks into two or more simpler substances.'},
-{prompt:'Which is a double displacement reaction?',options:['NaCl + AgNO3 -> AgCl + NaNO3','Zn + CuSO4 -> ZnSO4 + Cu','2H2O -> 2H2 + O2','C + O2 -> CO2'],correct:0,explanation:'Both reactants exchange ions - this is double displacement.'},
-{prompt:'An exothermic reaction:',options:['Releases heat','Absorbs heat','No energy change','Absorbs light'],correct:0,explanation:'Exothermic reactions release energy in the form of heat.'}
+{prompt:'A chemical equation is balanced to satisfy:',options:['Law of conservation of mass','Law of constant proportions','Law of multiple proportions','Avogadro law'],correct:0,explanation:'Balancing ensures mass is conserved.'},
+{prompt:'Rust formation is an example of:',options:['Oxidation','Reduction','Decomposition','Displacement'],correct:0,explanation:'Rusting is oxidation of iron.'},
+{prompt:'In a decomposition reaction, one reactant forms:',options:['Two or more products','One product','No products','Same substance'],correct:0,explanation:'Decomposition: one compound breaks into simpler substances.'},
+{prompt:'An exothermic reaction:',options:['Releases heat','Absorbs heat','No energy change','Absorbs light'],correct:0,explanation:'Exothermic reactions release energy as heat.'},
+{prompt:'Which type of reaction is burning of magnesium?',options:['Combination','Decomposition','Displacement','Double displacement'],correct:0,explanation:'Mg + O2 -> MgO is a combination reaction.'}
 ],
 'Acids Bases and Salts':[
-{prompt:'The pH of a neutral solution is:',options:['7','0','14','1'],correct:0,explanation:'pH 7 indicates a neutral solution (neither acidic nor basic).'},
+{prompt:'The pH of a neutral solution is:',options:['7','0','14','1'],correct:0,explanation:'pH 7 indicates a neutral solution.'},
 {prompt:'Litmus paper turns red in:',options:['Acidic solution','Basic solution','Neutral solution','Salt solution'],correct:0,explanation:'Blue litmus turns red in acidic solutions.'},
 {prompt:'The chemical formula of baking soda is:',options:['NaHCO3','Na2CO3','NaCl','NaOH'],correct:0,explanation:'Baking soda is sodium bicarbonate: NaHCO3.'},
 {prompt:'An acid reacts with a base to form:',options:['Salt and water','Only salt','Only water','Gas'],correct:0,explanation:'Neutralization: Acid + Base -> Salt + Water.'},
-{prompt:'The pH of stomach acid is approximately:',options:['1-2','7','10','5-6'],correct:0,explanation:'Stomach produces HCl with pH around 1-2 (highly acidic).'}
+{prompt:'The pH of stomach acid is approximately:',options:['1-2','7','10','5-6'],correct:0,explanation:'Stomach produces HCl with pH around 1-2.'}
 ],
 'The Fundamental Unit of Life':[
-{prompt:'The cell was discovered by:',options:['Robert Hooke','Robert Brown','Schleiden','Schwann'],correct:0,explanation:'Robert Hooke discovered cells in 1665 while observing cork.'},
+{prompt:'The cell was discovered by:',options:['Robert Hooke','Robert Brown','Schleiden','Schwann'],correct:0,explanation:'Robert Hooke discovered cells in 1665.'},
 {prompt:'The powerhouse of the cell is:',options:['Mitochondria','Nucleus','Ribosome','Golgi body'],correct:0,explanation:'Mitochondria produce ATP through cellular respiration.'},
-{prompt:'Which organelle is called the suicide bag?',options:['Lysosome','Ribosome','Vacuole','ER'],correct:0,explanation:'Lysosomes contain digestive enzymes that can destroy the cell.'},
-{prompt:'DNA is found in the:',options:['Nucleus','Cytoplasm','Cell wall','Vacuole'],correct:0,explanation:'DNA (genetic material) is present in the nucleus of the cell.'},
-{prompt:'Plant cells have but animal cells lack:',options:['Cell wall','Cell membrane','Nucleus','Mitochondria'],correct:0,explanation:'Plant cells have a rigid cell wall made of cellulose; animal cells do not.'}
+{prompt:'Which organelle is called the suicide bag?',options:['Lysosome','Ribosome','Vacuole','ER'],correct:0,explanation:'Lysosomes contain digestive enzymes.'},
+{prompt:'DNA is found in the:',options:['Nucleus','Cytoplasm','Cell wall','Vacuole'],correct:0,explanation:'DNA is present in the nucleus.'},
+{prompt:'Plant cells have but animal cells lack:',options:['Cell wall','Cell membrane','Nucleus','Mitochondria'],correct:0,explanation:'Plant cells have a rigid cell wall made of cellulose.'}
 ],
 'Heredity and Evolution':[
-{prompt:'The father of genetics is:',options:['Gregor Mendel','Charles Darwin','Lamarck','Hugo de Vries'],correct:0,explanation:'Gregor Mendel established laws of inheritance through pea plant experiments.'},
-{prompt:'DNA stands for:',options:['Deoxyribonucleic acid','Diribonucleic acid','Deoxyribose nucleic acid','None of these'],correct:0,explanation:'DNA = Deoxyribonucleic acid, the molecule carrying genetic information.'},
-{prompt:'The number of chromosomes in human cells is:',options:['46','23','44','48'],correct:0,explanation:'Humans have 46 chromosomes (23 pairs) in each somatic cell.'},
-{prompt:'Sex of a child is determined by:',options:['Father\'s chromosome','Mother\'s chromosome','Both equally','Neither'],correct:0,explanation:'Father contributes either X or Y chromosome determining the sex.'},
-{prompt:'A dominant trait is expressed in:',options:['Homozygous and heterozygous','Only homozygous','Only heterozygous','Neither'],correct:0,explanation:'Dominant alleles express in both homozygous (AA) and heterozygous (Aa) conditions.'}
+{prompt:'The father of genetics is:',options:['Gregor Mendel','Charles Darwin','Lamarck','Hugo de Vries'],correct:0,explanation:'Gregor Mendel established laws of inheritance.'},
+{prompt:'DNA stands for:',options:['Deoxyribonucleic acid','Diribonucleic acid','Deoxyribose nucleic acid','None of these'],correct:0,explanation:'DNA = Deoxyribonucleic acid.'},
+{prompt:'The number of chromosomes in human cells is:',options:['46','23','44','48'],correct:0,explanation:'Humans have 46 chromosomes (23 pairs).'},
+{prompt:'Sex of a child is determined by:',options:['Father chromosome','Mother chromosome','Both equally','Neither'],correct:0,explanation:'Father contributes either X or Y chromosome.'},
+{prompt:'A dominant trait is expressed in:',options:['Homozygous and heterozygous','Only homozygous','Only heterozygous','Neither'],correct:0,explanation:'Dominant alleles express in both AA and Aa conditions.'}
 ]
   };
-  // Return pool for chapter or generic questions
-  let key=Object.keys(pools).find(k=>chapter.toLowerCase().includes(k.toLowerCase().substring(0,8)));
+  var key=Object.keys(pools).find(function(k){return chapter.toLowerCase().indexOf(k.toLowerCase().substring(0,8))>=0});
   return pools[key]||pools[Object.keys(pools)[Math.floor(Math.random()*Object.keys(pools).length)]];
 }
 
 function getChemistryPool(chapter){
-  const pools={
+  var pools={
 'The Solid State':[
-{prompt:'In a face-centered cubic unit cell, number of atoms is:',options:['4','2','1','6'],correct:0,explanation:'FCC: 8 corners x 1/8 + 6 faces x 1/2 = 1 + 3 = 4 atoms.',difficulty:'hard'},
-{prompt:'Schottky defect is observed in:',options:['NaCl','ZnS','AgCl','FeO'],correct:0,explanation:'Schottky defect occurs in highly ionic compounds like NaCl.',difficulty:'medium'},
+{prompt:'In a face-centered cubic unit cell, number of atoms is:',options:['4','2','1','6'],correct:0,explanation:'FCC: 8 corners x 1/8 + 6 faces x 1/2 = 4 atoms.',difficulty:'hard'},
 {prompt:'Glass is a:',options:['Amorphous solid','Crystalline solid','Liquid','Gas'],correct:0,explanation:'Glass has no long-range order, making it amorphous.',difficulty:'easy'},
-{prompt:'The coordination number of Na+ in NaCl is:',options:['6','4','8','12'],correct:0,explanation:'Each Na+ is surrounded by 6 Cl- ions in octahedral arrangement.',difficulty:'medium'}
+{prompt:'The coordination number of Na+ in NaCl is:',options:['6','4','8','12'],correct:0,explanation:'Each Na+ is surrounded by 6 Cl- ions.',difficulty:'medium'}
 ],
 'Solutions':[
 {prompt:'Molarity is defined as moles of solute per:',options:['Litre of solution','Kg of solvent','Litre of solvent','Gram of solution'],correct:0,explanation:'Molarity (M) = moles of solute / volume of solution in litres.',difficulty:'easy'},
-{prompt:'Raoult\'s law is applicable to:',options:['Ideal solutions','Non-ideal solutions','Gases only','Solids only'],correct:0,explanation:'Raoult\'s law states partial vapor pressure is proportional to mole fraction (ideal solutions).',difficulty:'medium'},
-{prompt:'A solution with osmotic pressure equal to another is called:',options:['Isotonic','Hypertonic','Hypotonic','Saturated'],correct:0,explanation:'Isotonic solutions have equal osmotic pressure.',difficulty:'medium'},
-{prompt:'Colligative properties depend on:',options:['Number of solute particles','Nature of solute','Nature of solvent','Temperature only'],correct:0,explanation:'Colligative properties depend only on the number (concentration) of solute particles.',difficulty:'medium'}
+{prompt:'Colligative properties depend on:',options:['Number of solute particles','Nature of solute','Nature of solvent','Temperature only'],correct:0,explanation:'Colligative properties depend only on the number of solute particles.',difficulty:'medium'}
 ],
 'Electrochemistry':[
 {prompt:'In electrolysis, reduction occurs at:',options:['Cathode','Anode','Both','Neither'],correct:0,explanation:'At cathode, cations gain electrons (reduction).',difficulty:'easy'},
-{prompt:'The unit of molar conductivity is:',options:['S cm^2 mol^-1','S cm^-1','ohm cm','S mol^-1'],correct:0,explanation:'Molar conductivity = conductivity x 1000/Molarity, units: S cm^2 mol^-1.',difficulty:'medium'},
-{prompt:'EMF of a cell is measured with:',options:['Potentiometer','Ammeter','Voltmeter','Galvanometer'],correct:0,explanation:'Potentiometer measures EMF without drawing current from the cell.',difficulty:'medium'}
+{prompt:'EMF of a cell is measured with:',options:['Potentiometer','Ammeter','Voltmeter','Galvanometer'],correct:0,explanation:'Potentiometer measures EMF without drawing current.',difficulty:'medium'}
 ],
 'Chemical Kinetics':[
-{prompt:'The rate of a first-order reaction depends on:',options:['Concentration of one reactant','Two reactants','No reactant','Temperature only'],correct:0,explanation:'First order: rate = k[A]^1, depends on concentration of one reactant.',difficulty:'easy'},
-{prompt:'The half-life of a first-order reaction is:',options:['0.693/k','k/0.693','2.303/k','k/2.303'],correct:0,explanation:'For first order: t(1/2) = 0.693/k (independent of initial concentration).',difficulty:'medium'},
+{prompt:'The rate of a first-order reaction depends on:',options:['Concentration of one reactant','Two reactants','No reactant','Temperature only'],correct:0,explanation:'First order: rate = k[A]^1.',difficulty:'easy'},
+{prompt:'The half-life of a first-order reaction is:',options:['0.693/k','k/0.693','2.303/k','k/2.303'],correct:0,explanation:'For first order: t(1/2) = 0.693/k.',difficulty:'medium'},
 {prompt:'A catalyst:',options:['Lowers activation energy','Changes equilibrium','Is consumed','Increases enthalpy'],correct:0,explanation:'Catalysts provide alternative pathway with lower activation energy.',difficulty:'easy'}
 ]
   };
-  let key=Object.keys(pools).find(k=>chapter.toLowerCase().includes(k.toLowerCase().substring(0,8)));
+  var key=Object.keys(pools).find(function(k){return chapter.toLowerCase().indexOf(k.toLowerCase().substring(0,8))>=0});
   return pools[key]||pools[Object.keys(pools)[Math.floor(Math.random()*Object.keys(pools).length)]];
 }
 
 function getConceptPool(chapter,subject){
-  const generic=[
-    {prompt:'Which of the following best describes the concept of equilibrium?',options:['Balance of opposing forces or processes','Complete cessation of activity','Maximum rate of reaction','Minimum energy state'],correct:0,explanation:'Equilibrium is a state where opposing processes balance each other.'},
-    {prompt:'Conservation laws in physics state that:',options:['Certain quantities remain constant in isolated systems','Energy can be created','Mass can be destroyed','Forces always cancel'],correct:0,explanation:'Conservation laws state that total quantity (energy, momentum, etc.) remains constant in isolated systems.'},
-    {prompt:'The scientific method involves:',options:['Observation, hypothesis, experiment, conclusion','Only theory','Only experimentation','Random guessing'],correct:0,explanation:'Scientific method is a systematic approach: observe, hypothesize, test, conclude.'},
-    {prompt:'Dimensional analysis is used to:',options:['Check correctness of equations','Solve equations','Find exact values','Measure quantities'],correct:0,explanation:'Dimensional analysis verifies that both sides of an equation have same dimensions.'},
-    {prompt:'Significant figures indicate:',options:['Precision of measurement','Accuracy only','Random error','Systematic error'],correct:0,explanation:'Significant figures reflect the precision of a measuring instrument.'}
+  return [
+    {prompt:'Which of the following best describes equilibrium?',options:['Balance of opposing forces or processes','Complete cessation of activity','Maximum rate of reaction','Minimum energy state'],correct:0,explanation:'Equilibrium is where opposing processes balance.'},
+    {prompt:'Conservation laws state that:',options:['Certain quantities remain constant in isolated systems','Energy can be created','Mass can be destroyed','Forces always cancel'],correct:0,explanation:'Conservation laws: total quantity remains constant in isolated systems.'},
+    {prompt:'The scientific method involves:',options:['Observation, hypothesis, experiment, conclusion','Only theory','Only experimentation','Random guessing'],correct:0,explanation:'Scientific method: observe, hypothesize, test, conclude.'},
+    {prompt:'Dimensional analysis is used to:',options:['Check correctness of equations','Solve equations','Find exact values','Measure quantities'],correct:0,explanation:'Dimensional analysis verifies both sides have same dimensions.'},
+    {prompt:'Significant figures indicate:',options:['Precision of measurement','Accuracy only','Random error','Systematic error'],correct:0,explanation:'Significant figures reflect instrument precision.'}
   ];
-  return generic;
 }
 
 function getAssertionPool(chapter,subject){
-  const generic=[
-    {assertion:'Metals are good conductors of electricity.',reason:'Metals have free electrons that can move easily.',correct:0,explanation:'Both statements are true and the free electrons explain the conductivity of metals.'},
-    {assertion:'Ice floats on water.',reason:'Density of ice is less than that of water.',correct:0,explanation:'Both are true and the lower density of ice (due to hydrogen bonding) explains why it floats.'},
-    {assertion:'Plants appear green.',reason:'Chlorophyll reflects green light.',correct:0,explanation:'Both are true - chlorophyll absorbs red and blue, reflecting green, which explains the color.'},
-    {assertion:'Sound cannot travel in vacuum.',reason:'Sound needs a material medium to propagate.',correct:0,explanation:'Both are true - sound is a mechanical wave needing medium, explaining why it cannot travel in vacuum.'},
-    {assertion:'Neutralization is exothermic.',reason:'Acids react with bases to form ionic compounds.',correct:1,explanation:'Both are true but formation of ionic compounds is not the direct reason; the reason is formation of water from H+ and OH-.'}
+  return [
+    {assertion:'Metals are good conductors of electricity.',reason:'Metals have free electrons that can move easily.',correct:0,explanation:'Both true and free electrons explain conductivity.'},
+    {assertion:'Ice floats on water.',reason:'Density of ice is less than that of water.',correct:0,explanation:'Both true and lower density explains why ice floats.'},
+    {assertion:'Plants appear green.',reason:'Chlorophyll reflects green light.',correct:0,explanation:'Both true - chlorophyll reflects green, explaining the color.'},
+    {assertion:'Sound cannot travel in vacuum.',reason:'Sound needs a material medium to propagate.',correct:0,explanation:'Both true - sound is mechanical wave needing medium.'},
+    {assertion:'Neutralization is exothermic.',reason:'Acids react with bases to form ionic compounds.',correct:1,explanation:'Both true but ionic compound formation is not the direct reason.'}
   ];
-  return generic;
 }
-
 
 // ============== QUESTION GENERATION ENGINE ==============
 function generateQuestion(cls,subject,chapter,difficulty){
-  let subData=CURRICULUM[cls].subjects[subject];
-  let ch=chapter||pick(subData.chapters);
-  
-  // Decide generator based on subject type
-  let generators=[];
-  if(['math'].includes(subject)){
-    generators=['math_arithmetic','math_fraction','math_percentage','math_algebra','math_geometry','math_hcf_lcm','math_statistics','math_probability'];
-    if(cls>=9)generators.push('math_quadratic','math_ap','math_trigonometry');
+  var subData=CURRICULUM[cls].subjects[subject];
+  var ch=chapter||pick(subData.chapters);
+  var generators2=[];
+  if(subject==='math'){
+    generators2=['math_arithmetic','math_fraction','math_percentage','math_algebra','math_geometry','math_hcf_lcm','math_statistics','math_probability'];
+    if(cls>=9)generators2.push('math_quadratic','math_ap','math_trigonometry');
   }else if(subject==='physics'){
-    generators=['physics_numerical','science_mcq','concept_question','assertion_reason'];
+    generators2=['physics_numerical','science_mcq','concept_question','assertion_reason'];
   }else if(subject==='chemistry'){
-    generators=['chemistry_mcq','concept_question','assertion_reason'];
-  }else if(['science'].includes(subject)){
-    generators=['science_mcq','concept_question','assertion_reason'];
-    if(cls>=9)generators.push('physics_numerical');
+    generators2=['chemistry_mcq','concept_question','assertion_reason'];
+  }else if(subject==='science'){
+    generators2=['science_mcq','concept_question','assertion_reason'];
+    if(cls>=9)generators2.push('physics_numerical');
   }else{
-    generators=['concept_question','science_mcq'];
+    generators2=['concept_question','science_mcq'];
   }
-  
-  let genName=pick(generators);
-  let q;
+  var genName=pick(generators2);
+  var q;
   try{
-    if(genName==='concept_question'){
-      q=GENERATORS.concept_question(ch,subject);
-    }else if(genName==='assertion_reason'){
-      q=GENERATORS.assertion_reason(ch,subject);
-    }else{
-      q=GENERATORS[genName](ch);
-    }
-  }catch(e){
-    // Fallback
-    q=GENERATORS.math_arithmetic(ch);
-  }
-  
-  // Apply difficulty filter
-  if(difficulty&&difficulty!=='mixed'){
-    q.difficulty=difficulty;
-  }
-  
-  // Maybe tag as PYQ
+    if(genName==='concept_question') q=GENERATORS.concept_question(ch,subject);
+    else if(genName==='assertion_reason') q=GENERATORS.assertion_reason(ch,subject);
+    else q=GENERATORS[genName](ch);
+  }catch(e){ q=GENERATORS.math_arithmetic(ch); }
+  if(difficulty&&difficulty!=='mixed') q.difficulty=difficulty;
   if(Math.random()<0.15){
-    let year=randInt(2018,2024);
+    var year=randInt(2018,2024);
     q.pyqYears=[year];
-    if(Math.random()<0.3)q.pyqYears.push(year-randInt(1,3));
+    if(Math.random()<0.3) q.pyqYears.push(year-randInt(1,3));
   }
-  
-  // Ensure 4 options
-  while(q.options.length<4)q.options.push('None of these');
+  while(q.options.length<4) q.options.push('None of these');
   q.options=q.options.slice(0,4);
-  
-  // Ensure correct is in options
-  if(!q.options.includes(q.correct)){
-    q.options[randInt(0,3)]=q.correct;
-  }
-  
-  q.class=cls;
-  q.subject=subject;
+  if(q.options.indexOf(q.correct)<0) q.options[randInt(0,3)]=q.correct;
+  q.class=cls; q.subject=subject;
   q.marks=q.difficulty==='easy'?1:q.difficulty==='hard'?3:2;
   q.id=Date.now().toString(36)+Math.random().toString(36).substr(2,5);
-  
   return q;
 }
 
 function generateTest(config){
-  let{cls,subject,chapters,count,difficulty,mode,timeMinutes}=config;
-  let questions=[];
-  let chapList=chapters&&chapters.length>0?chapters:CURRICULUM[cls].subjects[subject].chapters;
-  
-  for(let i=0;i<count;i++){
-    let ch=pick(chapList);
-    let q=generateQuestion(cls,subject,ch,difficulty);
-    questions.push(q);
+  var cls=config.cls,subject=config.subject,chapters=config.chapters,count=config.count,difficulty=config.difficulty,mode=config.mode,timeMinutes=config.timeMinutes;
+  var questions=[];
+  var chapList=chapters&&chapters.length>0?chapters:CURRICULUM[cls].subjects[subject].chapters;
+  for(var i=0;i<count;i++){
+    var ch=pick(chapList);
+    questions.push(generateQuestion(cls,subject,ch,difficulty));
   }
-  
-  // For PYQ mode, ensure more PYQ tags
   if(mode==='pyq'){
-    questions.forEach(q=>{
-      if(!q.pyqYears){
-        q.pyqYears=[randInt(2019,2024)];
-      }
-    });
+    questions.forEach(function(q){ if(!q.pyqYears) q.pyqYears=[randInt(2019,2024)]; });
   }
-  
   return{
     id:Date.now().toString(36)+Math.random().toString(36).substr(2,5),
     title:CURRICULUM[cls].subjects[subject].name+' Test',
-    class:cls,
-    subject:subject,
-    mode:mode||'chapter',
+    class:cls, subject:subject, mode:mode||'chapter',
     questions:questions,
     timeMinutes:timeMinutes||Math.ceil(count*2),
-    totalMarks:questions.reduce((s,q)=>s+q.marks,0),
+    totalMarks:questions.reduce(function(s,q){return s+q.marks},0),
     createdAt:new Date().toISOString()
   };
 }
 
 // ============== APP STATE ==============
-let state={
+var state={
   currentPage:'dashboard',
   currentTest:null,
   currentQIndex:0,
-  answers:{},// qIndex -> {selected, marked}
+  answers:{},
   timerInterval:null,
   timeLeft:0,
-  testResults:JSON.parse(localStorage.getItem('itp_results')||'[]'),
+  testResults:[],
   generatorStep:0,
   genConfig:{cls:10,subject:'',chapters:[],count:20,difficulty:'mixed',mode:'chapter',timeMinutes:40},
-  teacherQuestions:JSON.parse(localStorage.getItem('itp_teacher_q')||'[]')
+  teacherQuestions:[]
 };
 
 // ============== PAGE NAVIGATION ==============
 function showPage(page){
   if(state.currentPage==='exam'&&page!=='exam'&&page!=='results'){
-    if(!confirm('Leave the test? Your progress will be lost.'))return;
+    if(!confirm(t('confirm_leave')))return;
     clearInterval(state.timerInterval);
   }
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  let el=document.getElementById('page-'+page);
-  if(el){el.classList.add('active')}
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  var el=document.getElementById('page-'+page);
+  if(el) el.classList.add('active');
   state.currentPage=page;
-  
-  // Update nav active
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.nav-links .nav-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(page.substring(0,4)))b.classList.add('active')});
-  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.mobile-nav button').forEach(b=>{
-    let map={dashboard:'Home',generator:'AI Test',pyq:'PYQ',analytics:'Stats',admin:'Admin'};
-    if(b.textContent.includes(map[page]||''))b.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active')});
+  document.querySelectorAll('.nav-links .nav-btn').forEach(function(b){
+    if(b.getAttribute('data-nav')===page) b.classList.add('active');
   });
-  
+  document.querySelectorAll('.mobile-nav button').forEach(function(b){b.classList.remove('active')});
+  var mobileMap={dashboard:0,generator:1,pyq:2,analytics:3,admin:4};
+  var mobileButtons=document.querySelectorAll('.mobile-nav button');
+  if(mobileMap[page]!==undefined && mobileButtons[mobileMap[page]]) mobileButtons[mobileMap[page]].classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
-  
-  // Render page content
   if(page==='dashboard')renderDashboard();
   else if(page==='generator')renderGenerator();
   else if(page==='pyq')renderPyq();
@@ -778,117 +1000,107 @@ function showPage(page){
 
 // ============== THEME ==============
 function toggleTheme(){
-  let html=document.documentElement;
-  let current=html.getAttribute('data-theme');
-  let next=current==='dark'?'light':'dark';
+  var html=document.documentElement;
+  var current=html.getAttribute('data-theme');
+  var next=current==='dark'?'light':'dark';
   html.setAttribute('data-theme',next);
   localStorage.setItem('itp_theme',next);
   document.querySelector('.theme-toggle').innerHTML=next==='dark'?'&#9788;':'&#9790;';
 }
-// Init theme
 (function(){
-  let saved=localStorage.getItem('itp_theme');
+  var saved=localStorage.getItem('itp_theme');
   if(saved){document.documentElement.setAttribute('data-theme',saved);
   if(saved==='dark')document.querySelector('.theme-toggle').innerHTML='&#9788;'}
 })();
 
-
 // ============== DASHBOARD ==============
 function renderDashboard(){
-  let results=state.testResults;
-  let totalTests=results.length;
-  let avgAcc=totalTests?Math.round(results.reduce((s,r)=>s+r.accuracy,0)/totalTests):0;
-  let totalQ=results.reduce((s,r)=>s+r.total,0);
-  let streak=calcStreak();
-  
-  document.getElementById('statCards').innerHTML=`
-    <div class="card stat-card"><div class="stat-icon" style="background:rgba(79,70,229,.1);color:var(--primary)">&#9997;</div><div class="stat-value">${totalTests}</div><div class="stat-label">Tests Taken</div></div>
-    <div class="card stat-card"><div class="stat-icon" style="background:rgba(16,185,129,.1);color:var(--green)">&#10003;</div><div class="stat-value">${avgAcc}%</div><div class="stat-label">Avg Accuracy</div></div>
-    <div class="card stat-card"><div class="stat-icon" style="background:rgba(59,130,246,.1);color:var(--blue)">&#9733;</div><div class="stat-value">${totalQ}</div><div class="stat-label">Questions Solved</div></div>
-    <div class="card stat-card"><div class="stat-icon" style="background:rgba(245,158,11,.1);color:var(--orange)">&#9734;</div><div class="stat-value">${streak}</div><div class="stat-label">Day Streak</div></div>
-  `;
-  
-  // Recent tests
-  let recentHtml='';
+  var results=state.testResults;
+  var totalTests=results.length;
+  var avgAcc=totalTests?Math.round(results.reduce(function(s,r){return s+r.accuracy},0)/totalTests):0;
+  var totalQ=results.reduce(function(s,r){return s+r.total},0);
+  var streak=calcStreak();
+  var userName=(currentUser&&currentUser.name)?currentUser.name:'Scholar';
+  document.getElementById('heroTitle').textContent=t('hero_welcome')+userName+'!';
+
+  document.getElementById('statCards').innerHTML=
+    '<div class="card stat-card"><div class="stat-icon" style="background:rgba(79,70,229,.1);color:var(--primary)">&#9997;</div><div class="stat-value">'+totalTests+'</div><div class="stat-label">'+t('tests_taken')+'</div></div>'+
+    '<div class="card stat-card"><div class="stat-icon" style="background:rgba(16,185,129,.1);color:var(--green)">&#10003;</div><div class="stat-value">'+avgAcc+'%</div><div class="stat-label">'+t('avg_accuracy')+'</div></div>'+
+    '<div class="card stat-card"><div class="stat-icon" style="background:rgba(59,130,246,.1);color:var(--blue)">&#9733;</div><div class="stat-value">'+totalQ+'</div><div class="stat-label">'+t('questions_solved')+'</div></div>'+
+    '<div class="card stat-card"><div class="stat-icon" style="background:rgba(245,158,11,.1);color:var(--orange)">&#9734;</div><div class="stat-value">'+streak+'</div><div class="stat-label">'+t('day_streak')+'</div></div>';
+
+  var recentHtml='';
   if(results.length>0){
-    results.slice(-5).reverse().forEach(r=>{
-      let subIcon=getSubjectIcon(r.subject);
-      recentHtml+=`<div class="table-row">
-        <span style="font-size:20px">${subIcon}</span>
-        <div style="flex:1"><div style="font-weight:600;font-size:14px">${r.title||r.subject}</div><div style="font-size:12px;color:var(--text3)">${new Date(r.date).toLocaleDateString()}</div></div>
-        <span class="badge ${r.accuracy>=70?'badge-green':r.accuracy>=40?'badge-orange':'badge-red'}">${r.accuracy}%</span>
-      </div>`;
+    results.slice(-5).reverse().forEach(function(r){
+      var subIcon=getSubjectIcon(r.subject);
+      recentHtml+='<div class="table-row"><span style="font-size:20px">'+subIcon+'</span><div style="flex:1"><div style="font-weight:600;font-size:14px">'+(r.title||r.subject)+'</div><div style="font-size:12px;color:var(--text3)">'+new Date(r.date).toLocaleDateString()+'</div></div><span class="badge '+(r.accuracy>=70?'badge-green':r.accuracy>=40?'badge-orange':'badge-red')+'">'+r.accuracy+'%</span></div>';
     });
   }else{
-    recentHtml='<p style="color:var(--text3);padding:16px">No tests taken yet. Start your first test!</p>';
+    recentHtml='<p style="color:var(--text3);padding:16px">'+t('no_tests_yet')+'</p>';
   }
   document.getElementById('recentTests').innerHTML=recentHtml;
-  
-  // Weak chapters
-  let weakHtml='';
-  let chapterStats=getChapterStats();
-  let weakChapters=chapterStats.filter(c=>c.accuracy<60).sort((a,b)=>a.accuracy-b.accuracy).slice(0,5);
-  if(weakChapters.length>0){
-    weakChapters.forEach(c=>{
-      weakHtml+=`<div style="margin-bottom:12px">
-        <div class="flex justify-between items-center" style="margin-bottom:4px">
-          <span style="font-size:13px;font-weight:500">${c.chapter}</span>
-          <span style="font-size:12px;color:${c.accuracy<30?'var(--red)':'var(--orange)'}">${c.accuracy}%</span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${c.accuracy}%;background:${c.accuracy<30?'var(--red)':'var(--orange)'}"></div></div>
-      </div>`;
+
+  var weakHtml='';
+  var chapterStats=getChapterStats();
+  var weakChapters2=chapterStats.filter(function(c){return c.accuracy<60}).sort(function(a,b){return a.accuracy-b.accuracy}).slice(0,5);
+  if(weakChapters2.length>0){
+    weakChapters2.forEach(function(c){
+      weakHtml+='<div style="margin-bottom:12px"><div class="flex justify-between items-center" style="margin-bottom:4px"><span style="font-size:13px;font-weight:500">'+c.chapter+'</span><span style="font-size:12px;color:'+(c.accuracy<30?'var(--red)':'var(--orange)')+'">'+c.accuracy+'%</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+c.accuracy+'%;background:'+(c.accuracy<30?'var(--red)':'var(--orange)')+'"></div></div></div>';
     });
   }else{
-    weakHtml='<p style="color:var(--text3);padding:16px">Take a few tests to see your weak areas.</p>';
+    weakHtml='<p style="color:var(--text3);padding:16px">'+t('take_tests_weak')+'</p>';
   }
   document.getElementById('weakChapters').innerHTML=weakHtml;
 }
 
 function calcStreak(){
-  let results=state.testResults;
+  var results=state.testResults;
   if(!results.length)return 0;
-  let dates=[...new Set(results.map(r=>new Date(r.date).toDateString()))];
-  let streak=0;
-  let today=new Date();
-  for(let i=0;i<30;i++){
-    let d=new Date(today);d.setDate(d.getDate()-i);
-    if(dates.includes(d.toDateString()))streak++;
+  var dates=[];
+  results.forEach(function(r){
+    var ds=new Date(r.date).toDateString();
+    if(dates.indexOf(ds)<0)dates.push(ds);
+  });
+  var streak=0;
+  var today=new Date();
+  for(var i=0;i<30;i++){
+    var d=new Date(today);d.setDate(d.getDate()-i);
+    if(dates.indexOf(d.toDateString())>=0)streak++;
     else if(i>0)break;
   }
   return streak;
 }
 
 function getChapterStats(){
-  let stats={};
-  state.testResults.forEach(r=>{
+  var stats={};
+  state.testResults.forEach(function(r){
     if(r.questions){
-      r.questions.forEach((q,i)=>{
+      r.questions.forEach(function(q,i){
         if(!stats[q.chapter])stats[q.chapter]={correct:0,total:0,chapter:q.chapter};
         stats[q.chapter].total++;
         if(r.answers&&r.answers[i]&&r.answers[i]===q.correct)stats[q.chapter].correct++;
       });
     }
   });
-  return Object.values(stats).map(s=>({...s,accuracy:s.total?Math.round(s.correct/s.total*100):0}));
+  return Object.keys(stats).map(function(k){var s=stats[k];return{chapter:s.chapter,correct:s.correct,total:s.total,accuracy:s.total?Math.round(s.correct/s.total*100):0}});
 }
 
 function getSubjectIcon(sub){
-  let icons={math:'&#215;',science:'&#9883;',physics:'&#9883;',chemistry:'&#9878;',biology:'&#9880;',sst:'&#9881;',english:'&#9998;',accounts:'&#9830;',economics:'&#9650;'};
+  var icons={math:'&#215;',science:'&#9883;',physics:'&#9883;',chemistry:'&#9878;',biology:'&#9880;',sst:'&#9881;',english:'&#9998;',accounts:'&#9830;',economics:'&#9650;'};
   return icons[sub]||'&#9733;';
 }
 
 // ============== GENERATOR ==============
 function renderGenerator(){
-  let steps=['Class','Subject','Chapters','Settings','Generate'];
-  let stepsHtml='';
-  steps.forEach((s,i)=>{
-    let cls=i<state.generatorStep?'done':i===state.generatorStep?'active':'';
-    stepsHtml+=`<div class="wizard-step ${cls}"><div class="step-num">${i<state.generatorStep?'&#10003;':i+1}</div><span class="step-label">${s}</span></div>`;
+  var steps=[t('select_class'),t('choose_subject'),t('select_chapters'),t('test_settings'),t('generate_test')];
+  var stepsHtml='';
+  steps.forEach(function(s,i){
+    var cls2=i<state.generatorStep?'done':i===state.generatorStep?'active':'';
+    stepsHtml+='<div class="wizard-step '+cls2+'"><div class="step-num">'+(i<state.generatorStep?'&#10003;':i+1)+'</div><span class="step-label">'+s+'</span></div>';
     if(i<steps.length-1)stepsHtml+='<span class="step-arrow">&#8594;</span>';
   });
   document.getElementById('wizardSteps').innerHTML=stepsHtml;
-  
-  let content='';
+  var content='';
   switch(state.generatorStep){
     case 0:content=renderGenClass();break;
     case 1:content=renderGenSubject();break;
@@ -900,13 +1112,10 @@ function renderGenerator(){
 }
 
 function renderGenClass(){
-  let html='<h3 style="margin-bottom:16px">Select Your Class</h3><div class="grid-4">';
-  Object.keys(CURRICULUM).forEach(cls=>{
-    let active=state.genConfig.cls==cls?'active':'';
-    html+=`<div class="card text-center" style="cursor:pointer;${active?'border-color:var(--primary);background:rgba(79,70,229,.05)':''}" onclick="selectGenClass(${cls})">
-      <div style="font-size:28px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${cls}</div>
-      <div style="font-size:13px;color:var(--text2);margin-top:4px">${CURRICULUM[cls].name}</div>
-    </div>`;
+  var html='<h3 style="margin-bottom:16px">'+t('select_class')+'</h3><div class="grid-4">';
+  Object.keys(CURRICULUM).forEach(function(cls){
+    var active=state.genConfig.cls==cls?'border-color:var(--primary);background:rgba(79,70,229,.05)':'';
+    html+='<div class="card text-center" style="cursor:pointer;'+active+'" onclick="selectGenClass('+cls+')"><div style="font-size:28px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+cls+'</div><div style="font-size:13px;color:var(--text2);margin-top:4px">'+CURRICULUM[cls].name+'</div></div>';
   });
   html+='</div>';
   return html;
@@ -921,17 +1130,14 @@ function selectGenClass(cls){
 }
 
 function renderGenSubject(){
-  let cls=state.genConfig.cls;
-  let subjects=CURRICULUM[cls].subjects;
-  let html='<h3 style="margin-bottom:16px">Choose Subject</h3><div class="grid-3">';
-  Object.entries(subjects).forEach(([key,sub])=>{
-    html+=`<div class="card subject-tile" onclick="selectGenSubject('${key}')">
-      <div class="tile-icon" style="background:${sub.color}15;color:${sub.color}">${sub.icon}</div>
-      <div class="tile-name">${sub.name}</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">${sub.chapters.length} chapters</div>
-    </div>`;
+  var cls=state.genConfig.cls;
+  var subjects=CURRICULUM[cls].subjects;
+  var html='<h3 style="margin-bottom:16px">'+t('choose_subject')+'</h3><div class="grid-3">';
+  Object.keys(subjects).forEach(function(key){
+    var sub=subjects[key];
+    html+='<div class="card subject-tile" onclick="selectGenSubject(\''+key+'\')"><div class="tile-icon" style="background:'+sub.color+'15;color:'+sub.color+'">'+sub.icon+'</div><div class="tile-name">'+sub.name+'</div><div style="font-size:11px;color:var(--text3);margin-top:4px">'+sub.chapters.length+' '+t('chapters')+'</div></div>';
   });
-  html+='</div><button class="btn btn-secondary mt-16" onclick="state.generatorStep=0;renderGenerator()">&#8592; Back</button>';
+  html+='</div><button class="btn btn-secondary mt-16" onclick="state.generatorStep=0;renderGenerator()">&#8592; '+t('back')+'</button>';
   return html;
 }
 
@@ -943,87 +1149,47 @@ function selectGenSubject(sub){
 }
 
 function renderGenChapters(){
-  let cls=state.genConfig.cls;
-  let sub=state.genConfig.subject;
-  let chapters=CURRICULUM[cls].subjects[sub].chapters;
-  let html='<h3 style="margin-bottom:8px">Select Chapters</h3><p style="font-size:13px;color:var(--text3);margin-bottom:16px">Click to toggle. Leave empty to include all chapters.</p><div class="flex flex-wrap">';
-  chapters.forEach(ch=>{
-    let active=state.genConfig.chapters.includes(ch)?'active':'';
-    html+=`<span class="chip ${active}" onclick="toggleChapter('${ch.replace(/'/g,"\\'")}')">${ch}</span>`;
+  var cls=state.genConfig.cls;
+  var sub=state.genConfig.subject;
+  var chapters=CURRICULUM[cls].subjects[sub].chapters;
+  var html='<h3 style="margin-bottom:8px">'+t('select_chapters')+'</h3><p style="font-size:13px;color:var(--text3);margin-bottom:16px">'+t('chapters_hint')+'</p><div class="flex flex-wrap">';
+  chapters.forEach(function(ch){
+    var active=state.genConfig.chapters.indexOf(ch)>=0?'active':'';
+    html+='<span class="chip '+active+'" onclick="toggleChapter(\''+ch.replace(/'/g,"\\'")+'\')">' +ch+'</span>';
   });
-  html+=`</div>
-    <div class="flex gap-8 mt-24">
-      <button class="btn btn-secondary" onclick="state.generatorStep=1;renderGenerator()">&#8592; Back</button>
-      <button class="btn btn-primary" onclick="state.generatorStep=3;renderGenerator()">Next &#8594;</button>
-    </div>`;
+  html+='</div><div class="flex gap-8 mt-24"><button class="btn btn-secondary" onclick="state.generatorStep=1;renderGenerator()">&#8592; '+t('back')+'</button><button class="btn btn-primary" onclick="state.generatorStep=3;renderGenerator()">'+t('next')+' &#8594;</button></div>';
   return html;
 }
 
 function toggleChapter(ch){
-  let idx=state.genConfig.chapters.indexOf(ch);
+  var idx=state.genConfig.chapters.indexOf(ch);
   if(idx>=0)state.genConfig.chapters.splice(idx,1);
   else state.genConfig.chapters.push(ch);
   renderGenerator();
 }
 
 function renderGenSettings(){
-  let c=state.genConfig;
-  let estTime=c.count*2;
-  let html=`<h3 style="margin-bottom:20px">Test Settings</h3>
-  <div class="grid-2">
-    <div>
-      <div class="input-group">
-        <label>Difficulty</label>
-        <div class="flex flex-wrap gap-8">
-          ${['easy','medium','hard','mixed'].map(d=>`<span class="chip ${c.difficulty===d?'active':''}" onclick="state.genConfig.difficulty='${d}';renderGenerator()" style="${d==='easy'?'border-color:var(--green)':d==='hard'?'border-color:var(--red)':d==='medium'?'border-color:var(--orange)':''}">${d.charAt(0).toUpperCase()+d.slice(1)}</span>`).join('')}
-        </div>
-      </div>
-      <div class="input-group">
-        <label>Test Mode</label>
-        <div class="flex flex-wrap gap-8">
-          ${['chapter','full_syllabus','board_mock','pyq','revision'].map(m=>`<span class="chip ${c.mode===m?'active':''}" onclick="state.genConfig.mode='${m}';renderGenerator()">${m.replace('_',' ').replace(/\b\w/g,l=>l.toUpperCase())}</span>`).join('')}
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="input-group">
-        <label>Number of Questions: <strong id="qCountLabel">${c.count}</strong></label>
-        <input type="range" min="5" max="50" value="${c.count}" oninput="state.genConfig.count=+this.value;document.getElementById('qCountLabel').textContent=this.value;document.getElementById('estTimeLabel').textContent=(this.value*2)+' min'">
-      </div>
-      <div class="input-group">
-        <label>Estimated Time</label>
-        <div id="estTimeLabel" style="font-size:24px;font-weight:700;color:var(--primary)">${estTime} min</div>
-      </div>
-      <div class="input-group">
-        <label>Timer (minutes)</label>
-        <input type="number" value="${c.timeMinutes}" min="5" max="180" onchange="state.genConfig.timeMinutes=+this.value">
-      </div>
-    </div>
-  </div>
-  <div class="flex gap-8 mt-24">
-    <button class="btn btn-secondary" onclick="state.generatorStep=2;renderGenerator()">&#8592; Back</button>
-    <button class="btn btn-primary" onclick="state.generatorStep=4;renderGenerator()">Next &#8594;</button>
-  </div>`;
+  var c=state.genConfig;
+  var estTime=c.count*2;
+  var diffs=['easy','medium','hard','mixed'];
+  var modes=['chapter','full_syllabus','board_mock','pyq','revision'];
+  var diffHtml='';diffs.forEach(function(d){diffHtml+='<span class="chip '+(c.difficulty===d?'active':'')+'" onclick="state.genConfig.difficulty=\''+d+'\';renderGenerator()">'+t(d)+'</span>'});
+  var modeHtml='';modes.forEach(function(m){modeHtml+='<span class="chip '+(c.mode===m?'active':'')+'" onclick="state.genConfig.mode=\''+m+'\';renderGenerator()">'+t(m.indexOf('_')>=0?m.replace('_',' ').replace(/\b\w/g,function(l){return l.toUpperCase()}):m==='pyq'?'pyq_mode':m+'_mode').replace('_mode','')+'</span>'});
+  var html='<h3 style="margin-bottom:20px">'+t('test_settings')+'</h3><div class="grid-2"><div><div class="input-group"><label>'+t('difficulty')+'</label><div class="flex flex-wrap gap-8">'+diffHtml+'</div></div><div class="input-group"><label>'+t('test_mode')+'</label><div class="flex flex-wrap gap-8">'+modeHtml+'</div></div></div><div><div class="input-group"><label>'+t('num_questions')+': <strong id="qCountLabel">'+c.count+'</strong></label><input type="range" min="5" max="50" value="'+c.count+'" oninput="state.genConfig.count=+this.value;document.getElementById(\'qCountLabel\').textContent=this.value;document.getElementById(\'estTimeLabel\').textContent=(this.value*2)+\' min\'"></div><div class="input-group"><label>'+t('estimated_time')+'</label><div id="estTimeLabel" style="font-size:24px;font-weight:700;color:var(--primary)">'+estTime+' min</div></div><div class="input-group"><label>'+t('timer_minutes')+'</label><input type="number" value="'+c.timeMinutes+'" min="5" max="180" onchange="state.genConfig.timeMinutes=+this.value"></div></div></div><div class="flex gap-8 mt-24"><button class="btn btn-secondary" onclick="state.generatorStep=2;renderGenerator()">&#8592; '+t('back')+'</button><button class="btn btn-primary" onclick="state.generatorStep=4;renderGenerator()">'+t('next')+' &#8594;</button></div>';
   return html;
 }
 
 function renderGenConfirm(){
-  let c=state.genConfig;
-  let subName=CURRICULUM[c.cls].subjects[c.subject].name;
-  let html=`<div class="text-center" style="padding:24px 0">
-    <div style="font-size:48px;margin-bottom:16px">&#9889;</div>
-    <h3 style="margin-bottom:8px">Ready to Generate</h3>
-    <p style="color:var(--text2);margin-bottom:24px">Class ${c.cls} | ${subName} | ${c.count} Questions | ${c.difficulty} | ${c.timeMinutes} min</p>
-    <button class="btn btn-primary btn-lg" onclick="startGenerating()" style="font-size:18px;padding:16px 48px">Generate Test &#8594;</button>
-    <div class="mt-16"><button class="btn btn-secondary" onclick="state.generatorStep=3;renderGenerator()">&#8592; Back to Settings</button></div>
-  </div>`;
+  var c=state.genConfig;
+  var subName=CURRICULUM[c.cls].subjects[c.subject].name;
+  var html='<div class="text-center" style="padding:24px 0"><div style="font-size:48px;margin-bottom:16px">&#9889;</div><h3 style="margin-bottom:8px">'+t('ready_to_generate')+'</h3><p style="color:var(--text2);margin-bottom:24px">Class '+c.cls+' | '+subName+' | '+c.count+' '+t('questions')+' | '+t(c.difficulty)+' | '+c.timeMinutes+' min</p><button class="btn btn-primary btn-lg" onclick="startGenerating()" style="font-size:18px;padding:16px 48px">'+t('generate_test')+' &#8594;</button><div class="mt-16"><button class="btn btn-secondary" onclick="state.generatorStep=3;renderGenerator()">&#8592; '+t('back_to_settings')+'</button></div></div>';
   return html;
 }
 
 function startGenerating(){
   document.getElementById('loadingOverlay').classList.remove('hidden');
-  setTimeout(()=>{
-    let test=generateTest(state.genConfig);
+  setTimeout(function(){
+    var test=generateTest(state.genConfig);
     state.currentTest=test;
     state.currentQIndex=0;
     state.answers={};
@@ -1033,7 +1199,6 @@ function startGenerating(){
     startExam();
   },1500);
 }
-
 
 // ============== EXAM RUNNER ==============
 function startExam(){
@@ -1045,7 +1210,7 @@ function startExam(){
 function startTimer(){
   clearInterval(state.timerInterval);
   updateTimerDisplay();
-  state.timerInterval=setInterval(()=>{
+  state.timerInterval=setInterval(function(){
     state.timeLeft--;
     updateTimerDisplay();
     if(state.timeLeft<=0){
@@ -1056,246 +1221,159 @@ function startTimer(){
 }
 
 function updateTimerDisplay(){
-  let m=Math.floor(state.timeLeft/60);
-  let s=state.timeLeft%60;
-  let el=document.getElementById('examTimer');
+  var m=Math.floor(state.timeLeft/60);
+  var s=state.timeLeft%60;
+  var el=document.getElementById('examTimer');
   el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  if(state.timeLeft<=60){
-    el.classList.add('warning');
-  }else{
-    el.classList.remove('warning');
-  }
+  if(state.timeLeft<=60) el.classList.add('warning');
+  else el.classList.remove('warning');
 }
 
 function renderExam(){
-  let test=state.currentTest;
-  let q=test.questions[state.currentQIndex];
-  let total=test.questions.length;
-  
+  var test=state.currentTest;
+  var q=test.questions[state.currentQIndex];
+  var total=test.questions.length;
   document.getElementById('examSubject').textContent=CURRICULUM[test.class].subjects[test.subject].name;
   document.getElementById('examQCount').textContent='Q '+(state.currentQIndex+1)+' of '+total;
-  
-  // Question content
-  let badges='';
-  badges+=`<span class="badge badge-primary">${q.type}</span> `;
-  badges+=`<span class="badge ${q.difficulty==='easy'?'badge-green':q.difficulty==='hard'?'badge-red':'badge-orange'}">${q.difficulty}</span> `;
-  badges+=`<span class="badge badge-blue">${q.marks} mark${q.marks>1?'s':''}</span> `;
-  if(q.pyqYears)badges+=q.pyqYears.map(y=>`<span class="badge badge-orange">PYQ ${y}</span>`).join(' ');
-  
-  let ansData=state.answers[state.currentQIndex]||{};
-  
-  let optionsHtml='';
-  if(q.type==='Subjective'){
-    optionsHtml=`<textarea style="width:100%;min-height:120px;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--surface);color:var(--text);resize:vertical" placeholder="Write your answer here..." oninput="state.answers[state.currentQIndex]={selected:this.value,marked:${ansData.marked||false}}">${ansData.selected||''}</textarea>`;
-  }else{
-    let keys=['A','B','C','D'];
-    q.options.forEach((opt,i)=>{
-      let selected=ansData.selected===opt?'selected':'';
-      optionsHtml+=`<div class="option-card ${selected}" onclick="selectOption(${state.currentQIndex},'${opt.replace(/'/g,"\\'")}')">
-        <div class="option-key">${keys[i]}</div>
-        <div style="font-size:14px">${opt}</div>
-      </div>`;
-    });
-  }
-  
-  document.getElementById('examMainContent').innerHTML=`
-    <div class="card-static" style="margin-bottom:16px">
-      <div class="flex flex-wrap gap-8 mb-16">${badges}</div>
-      <h3 style="font-size:17px;line-height:1.5;margin-bottom:20px;white-space:pre-wrap">${q.prompt}</h3>
-      ${optionsHtml}
-    </div>
-    <div class="flex gap-8 flex-wrap">
-      <button class="btn btn-secondary" onclick="navigateQ(-1)" ${state.currentQIndex===0?'disabled':''}>&#8592; Previous</button>
-      <button class="btn btn-secondary" onclick="clearAnswer()">Clear</button>
-      <button class="btn" style="background:var(--orange);color:#fff" onclick="markForReview()">&#9733; Mark</button>
-      <button class="btn btn-primary" onclick="navigateQ(1)" ${state.currentQIndex===total-1?'disabled':''}>Next &#8594;</button>
-    </div>
-  `;
-  
-  // Palette
-  let paletteHtml='';
-  for(let i=0;i<total;i++){
-    let ans=state.answers[i];
-    let cls='';
-    if(i===state.currentQIndex)cls+=' current';
-    if(ans&&ans.marked)cls+=' marked';
-    else if(ans&&ans.selected)cls+=' answered';
-    paletteHtml+=`<button class="palette-btn${cls}" onclick="goToQuestion(${i})">${i+1}</button>`;
+
+  var badges='';
+  badges+='<span class="badge badge-primary">'+q.type+'</span> ';
+  badges+='<span class="badge '+(q.difficulty==='easy'?'badge-green':q.difficulty==='hard'?'badge-red':'badge-orange')+'">'+q.difficulty+'</span> ';
+  badges+='<span class="badge badge-blue">'+q.marks+' mark'+(q.marks>1?'s':'')+'</span> ';
+  if(q.pyqYears) q.pyqYears.forEach(function(y){badges+='<span class="badge badge-orange">PYQ '+y+'</span> '});
+
+  var ansData=state.answers[state.currentQIndex]||{};
+  var optionsHtml='';
+  var keys2=['A','B','C','D'];
+  q.options.forEach(function(opt,i){
+    var selected=ansData.selected===opt?'selected':'';
+    optionsHtml+='<div class="option-card '+selected+'" onclick="selectOption('+state.currentQIndex+',\''+opt.replace(/'/g,"\\'")+'\')">'+'<div class="option-key">'+keys2[i]+'</div><div style="font-size:14px">'+opt+'</div></div>';
+  });
+
+  document.getElementById('examMainContent').innerHTML='<div class="card-static" style="margin-bottom:16px"><div class="flex flex-wrap gap-8 mb-16">'+badges+'</div><h3 style="font-size:17px;line-height:1.5;margin-bottom:20px;white-space:pre-wrap">'+q.prompt+'</h3>'+optionsHtml+'</div><div class="flex gap-8 flex-wrap"><button class="btn btn-secondary" onclick="navigateQ(-1)" '+(state.currentQIndex===0?'disabled':'')+'>&#8592; '+t('previous')+'</button><button class="btn btn-secondary" onclick="clearAnswer()">'+t('clear')+'</button><button class="btn" style="background:var(--orange);color:#fff" onclick="markForReview()">&#9733; '+t('mark_review')+'</button><button class="btn btn-primary" onclick="navigateQ(1)" '+(state.currentQIndex===total-1?'disabled':'')+'>'+t('next')+' &#8594;</button></div>';
+
+  var paletteHtml='';
+  for(var i=0;i<total;i++){
+    var ans=state.answers[i];
+    var cls2='';
+    if(i===state.currentQIndex) cls2+=' current';
+    if(ans&&ans.marked) cls2+=' marked';
+    else if(ans&&ans.selected) cls2+=' answered';
+    paletteHtml+='<button class="palette-btn'+cls2+'" onclick="goToQuestion('+i+')">'+(i+1)+'</button>';
   }
   document.getElementById('examPalette').innerHTML=paletteHtml;
 }
 
 function selectOption(qIdx,opt){
-  let existing=state.answers[qIdx]||{};
+  var existing=state.answers[qIdx]||{};
   state.answers[qIdx]={selected:opt,marked:existing.marked||false};
   renderExam();
 }
-
 function clearAnswer(){
-  let existing=state.answers[state.currentQIndex]||{};
+  var existing=state.answers[state.currentQIndex]||{};
   state.answers[state.currentQIndex]={selected:null,marked:existing.marked||false};
   renderExam();
 }
-
 function markForReview(){
-  let existing=state.answers[state.currentQIndex]||{};
+  var existing=state.answers[state.currentQIndex]||{};
   state.answers[state.currentQIndex]={selected:existing.selected||null,marked:!existing.marked};
   renderExam();
 }
-
 function navigateQ(dir){
-  let newIdx=state.currentQIndex+dir;
+  var newIdx=state.currentQIndex+dir;
   if(newIdx>=0&&newIdx<state.currentTest.questions.length){
     state.currentQIndex=newIdx;
     renderExam();
   }
 }
-
-function goToQuestion(idx){
-  state.currentQIndex=idx;
-  renderExam();
-}
+function goToQuestion(idx){state.currentQIndex=idx;renderExam()}
 
 function submitExam(){
-  if(state.timeLeft>0&&!confirm('Are you sure you want to submit? You still have time remaining.'))return;
+  if(state.timeLeft>0&&!confirm(t('confirm_submit')))return;
   clearInterval(state.timerInterval);
-  
-  let test=state.currentTest;
-  let correct=0,wrong=0,skipped=0,totalMarks=0,scored=0;
-  let timeTaken=test.timeMinutes*60-state.timeLeft;
-  
-  test.questions.forEach((q,i)=>{
-    let ans=state.answers[i];
-    if(!ans||!ans.selected){
-      skipped++;
-    }else if(ans.selected===q.correct){
-      correct++;
-      scored+=q.marks;
-    }else{
-      wrong++;
-    }
+  var test=state.currentTest;
+  var correct=0,wrong=0,skipped2=0,totalMarks=0,scored=0;
+  var timeTaken=test.timeMinutes*60-state.timeLeft;
+  test.questions.forEach(function(q,i){
+    var ans=state.answers[i];
+    if(!ans||!ans.selected) skipped2++;
+    else if(ans.selected===q.correct){correct++;scored+=q.marks}
+    else wrong++;
     totalMarks+=q.marks;
   });
-  
-  let result={
-    id:test.id,
-    title:test.title,
-    class:test.class,
-    subject:test.subject,
-    date:new Date().toISOString(),
-    total:test.questions.length,
-    correct:correct,
-    wrong:wrong,
-    skipped:skipped,
-    scored:scored,
-    totalMarks:totalMarks,
+  var result={
+    id:test.id, title:test.title, class:test.class, subject:test.subject,
+    date:new Date().toISOString(), total:test.questions.length,
+    correct:correct, wrong:wrong, skipped:skipped2,
+    scored:scored, totalMarks:totalMarks,
     accuracy:test.questions.length?Math.round(correct/test.questions.length*100):0,
-    timeTaken:timeTaken,
-    questions:test.questions,
-    answers:Object.fromEntries(Object.entries(state.answers).map(([k,v])=>[k,v?v.selected:null]))
+    timeTaken:timeTaken, questions:test.questions,
+    answers:{}
   };
-  
+  Object.keys(state.answers).forEach(function(k){result.answers[k]=state.answers[k]?state.answers[k].selected:null});
   state.testResults.push(result);
-  localStorage.setItem('itp_results',JSON.stringify(state.testResults));
-  
+  // Save to student-specific key
+  var storageKey=getStudentResultsKey();
+  localStorage.setItem(storageKey, JSON.stringify(state.testResults));
+  // Update activity timestamp
+  if(currentUser && currentUser.role==='student'){
+    var activity=JSON.parse(localStorage.getItem('itp_activity')||'{}');
+    activity[getStudentKey()]=new Date().toISOString();
+    localStorage.setItem('itp_activity',JSON.stringify(activity));
+  }
   showResults(result);
 }
 
 // ============== RESULTS ==============
 function showResults(result){
   showPage('results');
-  
-  let pct=result.accuracy;
-  let circumference=2*Math.PI*72;
-  let offset=circumference-(pct/100)*circumference;
-  
-  let verdict='';
-  if(pct>=90)verdict='Outstanding! You are well prepared.';
-  else if(pct>=70)verdict='Great job! Keep up the good work.';
-  else if(pct>=50)verdict='Good effort. Focus on weak areas.';
-  else if(pct>=30)verdict='Needs improvement. Review the topics.';
+  var pct=result.accuracy;
+  var circumference=2*Math.PI*72;
+  var offset=circumference-(pct/100)*circumference;
+  var verdict='';
+  if(pct>=90) verdict='Outstanding! You are well prepared.';
+  else if(pct>=70) verdict='Great job! Keep up the good work.';
+  else if(pct>=50) verdict='Good effort. Focus on weak areas.';
+  else if(pct>=30) verdict='Needs improvement. Review the topics.';
   else verdict='Keep practicing. You will improve!';
-  
-  let avgTime=result.total?Math.round(result.timeTaken/result.total):0;
-  
-  let html=`
-  <div class="text-center mb-24">
-    <div class="score-ring">
-      <svg width="180" height="180" viewBox="0 0 180 180">
-        <circle class="ring-bg" cx="90" cy="90" r="72"/>
-        <circle class="ring-fill" cx="90" cy="90" r="72" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-      </svg>
-      <div class="score-text"><div class="score-value">${pct}%</div><div class="score-label">Score</div></div>
-    </div>
-    <h2 style="margin-bottom:8px">${verdict}</h2>
-    <p style="color:var(--text2)">${result.title} - Class ${result.class}</p>
-  </div>
-  
-  <div class="grid-3 mb-24">
-    <div class="card-static text-center"><div style="font-size:24px;font-weight:700;color:var(--green)">${result.correct}</div><div style="font-size:12px;color:var(--text3)">Correct</div></div>
-    <div class="card-static text-center"><div style="font-size:24px;font-weight:700;color:var(--red)">${result.wrong}</div><div style="font-size:12px;color:var(--text3)">Incorrect</div></div>
-    <div class="card-static text-center"><div style="font-size:24px;font-weight:700;color:var(--orange)">${result.skipped}</div><div style="font-size:12px;color:var(--text3)">Skipped</div></div>
-    <div class="card-static text-center"><div style="font-size:24px;font-weight:700;color:var(--primary)">${result.scored}/${result.totalMarks}</div><div style="font-size:12px;color:var(--text3)">Marks</div></div>
-    <div class="card-static text-center"><div style="font-size:24px;font-weight:700">${formatTime(result.timeTaken)}</div><div style="font-size:12px;color:var(--text3)">Time Taken</div></div>
-    <div class="card-static text-center"><div style="font-size:24px;font-weight:700">${avgTime}s</div><div style="font-size:12px;color:var(--text3)">Avg/Question</div></div>
-  </div>
-  
-  <div class="flex gap-8 mb-24 justify-between flex-wrap">
-    <button class="btn btn-primary" onclick="showReview('${result.id}')">Review Answers</button>
-    <button class="btn btn-secondary" onclick="retakeTest()">Retake Test</button>
-    <button class="btn btn-secondary" onclick="showPage('dashboard')">Home</button>
-  </div>
-  
-  <div id="reviewSection"></div>`;
-  
-  document.getElementById('resultsContent').innerHTML=html;
+  var avgTime=result.total?Math.round(result.timeTaken/result.total):0;
+
+  document.getElementById('resultsContent').innerHTML=
+  '<div class="text-center mb-24"><div class="score-ring"><svg width="180" height="180" viewBox="0 0 180 180"><circle class="ring-bg" cx="90" cy="90" r="72"/><circle class="ring-fill" cx="90" cy="90" r="72" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+offset+'"/></svg><div class="score-text"><div class="score-value">'+pct+'%</div><div class="score-label">'+t('score')+'</div></div></div><h2 style="margin-bottom:8px">'+verdict+'</h2><p style="color:var(--text2)">'+result.title+' - Class '+result.class+'</p></div>'+
+  '<div class="grid-3 mb-24">'+
+  '<div class="card-static text-center"><div style="font-size:24px;font-weight:700;color:var(--green)">'+result.correct+'</div><div style="font-size:12px;color:var(--text3)">'+t('correct')+'</div></div>'+
+  '<div class="card-static text-center"><div style="font-size:24px;font-weight:700;color:var(--red)">'+result.wrong+'</div><div style="font-size:12px;color:var(--text3)">'+t('incorrect')+'</div></div>'+
+  '<div class="card-static text-center"><div style="font-size:24px;font-weight:700;color:var(--orange)">'+result.skipped+'</div><div style="font-size:12px;color:var(--text3)">'+t('skipped')+'</div></div>'+
+  '<div class="card-static text-center"><div style="font-size:24px;font-weight:700;color:var(--primary)">'+result.scored+'/'+result.totalMarks+'</div><div style="font-size:12px;color:var(--text3)">'+t('marks')+'</div></div>'+
+  '<div class="card-static text-center"><div style="font-size:24px;font-weight:700">'+formatTime(result.timeTaken)+'</div><div style="font-size:12px;color:var(--text3)">'+t('time_taken')+'</div></div>'+
+  '<div class="card-static text-center"><div style="font-size:24px;font-weight:700">'+avgTime+'s</div><div style="font-size:12px;color:var(--text3)">'+t('avg_per_question')+'</div></div></div>'+
+  '<div class="flex gap-8 mb-24 justify-between flex-wrap"><button class="btn btn-primary" onclick="showReview(\''+result.id+'\')">'+t('review_answers')+'</button><button class="btn btn-secondary" onclick="retakeTest()">'+t('retake_test')+'</button><button class="btn btn-secondary" onclick="showPage(\'dashboard\')">'+t('home')+'</button></div>'+
+  '<div id="reviewSection"></div>';
 }
 
 function showReview(testId){
-  let result=state.testResults.find(r=>r.id===testId);
+  var result=state.testResults.find(function(r){return r.id===testId});
   if(!result)return;
-  
-  let html='<h3 class="section-title">Detailed Review</h3>';
-  result.questions.forEach((q,i)=>{
-    let userAns=result.answers[i];
-    let isCorrect=userAns===q.correct;
-    let isSkipped=!userAns;
-    let statusClass=isSkipped?'skipped-q':isCorrect?'correct-q':'wrong-q';
-    
-    html+=`<div class="review-q ${statusClass}">
-      <div class="flex gap-8 items-center mb-16 flex-wrap">
-        <span style="font-weight:700;color:var(--text2)">Q${i+1}.</span>
-        <span class="badge ${isCorrect?'badge-green':isSkipped?'badge-orange':'badge-red'}">${isCorrect?'Correct':isSkipped?'Skipped':'Incorrect'}</span>
-        <span class="badge badge-primary">${q.type}</span>
-        ${q.pyqYears?q.pyqYears.map(y=>`<span class="badge badge-orange">PYQ ${y}</span>`).join(''):''}
-      </div>
-      <p style="font-size:15px;margin-bottom:12px;white-space:pre-wrap">${q.prompt}</p>`;
-    
-    if(q.type!=='Subjective'){
-      let keys=['A','B','C','D'];
-      q.options.forEach((opt,oi)=>{
-        let cls='';
-        if(opt===q.correct)cls='correct';
-        else if(opt===userAns&&!isCorrect)cls='wrong';
-        html+=`<div class="option-card ${cls}" style="cursor:default;margin-bottom:6px">
-          <div class="option-key">${keys[oi]}</div>
-          <div style="font-size:14px">${opt}${opt===userAns?' (Your answer)':''}${opt===q.correct?' (Correct)':''}</div>
-        </div>`;
-      });
-    }else{
-      html+=`<p style="font-size:14px;color:var(--text2)"><strong>Your answer:</strong> ${userAns||'Not answered'}</p>`;
-      html+=`<p style="font-size:14px;color:var(--green)"><strong>Expected:</strong> ${q.correct}</p>`;
-    }
-    
-    html+=`<div class="explanation-box"><strong>Explanation:</strong> ${q.explanation||'No explanation available.'}</div>`;
-    
-    if(q.steps){
-      html+=`<div class="explanation-box" style="margin-top:8px"><strong>Step-by-step:</strong><ol class="solution-steps">${q.steps.map(s=>'<li>'+s+'</li>').join('')}</ol></div>`;
-    }
-    
-    html+=`</div>`;
+  var html='<h3 class="section-title">'+t('detailed_review')+'</h3>';
+  result.questions.forEach(function(q,i){
+    var userAns=result.answers[i];
+    var isCorrect=userAns===q.correct;
+    var isSkipped2=!userAns;
+    var statusClass=isSkipped2?'skipped-q':isCorrect?'correct-q':'wrong-q';
+    html+='<div class="review-q '+statusClass+'"><div class="flex gap-8 items-center mb-16 flex-wrap"><span style="font-weight:700;color:var(--text2)">Q'+(i+1)+'.</span><span class="badge '+(isCorrect?'badge-green':isSkipped2?'badge-orange':'badge-red')+'">'+(isCorrect?t('correct'):isSkipped2?t('skipped'):t('incorrect'))+'</span><span class="badge badge-primary">'+q.type+'</span>';
+    if(q.pyqYears) q.pyqYears.forEach(function(y){html+='<span class="badge badge-orange">PYQ '+y+'</span>'});
+    html+='</div><p style="font-size:15px;margin-bottom:12px;white-space:pre-wrap">'+q.prompt+'</p>';
+    var keys2=['A','B','C','D'];
+    q.options.forEach(function(opt,oi){
+      var cls2='';
+      if(opt===q.correct) cls2='correct';
+      else if(opt===userAns&&!isCorrect) cls2='wrong';
+      html+='<div class="option-card '+cls2+'" style="cursor:default;margin-bottom:6px"><div class="option-key">'+keys2[oi]+'</div><div style="font-size:14px">'+opt+(opt===userAns?' (Your answer)':'')+(opt===q.correct?' (Correct)':'')+'</div></div>';
+    });
+    html+='<div class="explanation-box"><strong>Explanation:</strong> '+(q.explanation||'No explanation available.')+'</div>';
+    if(q.steps) html+='<div class="explanation-box" style="margin-top:8px"><strong>Step-by-step:</strong><ol class="solution-steps">'+q.steps.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol></div>';
+    html+='</div>';
   });
-  
   document.getElementById('reviewSection').innerHTML=html;
 }
 
@@ -1307,73 +1385,51 @@ function retakeTest(){
     startExam();
   }
 }
-
-function formatTime(seconds){
-  let m=Math.floor(seconds/60);
-  let s=seconds%60;
-  return m+'m '+s+'s';
-}
-
+function formatTime(seconds){var m=Math.floor(seconds/60);var s=seconds%60;return m+'m '+s+'s'}
 
 // ============== PYQ BROWSER ==============
 function renderPyq(){
-  let classSelect=document.getElementById('pyqClass');
+  var classSelect=document.getElementById('pyqClass');
   if(classSelect.options.length<=1){
-    Object.keys(CURRICULUM).forEach(cls=>{
-      classSelect.innerHTML+=`<option value="${cls}">Class ${cls}</option>`;
+    Object.keys(CURRICULUM).forEach(function(cls){
+      classSelect.innerHTML+='<option value="'+cls+'">Class '+cls+'</option>';
     });
   }
 }
-
 function updatePyqSubjects(){
-  let cls=document.getElementById('pyqClass').value;
-  let subSelect=document.getElementById('pyqSubject');
-  subSelect.innerHTML='<option value="">Select Subject</option>';
+  var cls=document.getElementById('pyqClass').value;
+  var subSelect=document.getElementById('pyqSubject');
+  subSelect.innerHTML='<option value="">'+t('select_subject_dropdown')+'</option>';
   if(cls&&CURRICULUM[cls]){
-    Object.entries(CURRICULUM[cls].subjects).forEach(([key,sub])=>{
-      subSelect.innerHTML+=`<option value="${key}">${sub.name}</option>`;
+    Object.keys(CURRICULUM[cls].subjects).forEach(function(key){
+      subSelect.innerHTML+='<option value="'+key+'">'+CURRICULUM[cls].subjects[key].name+'</option>';
     });
   }
   document.getElementById('pyqList').innerHTML='';
 }
-
 function loadPyqList(){
-  let cls=+document.getElementById('pyqClass').value;
-  let sub=document.getElementById('pyqSubject').value;
+  var cls=+document.getElementById('pyqClass').value;
+  var sub=document.getElementById('pyqSubject').value;
   if(!cls||!sub)return;
-  
-  // Generate PYQ questions
-  let chapters=CURRICULUM[cls].subjects[sub].chapters;
-  let questions=[];
-  for(let i=0;i<30;i++){
-    let q=generateQuestion(cls,sub,pick(chapters),'mixed');
-    let year=randInt(2018,2024);
-    q.pyqYears=[year];
-    if(Math.random()<0.3)q.pyqYears.push(year-randInt(1,3));
+  var chapters=CURRICULUM[cls].subjects[sub].chapters;
+  var questions=[];
+  for(var i=0;i<30;i++){
+    var q=generateQuestion(cls,sub,pick(chapters),'mixed');
+    q.pyqYears=[randInt(2018,2024)];
+    if(Math.random()<0.3) q.pyqYears.push(q.pyqYears[0]-randInt(1,3));
     questions.push(q);
   }
-  
-  let html='<div class="card-static">';
-  questions.forEach((q,i)=>{
-    let repeated=q.pyqYears.length>1;
-    html+=`<div class="table-row">
-      <span style="font-weight:700;color:var(--text3);width:30px">${i+1}</span>
-      <div style="flex:1">
-        <div style="font-size:14px;margin-bottom:4px">${q.prompt.substring(0,80)}${q.prompt.length>80?'...':''}</div>
-        <div class="flex gap-8 flex-wrap">
-          ${q.pyqYears.map(y=>`<span class="badge badge-orange">PYQ ${y}</span>`).join('')}
-          ${repeated?'<span class="badge badge-red">Repeated</span>':''}
-          <span class="badge badge-primary">${q.chapter}</span>
-        </div>
-      </div>
-    </div>`;
+  var html='<div class="card-static">';
+  questions.forEach(function(q2,i2){
+    var repeated=q2.pyqYears.length>1;
+    html+='<div class="table-row"><span style="font-weight:700;color:var(--text3);width:30px">'+(i2+1)+'</span><div style="flex:1"><div style="font-size:14px;margin-bottom:4px">'+q2.prompt.substring(0,80)+(q2.prompt.length>80?'...':'')+'</div><div class="flex gap-8 flex-wrap">';
+    q2.pyqYears.forEach(function(y){html+='<span class="badge badge-orange">PYQ '+y+'</span>'});
+    if(repeated) html+='<span class="badge badge-red">Repeated</span>';
+    html+='<span class="badge badge-primary">'+q2.chapter+'</span></div></div></div>';
   });
-  html+=`</div>
-  <button class="btn btn-primary btn-lg mt-24" onclick="startPyqPractice(${cls},'${sub}')">Start PYQ Practice (${questions.length} Questions)</button>`;
-  
+  html+='</div><button class="btn btn-primary btn-lg mt-24" onclick="startPyqPractice('+cls+',\''+sub+'\')">'+t('start_pyq_practice')+' ('+questions.length+' Q)</button>';
   document.getElementById('pyqList').innerHTML=html;
 }
-
 function startPyqPractice(cls,sub){
   state.genConfig={cls:cls,subject:sub,chapters:[],count:20,difficulty:'mixed',mode:'pyq',timeMinutes:40};
   startGenerating();
@@ -1381,189 +1437,246 @@ function startPyqPractice(cls,sub){
 
 // ============== ANALYTICS ==============
 function renderAnalytics(){
-  let results=state.testResults;
-  
+  var results=state.testResults;
   if(results.length===0){
-    document.getElementById('analyticsContent').innerHTML='<div class="card-static text-center" style="padding:48px"><div style="font-size:48px;margin-bottom:16px">&#128202;</div><h3>No Data Yet</h3><p style="color:var(--text2);margin-top:8px">Take some tests to see your analytics here.</p></div>';
+    document.getElementById('analyticsContent').innerHTML='<div class="card-static text-center" style="padding:48px"><div style="font-size:48px;margin-bottom:16px">&#128202;</div><h3>'+t('no_data_yet')+'</h3><p style="color:var(--text2);margin-top:8px">'+t('take_tests_analytics')+'</p></div>';
     return;
   }
-  
-  // Accuracy trend (last 10 tests)
-  let last10=results.slice(-10);
-  let maxAcc=Math.max(...last10.map(r=>r.accuracy),1);
-  let barHtml='<div class="bar-chart">';
-  last10.forEach((r,i)=>{
-    let h=Math.max((r.accuracy/100)*140,4);
-    barHtml+=`<div class="bar-col"><div class="bar" style="height:${h}px"></div><div class="bar-label">${r.accuracy}%</div></div>`;
+  var last10=results.slice(-10);
+  var barHtml='<div class="bar-chart">';
+  last10.forEach(function(r){
+    var h=Math.max((r.accuracy/100)*140,4);
+    barHtml+='<div class="bar-col"><div class="bar" style="height:'+h+'px"></div><div class="bar-label">'+r.accuracy+'%</div></div>';
   });
   barHtml+='</div>';
-  
-  // Subject-wise accuracy
-  let subStats={};
-  results.forEach(r=>{
-    if(!subStats[r.subject])subStats[r.subject]={correct:0,total:0};
+
+  var subStats={};
+  results.forEach(function(r){
+    if(!subStats[r.subject]) subStats[r.subject]={correct:0,total:0};
     subStats[r.subject].correct+=r.correct;
     subStats[r.subject].total+=r.total;
   });
-  
-  let subHtml='';
-  Object.entries(subStats).forEach(([sub,s])=>{
-    let acc=s.total?Math.round(s.correct/s.total*100):0;
-    subHtml+=`<div style="margin-bottom:14px">
-      <div class="flex justify-between items-center" style="margin-bottom:4px">
-        <span style="font-size:14px;font-weight:500">${sub.charAt(0).toUpperCase()+sub.slice(1)}</span>
-        <span style="font-size:13px;font-weight:600;color:var(--primary)">${acc}%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${acc}%"></div></div>
-    </div>`;
+  var subHtml='';
+  Object.keys(subStats).forEach(function(sub){
+    var s=subStats[sub];
+    var acc=s.total?Math.round(s.correct/s.total*100):0;
+    subHtml+='<div style="margin-bottom:14px"><div class="flex justify-between items-center" style="margin-bottom:4px"><span style="font-size:14px;font-weight:500">'+sub.charAt(0).toUpperCase()+sub.slice(1)+'</span><span style="font-size:13px;font-weight:600;color:var(--primary)">'+acc+'%</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+acc+'%"></div></div></div>';
   });
-  
-  // Weak chapters
-  let chapterStats=getChapterStats();
-  let weakList=chapterStats.filter(c=>c.accuracy<60).sort((a,b)=>a.accuracy-b.accuracy).slice(0,8);
-  let weakHtml='';
-  weakList.forEach(c=>{
-    weakHtml+=`<div class="table-row"><span style="flex:1;font-size:14px">${c.chapter}</span><span class="badge ${c.accuracy<30?'badge-red':'badge-orange'}">${c.accuracy}%</span></div>`;
+
+  var chapterStats=getChapterStats();
+  var weakList=chapterStats.filter(function(c){return c.accuracy<60}).sort(function(a,b){return a.accuracy-b.accuracy}).slice(0,8);
+  var weakHtml='';
+  weakList.forEach(function(c){
+    weakHtml+='<div class="table-row"><span style="flex:1;font-size:14px">'+c.chapter+'</span><span class="badge '+(c.accuracy<30?'badge-red':'badge-orange')+'">'+c.accuracy+'%</span></div>';
   });
-  if(!weakHtml)weakHtml='<p style="padding:16px;color:var(--text3)">No weak chapters identified yet.</p>';
-  
-  let streak=calcStreak();
-  
-  document.getElementById('analyticsContent').innerHTML=`
-  <div class="grid-2 mb-24">
-    <div class="card-static">
-      <h3 style="font-size:16px;margin-bottom:12px">Accuracy Trend (Last ${last10.length} Tests)</h3>
-      ${barHtml}
-    </div>
-    <div class="card-static">
-      <h3 style="font-size:16px;margin-bottom:12px">Subject-wise Accuracy</h3>
-      ${subHtml||'<p style="color:var(--text3)">No subject data yet.</p>'}
-    </div>
-  </div>
-  <div class="grid-2">
-    <div class="card-static">
-      <h3 style="font-size:16px;margin-bottom:12px">Weak Chapters</h3>
-      ${weakHtml}
-    </div>
-    <div class="card-static text-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
-      <div style="font-size:48px;margin-bottom:8px">&#128293;</div>
-      <div style="font-size:36px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${streak} Days</div>
-      <div style="font-size:14px;color:var(--text3)">Study Streak</div>
-      <button class="btn btn-danger mt-24" onclick="resetData()" style="font-size:12px">Reset All Data</button>
-    </div>
-  </div>`;
+  if(!weakHtml) weakHtml='<p style="padding:16px;color:var(--text3)">'+t('take_tests_weak')+'</p>';
+  var streak=calcStreak();
+
+  document.getElementById('analyticsContent').innerHTML=
+  '<div class="grid-2 mb-24"><div class="card-static"><h3 style="font-size:16px;margin-bottom:12px">'+t('accuracy_trend')+' ('+last10.length+')</h3>'+barHtml+'</div><div class="card-static"><h3 style="font-size:16px;margin-bottom:12px">'+t('subject_accuracy')+'</h3>'+(subHtml||'<p style="color:var(--text3)">No subject data yet.</p>')+'</div></div>'+
+  '<div class="grid-2"><div class="card-static"><h3 style="font-size:16px;margin-bottom:12px">'+t('weak_chapters')+'</h3>'+weakHtml+'</div><div class="card-static text-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:48px;margin-bottom:8px">&#128293;</div><div style="font-size:36px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+streak+' Days</div><div style="font-size:14px;color:var(--text3)">'+t('study_streak')+'</div><button class="btn btn-danger mt-24" onclick="resetData()" style="font-size:12px">'+t('reset_all_data')+'</button></div></div>';
 }
 
 function resetData(){
-  if(confirm('This will delete all your test history and progress. Are you sure?')){
+  if(confirm(t('confirm_reset'))){
     state.testResults=[];
-    localStorage.removeItem('itp_results');
+    var storageKey=getStudentResultsKey();
+    localStorage.removeItem(storageKey);
     renderAnalytics();
   }
 }
 
-// ============== ADMIN PANEL ==============
+// ============== ADMIN PANEL (UPGRADED) ==============
 function renderAdmin(){
-  let teacherQ=state.teacherQuestions;
-  let totalQ=Object.values(CURRICULUM).reduce((s,c)=>s+Object.values(c.subjects).reduce((s2,sub)=>s2+sub.chapters.length*50,0),0);
-  let pyqCount=Math.round(totalQ*0.15);
-  
-  let classesHtml='';
-  Object.entries(CURRICULUM).forEach(([cls,data])=>{
-    let subCount=Object.keys(data.subjects).length;
-    let chapCount=Object.values(data.subjects).reduce((s,sub)=>s+sub.chapters.length,0);
-    classesHtml+=`<div class="table-row">
-      <span style="font-weight:700">Class ${cls}</span>
-      <span style="flex:1;font-size:13px;color:var(--text2);margin-left:12px">${subCount} subjects, ${chapCount} chapters</span>
-      <span class="badge badge-primary">${chapCount*50}+ Qs</span>
-    </div>`;
+  var teacherQ=state.teacherQuestions;
+  var totalQ=Object.keys(CURRICULUM).reduce(function(s,c){return s+Object.keys(CURRICULUM[c].subjects).reduce(function(s2,sub){return s2+CURRICULUM[c].subjects[sub].chapters.length*50},0)},0);
+  var pyqCount=Math.round(totalQ*0.15);
+
+  // Check if admin
+  var isAdmin=currentUser&&currentUser.role==='admin';
+  var html='';
+
+  if(isAdmin){
+    // Admin sees student overview + platform stats + add question
+    var students=JSON.parse(localStorage.getItem('itp_students')||'[]');
+    var activity=JSON.parse(localStorage.getItem('itp_activity')||'{}');
+    var totalStudents=students.length;
+    var allTests=0, totalAcc=0, testCount=0;
+    students.forEach(function(st){
+      var key='itp_results_'+st.key;
+      var results=JSON.parse(localStorage.getItem(key)||'[]');
+      allTests+=results.length;
+      results.forEach(function(r){totalAcc+=r.accuracy;testCount++});
+    });
+    var avgPlatformAcc=testCount?Math.round(totalAcc/testCount):0;
+
+    html+='<div class="grid-4 mb-24">'+
+      '<div class="card stat-card"><div class="stat-value">'+totalQ+'+</div><div class="stat-label">'+t('total_questions')+'</div></div>'+
+      '<div class="card stat-card"><div class="stat-value">'+totalStudents+'</div><div class="stat-label">'+t('total_students')+'</div></div>'+
+      '<div class="card stat-card"><div class="stat-value">'+allTests+'</div><div class="stat-label">'+t('total_tests_platform')+'</div></div>'+
+      '<div class="card stat-card"><div class="stat-value">'+avgPlatformAcc+'%</div><div class="stat-label">'+t('avg_platform_accuracy')+'</div></div></div>';
+
+    // Student overview table
+    html+='<div class="card-static mb-24"><h3 style="font-size:16px;margin-bottom:16px">'+t('student_overview')+'</h3>';
+    html+='<div id="adminStudentView">';
+    if(students.length>0){
+      html+='<div class="table-row" style="font-weight:700;background:var(--surface2);border-radius:8px 8px 0 0"><span style="flex:2">'+t('student_name')+'</span><span style="flex:1">'+t('student_class')+'</span><span style="flex:1">'+t('student_tests')+'</span><span style="flex:1">'+t('student_accuracy')+'</span><span style="flex:1">'+t('student_last_active')+'</span><span style="width:80px"></span></div>';
+      students.forEach(function(st){
+        var key='itp_results_'+st.key;
+        var results=JSON.parse(localStorage.getItem(key)||'[]');
+        var stTests=results.length;
+        var stAcc=stTests?Math.round(results.reduce(function(s,r){return s+r.accuracy},0)/stTests):0;
+        var lastActive=activity[st.key]?new Date(activity[st.key]).toLocaleDateString():'N/A';
+        html+='<div class="table-row"><span style="flex:2;font-weight:600">'+st.name+'</span><span style="flex:1">'+st.class+'</span><span style="flex:1">'+stTests+'</span><span style="flex:1"><span class="badge '+(stAcc>=70?'badge-green':stAcc>=40?'badge-orange':'badge-red')+'">'+stAcc+'%</span></span><span style="flex:1;font-size:12px;color:var(--text3)">'+lastActive+'</span><span style="width:80px"><button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="viewStudentDetails(\''+st.key+'\')">'+t('view_details')+'</button></span></div>';
+      });
+    }else{
+      html+='<p style="color:var(--text3);padding:16px">No students registered yet.</p>';
+    }
+    html+='</div></div>';
+
+    // Student detail view (hidden by default, shown when clicking view)
+    html+='<div id="adminStudentDetail" class="card-static mb-24 hidden"></div>';
+  }
+
+  // Question bank stats (visible to both admin and students, but students just see bank summary)
+  if(!isAdmin){
+    html+='<div class="grid-4 mb-24">'+
+      '<div class="card stat-card"><div class="stat-value">'+totalQ+'+</div><div class="stat-label">'+t('total_questions')+'</div></div>'+
+      '<div class="card stat-card"><div class="stat-value">'+teacherQ.length+'</div><div class="stat-label">'+t('teacher_added')+'</div></div>'+
+      '<div class="card stat-card"><div class="stat-value">7</div><div class="stat-label">'+t('classes_covered')+'</div></div>'+
+      '<div class="card stat-card"><div class="stat-value">'+pyqCount+'+</div><div class="stat-label">PYQs</div></div></div>';
+  }
+
+  // Add question form (admin only)
+  if(isAdmin){
+    var classesHtml2='';
+    Object.keys(CURRICULUM).forEach(function(cls){
+      var data=CURRICULUM[cls];
+      var subCount=Object.keys(data.subjects).length;
+      var chapCount=Object.keys(data.subjects).reduce(function(s,sub){return s+data.subjects[sub].chapters.length},0);
+      classesHtml2+='<div class="table-row"><span style="font-weight:700">Class '+cls+'</span><span style="flex:1;font-size:13px;color:var(--text2);margin-left:12px">'+subCount+' subjects, '+chapCount+' chapters</span><span class="badge badge-primary">'+chapCount*50+'+ Qs</span></div>';
+    });
+
+    html+='<div class="grid-2"><div class="card-static"><h3 style="font-size:16px;margin-bottom:16px">'+t('add_question')+'</h3>'+
+    '<div class="input-group"><label>'+t('student_class')+'</label><select id="adminClass" onchange="updateAdminSubjects()"><option value="">Select</option>'+Object.keys(CURRICULUM).map(function(c){return '<option value="'+c+'">Class '+c+'</option>'}).join('')+'</select></div>'+
+    '<div class="input-group"><label>Subject</label><select id="adminSubject" onchange="updateAdminChapters()"><option value="">Select</option></select></div>'+
+    '<div class="input-group"><label>Chapter</label><select id="adminChapter"><option value="">Select</option></select></div>'+
+    '<div class="input-group"><label>'+t('question_text')+'</label><textarea id="adminQText" rows="3" placeholder="Enter question..."></textarea></div>'+
+    '<div class="input-group"><label>Option A</label><input id="adminOA" placeholder="Option A"></div>'+
+    '<div class="input-group"><label>Option B</label><input id="adminOB" placeholder="Option B"></div>'+
+    '<div class="input-group"><label>Option C</label><input id="adminOC" placeholder="Option C"></div>'+
+    '<div class="input-group"><label>Option D</label><input id="adminOD" placeholder="Option D"></div>'+
+    '<div class="input-group"><label>'+t('correct_option')+'</label><select id="adminCorrect"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>'+
+    '<button class="btn btn-primary" onclick="saveAdminQuestion()">'+t('save_question')+'</button></div>'+
+    '<div class="card-static"><h3 style="font-size:16px;margin-bottom:16px">'+t('bank_summary')+'</h3>'+classesHtml2+'</div></div>';
+  }else{
+    // Non-admin sees bank summary only
+    var classesHtml3='';
+    Object.keys(CURRICULUM).forEach(function(cls){
+      var data=CURRICULUM[cls];
+      var subCount=Object.keys(data.subjects).length;
+      var chapCount=Object.keys(data.subjects).reduce(function(s,sub){return s+data.subjects[sub].chapters.length},0);
+      classesHtml3+='<div class="table-row"><span style="font-weight:700">Class '+cls+'</span><span style="flex:1;font-size:13px;color:var(--text2);margin-left:12px">'+subCount+' subjects, '+chapCount+' chapters</span><span class="badge badge-primary">'+chapCount*50+'+ Qs</span></div>';
+    });
+    html+='<div class="card-static"><h3 style="font-size:16px;margin-bottom:16px">'+t('bank_summary')+'</h3>'+classesHtml3+'</div>';
+  }
+
+  document.getElementById('adminContent').innerHTML=html;
+}
+
+function viewStudentDetails(studentKey){
+  var students=JSON.parse(localStorage.getItem('itp_students')||'[]');
+  var student=students.find(function(s){return s.key===studentKey});
+  if(!student)return;
+  var results=JSON.parse(localStorage.getItem('itp_results_'+studentKey)||'[]');
+  var detailEl=document.getElementById('adminStudentDetail');
+  detailEl.classList.remove('hidden');
+
+  var stTests=results.length;
+  var stAcc=stTests?Math.round(results.reduce(function(s,r){return s+r.accuracy},0)/stTests):0;
+
+  var subStats={};
+  results.forEach(function(r){
+    if(!subStats[r.subject]) subStats[r.subject]={correct:0,total:0,tests:0};
+    subStats[r.subject].correct+=r.correct;
+    subStats[r.subject].total+=r.total;
+    subStats[r.subject].tests++;
   });
-  
-  document.getElementById('adminContent').innerHTML=`
-  <div class="grid-4 mb-24">
-    <div class="card stat-card"><div class="stat-value">${totalQ}+</div><div class="stat-label">Total Questions</div></div>
-    <div class="card stat-card"><div class="stat-value">${teacherQ.length}</div><div class="stat-label">Teacher Added</div></div>
-    <div class="card stat-card"><div class="stat-value">7</div><div class="stat-label">Classes Covered</div></div>
-    <div class="card stat-card"><div class="stat-value">${pyqCount}+</div><div class="stat-label">PYQs</div></div>
-  </div>
-  
-  <div class="grid-2">
-    <div class="card-static">
-      <h3 style="font-size:16px;margin-bottom:16px">Add Question</h3>
-      <div class="input-group"><label>Class</label><select id="adminClass" onchange="updateAdminSubjects()"><option value="">Select</option>${Object.keys(CURRICULUM).map(c=>'<option value="'+c+'">Class '+c+'</option>').join('')}</select></div>
-      <div class="input-group"><label>Subject</label><select id="adminSubject" onchange="updateAdminChapters()"><option value="">Select</option></select></div>
-      <div class="input-group"><label>Chapter</label><select id="adminChapter"><option value="">Select</option></select></div>
-      <div class="input-group"><label>Question Text</label><textarea id="adminQText" rows="3" placeholder="Enter question..."></textarea></div>
-      <div class="input-group"><label>Option A</label><input id="adminOA" placeholder="Option A"></div>
-      <div class="input-group"><label>Option B</label><input id="adminOB" placeholder="Option B"></div>
-      <div class="input-group"><label>Option C</label><input id="adminOC" placeholder="Option C"></div>
-      <div class="input-group"><label>Option D</label><input id="adminOD" placeholder="Option D"></div>
-      <div class="input-group"><label>Correct Option</label><select id="adminCorrect"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>
-      <button class="btn btn-primary" onclick="saveAdminQuestion()">Save Question</button>
-    </div>
-    <div class="card-static">
-      <h3 style="font-size:16px;margin-bottom:16px">Bank Summary by Class</h3>
-      ${classesHtml}
-    </div>
-  </div>`;
+
+  var subHtml='';
+  Object.keys(subStats).forEach(function(sub){
+    var s=subStats[sub];
+    var acc=s.total?Math.round(s.correct/s.total*100):0;
+    subHtml+='<div style="margin-bottom:10px"><div class="flex justify-between items-center" style="margin-bottom:4px"><span style="font-size:14px">'+sub.charAt(0).toUpperCase()+sub.slice(1)+' ('+s.tests+' tests)</span><span style="font-size:13px;font-weight:600;color:var(--primary)">'+acc+'%</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+acc+'%"></div></div></div>';
+  });
+
+  // Weak chapters for this student
+  var chStats={};
+  results.forEach(function(r){
+    if(r.questions){
+      r.questions.forEach(function(q,i){
+        if(!chStats[q.chapter]) chStats[q.chapter]={correct:0,total:0};
+        chStats[q.chapter].total++;
+        if(r.answers&&r.answers[i]&&r.answers[i]===q.correct) chStats[q.chapter].correct++;
+      });
+    }
+  });
+  var weakCh=Object.keys(chStats).map(function(k){return{chapter:k,accuracy:chStats[k].total?Math.round(chStats[k].correct/chStats[k].total*100):0}}).filter(function(c){return c.accuracy<60}).sort(function(a,b){return a.accuracy-b.accuracy}).slice(0,5);
+  var weakChHtml='';
+  weakCh.forEach(function(c){weakChHtml+='<div class="table-row"><span style="flex:1;font-size:13px">'+c.chapter+'</span><span class="badge '+(c.accuracy<30?'badge-red':'badge-orange')+'">'+c.accuracy+'%</span></div>'});
+  if(!weakChHtml) weakChHtml='<p style="color:var(--text3);font-size:13px">No weak chapters identified.</p>';
+
+  detailEl.innerHTML='<div class="flex justify-between items-center mb-16"><h3 style="font-size:16px">'+t('student_details')+': '+student.name+'</h3><button class="btn btn-secondary" style="font-size:12px" onclick="document.getElementById(\'adminStudentDetail\').classList.add(\'hidden\')">'+t('back_to_overview')+'</button></div>'+
+  '<div class="grid-3 mb-16"><div class="card-static text-center"><div style="font-size:20px;font-weight:700">'+student.class+'</div><div style="font-size:11px;color:var(--text3)">'+t('student_class')+'</div></div><div class="card-static text-center"><div style="font-size:20px;font-weight:700">'+stTests+'</div><div style="font-size:11px;color:var(--text3)">'+t('student_tests')+'</div></div><div class="card-static text-center"><div style="font-size:20px;font-weight:700">'+stAcc+'%</div><div style="font-size:11px;color:var(--text3)">'+t('student_accuracy')+'</div></div></div>'+
+  '<div class="grid-2"><div><h4 style="font-size:14px;margin-bottom:12px">'+t('subjects_attempted')+'</h4>'+(subHtml||'<p style="color:var(--text3)">No subjects attempted yet.</p>')+'</div><div><h4 style="font-size:14px;margin-bottom:12px">'+t('weak_chapters')+'</h4>'+weakChHtml+'</div></div>';
+
+  detailEl.scrollIntoView({behavior:'smooth'});
 }
 
 function updateAdminSubjects(){
-  let cls=document.getElementById('adminClass').value;
-  let sel=document.getElementById('adminSubject');
+  var cls=document.getElementById('adminClass').value;
+  var sel=document.getElementById('adminSubject');
   sel.innerHTML='<option value="">Select</option>';
   if(cls&&CURRICULUM[cls]){
-    Object.entries(CURRICULUM[cls].subjects).forEach(([k,v])=>{
-      sel.innerHTML+=`<option value="${k}">${v.name}</option>`;
+    Object.keys(CURRICULUM[cls].subjects).forEach(function(k){
+      sel.innerHTML+='<option value="'+k+'">'+CURRICULUM[cls].subjects[k].name+'</option>';
     });
   }
   document.getElementById('adminChapter').innerHTML='<option value="">Select</option>';
 }
-
 function updateAdminChapters(){
-  let cls=document.getElementById('adminClass').value;
-  let sub=document.getElementById('adminSubject').value;
-  let sel=document.getElementById('adminChapter');
+  var cls=document.getElementById('adminClass').value;
+  var sub=document.getElementById('adminSubject').value;
+  var sel=document.getElementById('adminChapter');
   sel.innerHTML='<option value="">Select</option>';
   if(cls&&sub&&CURRICULUM[cls]&&CURRICULUM[cls].subjects[sub]){
-    CURRICULUM[cls].subjects[sub].chapters.forEach(ch=>{
-      sel.innerHTML+=`<option value="${ch}">${ch}</option>`;
+    CURRICULUM[cls].subjects[sub].chapters.forEach(function(ch){
+      sel.innerHTML+='<option value="'+ch+'">'+ch+'</option>';
     });
   }
 }
-
 function saveAdminQuestion(){
-  let cls=document.getElementById('adminClass').value;
-  let sub=document.getElementById('adminSubject').value;
-  let ch=document.getElementById('adminChapter').value;
-  let text=document.getElementById('adminQText').value;
-  let opts=[document.getElementById('adminOA').value,document.getElementById('adminOB').value,document.getElementById('adminOC').value,document.getElementById('adminOD').value];
-  let correct=+document.getElementById('adminCorrect').value;
-  
-  if(!cls||!sub||!ch||!text||opts.some(o=>!o)){
-    alert('Please fill in all fields.');
+  var cls=document.getElementById('adminClass').value;
+  var sub=document.getElementById('adminSubject').value;
+  var ch=document.getElementById('adminChapter').value;
+  var text=document.getElementById('adminQText').value;
+  var opts=[document.getElementById('adminOA').value,document.getElementById('adminOB').value,document.getElementById('adminOC').value,document.getElementById('adminOD').value];
+  var correct=+document.getElementById('adminCorrect').value;
+  if(!cls||!sub||!ch||!text||opts.some(function(o){return !o})){
+    alert(t('fill_all_fields'));
     return;
   }
-  
-  let q={
-    id:Date.now().toString(36),
-    class:+cls,subject:sub,chapter:ch,
-    prompt:text,options:opts,correct:opts[correct],
-    explanation:'Teacher-added question.',difficulty:'medium',type:'MCQ',marks:2
-  };
-  
+  var q={id:Date.now().toString(36),class:+cls,subject:sub,chapter:ch,prompt:text,options:opts,correct:opts[correct],explanation:'Teacher-added question.',difficulty:'medium',type:'MCQ',marks:2};
   state.teacherQuestions.push(q);
   localStorage.setItem('itp_teacher_q',JSON.stringify(state.teacherQuestions));
-  alert('Question saved successfully!');
-  
-  // Clear form
+  alert(t('question_saved'));
   document.getElementById('adminQText').value='';
-  ['adminOA','adminOB','adminOC','adminOD'].forEach(id=>document.getElementById(id).value='');
+  ['adminOA','adminOB','adminOC','adminOD'].forEach(function(id){document.getElementById(id).value=''});
   renderAdmin();
 }
 
 // ============== INIT ==============
-renderDashboard();
+checkAuth();
 </script>
 </body>
 </html>
