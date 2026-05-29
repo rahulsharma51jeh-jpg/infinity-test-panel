@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+<title>Infinity Test Panel — BSEB Smart Exam Platform</title>
+<style>
+:root{--brand:#4f46e5;--brand2:#06b6d4;--grad:linear-gradient(135deg,#6366f1,#06b6d4);--r:16px;--rs:10px}
+[data-theme=light]{--bg:#f4f6fb;--surface:#fff;--s2:#f1f5f9;--text:#0f172a;--soft:#475569;--muted:#94a3b8;--border:#e2e8f0;--easy:#16a34a;--med:#d97706;--hard:#dc2626;--okbg:#dcfce7;--okfg:#166534;--nobg:#fee2e2;--nofg:#991b1b}
+[data-theme=dark]{--bg:#0b1020;--surface:#141b33;--s2:#1b2342;--text:#e6ebf5;--soft:#aab4cf;--muted:#6b7796;--border:#25304f;--easy:#22c55e;--med:#f59e0b;--hard:#f87171;--okbg:#064e3b;--okfg:#bbf7d0;--nobg:#4c1d24;--nofg:#fecaca}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,"Noto Sans Devanagari",Arial,sans-serif;background:var(--bg);color:var(--text);transition:.25s}
+h1,h2,h3,h4{margin:0 0 .4em;line-height:1.2}
+p{line-height:1.6;color:var(--soft)}
+button{font-family:inherit;cursor:pointer}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:12px 16px;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:18px}
+.brand small{display:block;font-weight:500;font-size:.66rem;color:var(--muted)}
+.nav{display:flex;gap:4px;margin-left:8px;flex:1;overflow-x:auto}
+.nav button{padding:8px 14px;border:none;border-radius:999px;font-size:.88rem;font-weight:700;color:var(--soft);background:transparent;white-space:nowrap}
+.nav button:hover{background:var(--s2);color:var(--text)}
+.nav button.active{background:var(--brand);color:#fff}
+.actions{display:flex;gap:8px;margin-left:auto}
+.icon-btn{border:1px solid var(--border);background:var(--s2);color:var(--text);min-width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:1.05rem;font-weight:700;padding:0 10px}
+.wrap{max-width:1140px;margin:0 auto;padding:20px 16px 96px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 2px 10px rgba(2,6,23,.05)}
+.pad{padding:18px}
+.grid{display:grid;gap:16px}
+.c4{grid-template-columns:repeat(4,1fr)}.c3{grid-template-columns:repeat(3,1fr)}.c2{grid-template-columns:repeat(2,1fr)}
+.muted{color:var(--muted)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.row:last-child{border:none}
+.hero{position:relative;overflow:hidden;border-radius:var(--r);padding:26px;color:#fff;background:var(--grad)}
+.hero h1{font-size:1.55rem}.hero p{color:rgba(255,255,255,.9);max-width:560px}
+.hero .deco{position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.12)}
+.ha{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);padding:11px 18px;border-radius:12px;font-weight:700;font-size:.92rem;transition:.12s}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--grad);color:#fff;border:none;box-shadow:0 8px 20px rgba(79,70,229,.35)}
+.btn.ghost{background:transparent}
+.btn.block{width:100%;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.hero .btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff}
+.hero .btn.primary{background:#fff;color:var(--brand)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:.8rem;font-weight:700;border:1px solid var(--border);background:var(--s2);color:var(--soft);user-select:none}
+.chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.chip.sm{font-size:.7rem;padding:3px 9px}
+.optrow{display:flex;flex-wrap:wrap;gap:8px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.tile{border:1.5px solid var(--border);background:var(--s2);border-radius:12px;padding:12px;text-align:center;font-weight:700;font-size:.88rem;color:var(--text)}
+.tile:hover{border-color:var(--brand)}
+.tile.active{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,transparent);color:var(--brand)}
+.tile .ic{font-size:1.5rem;display:block;margin-bottom:4px}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.7rem;font-weight:800}
+.badge.easy{background:color-mix(in srgb,var(--easy) 18%,transparent);color:var(--easy)}
+.badge.medium{background:color-mix(in srgb,var(--med) 18%,transparent);color:var(--med)}
+.badge.hard{background:color-mix(in srgb,var(--hard) 18%,transparent);color:var(--hard)}
+.badge.type{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
+.badge.pyq{background:color-mix(in srgb,var(--brand2) 22%,transparent);color:var(--brand2)}
+.field{margin-bottom:18px}.field>label{display:block;font-weight:700;margin-bottom:8px;font-size:.92rem}
+input[type=range]{width:100%;accent-color:var(--brand)}
+input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--s2);color:var(--text);font-family:inherit;font-size:.95rem}
+textarea{resize:vertical;min-height:80px}
+.stat{padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:1.1rem;background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.stat .v{font-size:1.7rem;font-weight:800}.stat .l{font-size:.78rem;color:var(--muted);font-weight:600}
+.qmeta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.qprompt{font-size:1.06rem;font-weight:600;white-space:pre-wrap;line-height:1.55;margin:8px 0 18px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);background:var(--s2);border-radius:12px;padding:12px 14px;text-align:left;color:var(--text);font-size:.96rem;width:100%}
+.opt:hover{border-color:var(--brand)}
+.opt.sel{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.opt.correct{border-color:var(--easy);background:var(--okbg);color:var(--okfg)}
+.opt.wrong{border-color:var(--hard);background:var(--nobg);color:var(--nofg)}
+.opt .k{width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;font-weight:800;background:var(--surface);border:1px solid var(--border)}
+.runner{display:grid;grid-template-columns:1fr 240px;gap:18px;align-items:start}
+.rhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:1.05rem;padding:8px 14px;border-radius:12px;background:var(--s2);border:1px solid var(--border)}
+.timer.warn{color:var(--hard);border-color:var(--hard)}
+.palette{position:sticky;top:78px}
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.pbtn{aspect-ratio:1;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);font-weight:800;font-size:.85rem}
+.pbtn.done{background:var(--easy);color:#fff;border-color:var(--easy)}
+.pbtn.cur{outline:3px solid var(--brand);outline-offset:1px}
+.ring{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;margin:14px auto}
+.ring .in{width:116px;height:116px;border-radius:50%;background:var(--surface);display:grid;place-items:center;text-align:center}
+.ring .in b{font-size:1.9rem;display:block}
+.rev{border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+.rev.correct{border-left:4px solid var(--easy)}.rev.wrong{border-left:4px solid var(--hard)}.rev.skip{border-left:4px solid var(--muted)}
+.exp{margin-top:10px;padding:12px;border-radius:10px;background:var(--s2);font-size:.9rem}
+.steps{margin:6px 0 0;padding-left:18px}.steps li{margin:4px 0;color:var(--soft)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:10px}
+.bcol{flex:1;min-width:24px;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%}
+.bar{width:70%;border-radius:8px 8px 0 0;background:var(--grad);min-height:4px}
+.blab{font-size:.7rem;color:var(--muted)}.bval{font-size:.72rem;font-weight:800}
+.prog{height:8px;border-radius:999px;background:var(--s2);overflow:hidden;margin-top:4px}.prog>span{display:block;height:100%;background:var(--grad)}
+.empty{text-align:center;padding:36px 16px;color:var(--muted)}.empty .e{font-size:2.4rem}
+.sectitle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:24px 0 12px}.sectitle h2{font-size:1.15rem}
+.bnav{display:none}
+.fade{animation:f .3s ease}@keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.spin{width:42px;height:42px;border-radius:50%;border:4px solid var(--s2);border-top-color:var(--brand);animation:sp .8s linear infinite;margin:16px auto}@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:900px){.c4{grid-template-columns:repeat(2,1fr)}.c3,.c2{grid-template-columns:1fr}.runner{grid-template-columns:1fr}.palette{position:static}}
+@media(max-width:640px){.nav{display:none}.wrap{padding:16px 12px 92px}
+.bnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:60;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--border);justify-content:space-around;padding:6px 2px}
+.bnav button{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.6rem;font-weight:700;color:var(--muted);padding:4px 6px;border-radius:10px}
+.bnav button.active{color:var(--brand)}.bnav .bi{font-size:1.2rem}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ===== Infinity Test Panel — standalone single-file build (no server needed) ===== */
+"use strict";
+
+/* ---------- Subject & chapter metadata ---------- */
+var SUBJ = {
+  science:{n:"Science",hi:"विज्ञान",ic:"🔬"}, math:{n:"Mathematics",hi:"गणित",ic:"📐"},
+  sst:{n:"Social Science",hi:"सामाजिक विज्ञान",ic:"🌏"}, english:{n:"English",hi:"अंग्रेज़ी",ic:"📖"},
+  hindi:{n:"Hindi",hi:"हिन्दी",ic:"📝"}, physics:{n:"Physics",hi:"भौतिकी",ic:"🧲"},
+  chemistry:{n:"Chemistry",hi:"रसायन",ic:"⚗️"}, biology:{n:"Biology",hi:"जीव विज्ञान",ic:"🧬"}
+};
+var CHAP = {
+  light:{n:"Light – Reflection & Refraction",hi:"प्रकाश"}, "chem-react":{n:"Chemical Reactions",hi:"रासायनिक अभिक्रियाएँ"},
+  "life":{n:"Life Processes",hi:"जैव प्रक्रम"}, electricity:{n:"Electricity",hi:"विद्युत"}, acids:{n:"Acids, Bases & Salts",hi:"अम्ल, क्षारक एवं लवण"},
+  carbon:{n:"Carbon & its Compounds",hi:"कार्बन एवं यौगिक"}, "real":{n:"Real Numbers",hi:"वास्तविक संख्याएँ"},
+  quad:{n:"Quadratic Equations",hi:"द्विघात समीकरण"}, trig:{n:"Trigonometry",hi:"त्रिकोणमिति"}, ap:{n:"Arithmetic Progressions",hi:"समांतर श्रेढ़ी"},
+  "nat-india":{n:"Nationalism in India",hi:"भारत में राष्ट्रवाद"}, power:{n:"Power Sharing",hi:"सत्ता की साझेदारी"}, resources:{n:"Resources & Development",hi:"संसाधन एवं विकास"},
+  grammar:{n:"Grammar",hi:"व्याकरण"}, vyakaran:{n:"Vyakaran",hi:"व्याकरण"},
+  electrostatics:{n:"Electric Charges & Fields",hi:"विद्युत आवेश तथा क्षेत्र"}, current:{n:"Current Electricity",hi:"विद्युत धारा"},
+  solutions:{n:"Solutions",hi:"विलयन"}, genetics:{n:"Inheritance & Variation",hi:"वंशागति तथा विविधता"}, integers:{n:"Integers",hi:"पूर्णांक"}, algebra:{n:"Algebra",hi:"बीजगणित"}
+};
+var TYPE = {mcq:{n:"Objective (MCQ)",hi:"वस्तुनिष्ठ"}, assertion:{n:"Assertion-Reason",hi:"अभिकथन-कारण"}, numerical:{n:"Numerical",hi:"संख्यात्मक"}, concept:{n:"Concept",hi:"अवधारणा"}, subjective:{n:"Subjective",hi:"विषयनिष्ठ"}, casestudy:{n:"Case Study",hi:"केस स्टडी"}};
+
+/* ---------- Seed question bank ---------- */
+var QUESTIONS = [
+{id:"q1",cls:10,sub:"science",chap:"light",type:"mcq",diff:"easy",marks:1,pyq:[2019,2022],
+ q:"The image formed by a plane mirror is always:",qHi:"समतल दर्पण द्वारा बना प्रतिबिंब हमेशा होता है:",
+ opts:["Real and inverted","Virtual and erect","Real and erect","Virtual and inverted"],
+ optsHi:["वास्तविक तथा उल्टा","आभासी तथा सीधा","वास्तविक तथा सीधा","आभासी तथा उल्टा"],ans:1,
+ exp:"A plane mirror always forms a virtual, erect image of the same size.",expHi:"समतल दर्पण हमेशा समान आकार का आभासी, सीधा प्रतिबिंब बनाता है।"},
+{id:"q2",cls:10,sub:"science",chap:"light",type:"numerical",diff:"medium",marks:3,pyq:[2020],
+ q:"A convex lens has focal length 20 cm. An object is 30 cm in front of it. Find the image distance.",
+ qHi:"उत्तल लेंस की फोकस दूरी 20 cm है। वस्तु इसके सामने 30 cm पर है। प्रतिबिंब दूरी ज्ञात कीजिए।",
+ ansText:"v = 60 cm (real image).",steps:["Lens formula 1/v − 1/u = 1/f","f=+20, u=−30","1/v = 1/20 − 1/30 = 1/60","v = 60 cm"]},
+{id:"q3",cls:10,sub:"science",chap:"chem-react",type:"mcq",diff:"easy",marks:1,pyq:[2018,2021,2023],
+ q:"The reaction 2H₂ + O₂ → 2H₂O is an example of a:",qHi:"अभिक्रिया 2H₂ + O₂ → 2H₂O किसका उदाहरण है:",
+ opts:["Decomposition","Displacement","Combination","Double displacement"],optsHi:["वियोजन","विस्थापन","संयोजन","द्वि-विस्थापन"],ans:2,
+ exp:"Two reactants combine to form one product — a combination reaction.",expHi:"दो अभिकारक मिलकर एक उत्पाद बनाते हैं — संयोजन अभिक्रिया।"},
+{id:"q4",cls:10,sub:"science",chap:"chem-react",type:"subjective",diff:"medium",marks:2,pyq:[2017,2022],
+ q:"Balance the equation: Fe + H₂O → Fe₃O₄ + H₂",qHi:"समीकरण संतुलित कीजिए: Fe + H₂O → Fe₃O₄ + H₂",
+ ansText:"3Fe + 4H₂O → Fe₃O₄ + 4H₂",steps:["Balance Fe → 3Fe","Balance O → 4H₂O","Balance H → 4H₂","3Fe + 4H₂O → Fe₃O₄ + 4H₂"]},
+{id:"q5",cls:10,sub:"science",chap:"life",type:"mcq",diff:"medium",marks:1,pyq:[2019],
+ q:"During anaerobic respiration in human muscles, glucose breaks down into:",qHi:"मानव मांसपेशियों में अवायवीय श्वसन में ग्लूकोज बनता है:",
+ opts:["Ethanol and CO₂","Lactic acid","CO₂ and water","Pyruvate only"],optsHi:["इथेनॉल तथा CO₂","लैक्टिक अम्ल","CO₂ तथा जल","केवल पाइरुवेट"],ans:1,
+ exp:"Lack of oxygen converts pyruvate to lactic acid, causing cramps.",expHi:"ऑक्सीजन की कमी से पाइरुवेट लैक्टिक अम्ल में बदलता है।"},
+{id:"q6",cls:10,sub:"science",chap:"electricity",type:"numerical",diff:"medium",marks:3,pyq:[2021],
+ q:"A current of 0.5 A flows through a resistor across a 10 V battery. Find the resistance.",
+ qHi:"10 V बैटरी पर प्रतिरोधक से 0.5 A धारा बहती है। प्रतिरोध ज्ञात कीजिए।",
+ ansText:"R = 20 Ω",steps:["V = IR","R = V/I = 10/0.5","R = 20 Ω"]},
+{id:"q7",cls:10,sub:"science",chap:"acids",type:"mcq",diff:"easy",marks:1,pyq:[2018,2023],
+ q:"A solution turns blue litmus red. Its pH is most likely:",qHi:"एक विलयन नीले लिटमस को लाल करता है। इसका pH है:",
+ opts:["8","7","10","3"],optsHi:["8","7","10","3"],ans:3,
+ exp:"Turning blue litmus red indicates an acid (pH < 7).",expHi:"नीले लिटमस का लाल होना अम्ल दर्शाता है (pH < 7)।"},
+{id:"q8",cls:10,sub:"science",chap:"carbon",type:"concept",diff:"medium",marks:2,
+ q:"Why does carbon form a very large number of compounds? Give two reasons.",qHi:"कार्बन इतने अधिक यौगिक क्यों बनाता है? दो कारण दीजिए।",
+ ansText:"Catenation and tetravalency.",steps:["Catenation: carbon links to form long chains/rings.","Tetravalency: 4 valence electrons form strong covalent bonds."]},
+{id:"q9",cls:10,sub:"math",chap:"real",type:"numerical",diff:"easy",marks:2,pyq:[2019,2022],
+ q:"Find the HCF of 96 and 404 by prime factorisation.",qHi:"96 तथा 404 का HCF अभाज्य गुणनखंडन से ज्ञात कीजिए।",
+ ansText:"HCF = 4",steps:["96 = 2⁵ × 3","404 = 2² × 101","Common = 2² = 4"]},
+{id:"q10",cls:10,sub:"math",chap:"quad",type:"mcq",diff:"medium",marks:1,pyq:[2020,2023],
+ q:"The roots of x² − 4x + 4 = 0 are:",qHi:"x² − 4x + 4 = 0 के मूल हैं:",
+ opts:["Real and distinct","Real and equal","Imaginary","No roots"],optsHi:["वास्तविक तथा भिन्न","वास्तविक तथा बराबर","काल्पनिक","कोई मूल नहीं"],ans:1,
+ exp:"D = 16 − 16 = 0, so roots are real and equal (x = 2, 2).",expHi:"D = 16 − 16 = 0, अतः मूल वास्तविक तथा बराबर हैं।"},
+{id:"q11",cls:10,sub:"math",chap:"trig",type:"subjective",diff:"hard",marks:3,pyq:[2018],
+ q:"Prove that (1 + tan²θ) = sec²θ.",qHi:"सिद्ध कीजिए कि (1 + tan²θ) = sec²θ।",
+ ansText:"Divide sin²θ + cos²θ = 1 by cos²θ.",steps:["sin²θ + cos²θ = 1","Divide by cos²θ","tan²θ + 1 = sec²θ"]},
+{id:"q12",cls:10,sub:"math",chap:"ap",type:"numerical",diff:"medium",marks:2,pyq:[2021],
+ q:"Find the 15th term of the AP: 3, 7, 11, 15, ...",qHi:"समांतर श्रेढ़ी 3, 7, 11, 15, ... का 15वाँ पद ज्ञात कीजिए।",
+ ansText:"a₁₅ = 59",steps:["a=3, d=4","aₙ = a + (n−1)d","a₁₅ = 3 + 14×4 = 59"]},
+{id:"q13",cls:10,sub:"sst",chap:"nat-india",type:"mcq",diff:"easy",marks:1,pyq:[2017,2020,2022],
+ q:"The Non-Cooperation Movement was launched by Mahatma Gandhi in:",qHi:"असहयोग आंदोलन महात्मा गांधी द्वारा किस वर्ष आरंभ हुआ:",
+ opts:["1919","1920","1930","1942"],optsHi:["1919","1920","1930","1942"],ans:1,
+ exp:"Launched in 1920 after Jallianwala Bagh and the Khilafat issue.",expHi:"जलियांवाला बाग व खिलाफत के बाद 1920 में आरंभ हुआ।"},
+{id:"q14",cls:10,sub:"sst",chap:"power",type:"concept",diff:"medium",marks:3,
+ q:"What is 'power sharing'? Why is it desirable in a democracy?",qHi:"'सत्ता की साझेदारी' क्या है? लोकतंत्र में यह क्यों वांछनीय है?",
+ ansText:"Distribution of power among organs/levels; reduces conflict, ensures stability.",steps:["Power shared among organs and levels of govt.","Prudential: reduces conflict, ensures stability.","Moral: spirit of democracy."]},
+{id:"q15",cls:10,sub:"sst",chap:"resources",type:"mcq",diff:"medium",marks:1,pyq:[2019],
+ q:"Which soil is most suitable for growing cotton?",qHi:"कपास उगाने के लिए कौन-सी मिट्टी उपयुक्त है?",
+ opts:["Laterite","Black","Alluvial","Arid"],optsHi:["लैटेराइट","काली","जलोढ़","शुष्क"],ans:1,
+ exp:"Black soil (regur) is moisture-retentive — ideal for cotton.",expHi:"काली मिट्टी (रेगुर) नमी धारण करती है — कपास के लिए आदर्श।"},
+{id:"q16",cls:10,sub:"english",chap:"grammar",type:"mcq",diff:"easy",marks:1,pyq:[2021],
+ q:"Change into passive voice: 'The teacher teaches the students.'",qHi:"कर्मवाच्य में बदलें: 'The teacher teaches the students.'",
+ opts:["The students are taught by the teacher.","The students were taught by the teacher.","The students are being taught by the teacher.","The students teach the teacher."],ans:0,
+ exp:"Simple present passive: 'is/are + past participle'.",expHi:"साधारण वर्तमान कर्मवाच्य: 'is/are + past participle'।"},
+{id:"q17",cls:10,sub:"hindi",chap:"vyakaran",type:"mcq",diff:"medium",marks:1,pyq:[2018,2022],
+ q:"'चारु चंद्र की चंचल किरणें' में कौन-सा अलंकार है?",qHi:"'चारु चंद्र की चंचल किरणें' में कौन-सा अलंकार है?",
+ opts:["अनुप्रास","यमक","श्लेष","उपमा"],optsHi:["अनुप्रास","यमक","श्लेष","उपमा"],ans:0,
+ exp:"'च' वर्ण की आवृत्ति के कारण अनुप्रास अलंकार है।",expHi:"'च' वर्ण की आवृत्ति के कारण अनुप्रास अलंकार है।"},
+{id:"q18",cls:12,sub:"physics",chap:"electrostatics",type:"numerical",diff:"medium",marks:3,pyq:[2019,2023],
+ q:"Two charges +2 μC and +3 μC are 30 cm apart in air. Find the force. (k = 9×10⁹)",
+ qHi:"+2 μC तथा +3 μC आवेश हवा में 30 cm दूर हैं। बल ज्ञात कीजिए। (k = 9×10⁹)",
+ ansText:"F = 0.6 N (repulsive)",steps:["F = k·q₁·q₂/r²","= 9e9 × 2e-6 × 3e-6 / 0.09","= 0.6 N (repulsive)"]},
+{id:"q19",cls:12,sub:"physics",chap:"electrostatics",type:"assertion",diff:"hard",marks:1,
+ q:"Assertion (A): E inside a charged hollow conductor is zero.\nReason (R): Net charge resides on the conductor's surface.",
+ qHi:"अभिकथन (A): आवेशित खोखले चालक के अंदर E शून्य है।\nकारण (R): कुल आवेश चालक की सतह पर रहता है।",
+ opts:["Both true, R explains A","Both true, R does NOT explain A","A true, R false","A false, R true"],
+ optsHi:["दोनों सत्य, R व्याख्या है","दोनों सत्य, R व्याख्या नहीं","A सत्य, R असत्य","A असत्य, R सत्य"],ans:0,
+ exp:"Charge on surface ⇒ enclosed charge zero ⇒ E = 0 inside (Gauss's law).",expHi:"आवेश सतह पर ⇒ अंदर परिबद्ध आवेश शून्य ⇒ E = 0 (गॉस नियम)।"},
+{id:"q20",cls:12,sub:"physics",chap:"current",type:"concept",diff:"medium",marks:2,pyq:[2020],
+ q:"State Kirchhoff's junction rule and the principle it is based on.",qHi:"किरचॉफ का संधि नियम व आधार सिद्धांत बताइए।",
+ ansText:"Current in = current out; based on conservation of charge.",steps:["Algebraic sum of currents at a junction = 0.","Based on conservation of electric charge."]},
+{id:"q21",cls:12,sub:"chemistry",chap:"solutions",type:"mcq",diff:"medium",marks:1,pyq:[2018,2022],
+ q:"Which of the following is a colligative property?",qHi:"निम्न में से कौन अणुसंख्यक गुण है?",
+ opts:["Viscosity","Surface tension","Osmotic pressure","Refractive index"],optsHi:["श्यानता","पृष्ठ तनाव","परासरण दाब","अपवर्तनांक"],ans:2,
+ exp:"Osmotic pressure depends on the number of solute particles.",expHi:"परासरण दाब विलेय कणों की संख्या पर निर्भर करता है।"},
+{id:"q22",cls:12,sub:"biology",chap:"genetics",type:"mcq",diff:"easy",marks:1,pyq:[2019,2021,2023],
+ q:"In a monohybrid cross, the F₂ phenotypic ratio is:",qHi:"एकसंकर संकरण में F₂ लक्षणप्ररूपी अनुपात है:",
+ opts:["1:1","3:1","9:3:3:1","1:2:1"],optsHi:["1:1","3:1","9:3:3:1","1:2:1"],ans:1,
+ exp:"Monohybrid cross gives 3:1 (dominant : recessive) in F₂.",expHi:"एकसंकर संकरण F₂ में 3:1 अनुपात देता है।"},
+{id:"q23",cls:9,sub:"math",chap:"real",type:"mcq",diff:"easy",marks:1,
+ q:"Which of the following is an irrational number?",qHi:"निम्न में से कौन अपरिमेय संख्या है?",
+ opts:["0.25","√2","3/4","−7"],optsHi:["0.25","√2","3/4","−7"],ans:1,
+ exp:"√2 is non-terminating, non-recurring ⇒ irrational.",expHi:"√2 अनवसानी, अनावर्ती ⇒ अपरिमेय।"},
+{id:"q24",cls:6,sub:"math",chap:"integers",type:"mcq",diff:"easy",marks:1,
+ q:"What is the value of (−5) + (+8)?",qHi:"(−5) + (+8) का मान क्या है?",
+ opts:["−13","3","13","−3"],optsHi:["−13","3","13","−3"],ans:1,
+ exp:"(−5) + 8 = 3.",expHi:"(−5) + 8 = 3।"}
+];
+
+/* ---------- Translations (UI chrome) ---------- */
+var T = {
+ en:{tagline:"AI-powered BSEB smart exam prep",dash:"Dashboard",gen:"AI Generator",pyq:"PYQ",ana:"Analytics",admin:"Admin",about:"About",
+  welcome:"Welcome back",sub:"Generate a test or continue your prep.",genTest:"Generate Test",boardMock:"Board Mock",pracPyq:"Practice PYQs",
+  testsTaken:"Tests taken",avgAcc:"Avg. accuracy",solved:"Questions solved",streak:"Day streak",recent:"Recent tests",noTests:"No tests yet — generate your first!",
+  weak:"Chapters to improve",noWeak:"Take a few tests to see focus areas.",genTitle:"AI Auto Test Generator",genSub:"Pick class, subject & chapters — balanced to the BSEB pattern.",
+  selClass:"Select class",selSub:"Select subject",selChap:"Select chapters (all if none)",diff:"Difficulty",mode:"Test mode",num:"Number of questions",
+  easy:"Easy",medium:"Medium",hard:"Hard",mixed:"Mixed",generate:"Generate",generating:"Composing your paper...",noQ:"No questions for this selection.",avail:"available",
+  timeLeft:"Time left",submit:"Submit Test",confirm:"Submit the test now?",next:"Next",prev:"Previous",clear:"Clear",mark:"Mark",attempted:"attempted",
+  resTitle:"Your Result",marks:"marks",correct:"Correct",incorrect:"Incorrect",skipped:"Skipped",accuracy:"Accuracy",timeTaken:"Time",avgQ:"Avg/Q",
+  review:"Review",retake:"Retake",home:"Home",yourAns:"Your answer",correctAns:"Correct answer",explain:"Explanation",solution:"Solution",
+  great:"Great job! Keep it up.",ok:"Good effort — review and retry.",low:"Focus on the explanations and practice more.",
+  pyqTitle:"Previous Year Questions",pyqSub:"Bihar Board questions; repeated ones highlighted.",repeated:"Repeated",appeared:"Appeared in",startPyq:"Start PYQ Practice",
+  anaTitle:"Performance Analytics",anaSub:"Track accuracy, speed & progress.",accTrend:"Accuracy trend",subjAcc:"Subject accuracy",reset:"Reset data",
+  adminTitle:"Teacher / Admin",adminSub:"Add questions to the bank.",addQ:"Add question",qText:"Question text",opt:"Options (mark correct)",saveQ:"Save question",bank:"Bank summary",total:"Total questions",
+  aboutT:"About",question:"Question",unattempted:"Unattempted"},
+ hi:{tagline:"एआई-संचालित BSEB स्मार्ट परीक्षा तैयारी",dash:"डैशबोर्ड",gen:"एआई जनरेटर",pyq:"विगत प्रश्न",ana:"विश्लेषण",admin:"एडमिन",about:"परिचय",
+  welcome:"वापसी पर स्वागत है",sub:"टेस्ट जनरेट करें या तैयारी जारी रखें।",genTest:"टेस्ट जनरेट करें",boardMock:"बोर्ड मॉक",pracPyq:"विगत प्रश्न हल करें",
+  testsTaken:"दिए टेस्ट",avgAcc:"औसत सटीकता",solved:"हल प्रश्न",streak:"दिन श्रृंखला",recent:"हाल के टेस्ट",noTests:"अभी कोई टेस्ट नहीं — पहला जनरेट करें!",
+  weak:"सुधार योग्य अध्याय",noWeak:"कुछ टेस्ट दें, फिर फोकस क्षेत्र दिखेंगे।",genTitle:"एआई ऑटो टेस्ट जनरेटर",genSub:"कक्षा, विषय व अध्याय चुनें — BSEB पैटर्न अनुसार।",
+  selClass:"कक्षा चुनें",selSub:"विषय चुनें",selChap:"अध्याय चुनें (खाली = सभी)",diff:"कठिनाई",mode:"टेस्ट मोड",num:"प्रश्न संख्या",
+  easy:"आसान",medium:"मध्यम",hard:"कठिन",mixed:"मिश्रित",generate:"जनरेट करें",generating:"पेपर तैयार हो रहा है...",noQ:"इस चयन हेतु कोई प्रश्न नहीं।",avail:"उपलब्ध",
+  timeLeft:"शेष समय",submit:"जमा करें",confirm:"टेस्ट अभी जमा करें?",next:"अगला",prev:"पिछला",clear:"हटाएँ",mark:"चिह्नित",attempted:"उत्तर दिए",
+  resTitle:"आपका परिणाम",marks:"अंक",correct:"सही",incorrect:"गलत",skipped:"छोड़े",accuracy:"सटीकता",timeTaken:"समय",avgQ:"औसत/प्रश्न",
+  review:"समीक्षा",retake:"दोबारा",home:"होम",yourAns:"आपका उत्तर",correctAns:"सही उत्तर",explain:"व्याख्या",solution:"हल",
+  great:"बहुत बढ़िया! जारी रखें।",ok:"अच्छा प्रयास — समीक्षा करें व पुनः प्रयास करें।",low:"व्याख्या पर ध्यान दें व अधिक अभ्यास करें।",
+  pyqTitle:"विगत वर्ष प्रश्न",pyqSub:"बिहार बोर्ड प्रश्न; दोहराए गए हाइलाइट हैं।",repeated:"दोहराया गया",appeared:"इन वर्षों में",startPyq:"विगत प्रश्न अभ्यास",
+  anaTitle:"प्रदर्शन विश्लेषण",anaSub:"सटीकता, गति व प्रगति देखें।",accTrend:"सटीकता प्रवृत्ति",subjAcc:"विषय सटीकता",reset:"डेटा रीसेट",
+  adminTitle:"शिक्षक / एडमिन",adminSub:"बैंक में प्रश्न जोड़ें।",addQ:"प्रश्न जोड़ें",qText:"प्रश्न पाठ",opt:"विकल्प (सही चिह्नित करें)",saveQ:"प्रश्न सहेजें",bank:"बैंक सारांश",total:"कुल प्रश्न",
+  aboutT:"परिचय",question:"प्रश्न",unattempted:"अनुत्तरित"}
+};
+
+/* ---------- State ---------- */
+var lang = localStorage.getItem("itp_lang") || "en";
+var theme = localStorage.getItem("itp_theme") || "light";
+var state = {view:"dash", gen:{cls:10,sub:"science",chaps:[],diff:"mixed",mode:"chapter",count:8}, test:null, cur:0, resp:{}, secLeft:0, timer:null, lastResult:null, admin:{cls:10,sub:"science",chap:"light",diff:"medium",opts:["","","",""],correct:0}};
+var KEYS=["A","B","C","D","E"];
+function t(k){return (T[lang]&&T[lang][k])||T.en[k]||k;}
+function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function sname(id){return lang==="hi"&&SUBJ[id]?SUBJ[id].hi:(SUBJ[id]?SUBJ[id].n:id);}
+function cname(id){return lang==="hi"&&CHAP[id]?CHAP[id].hi:(CHAP[id]?CHAP[id].n:id);}
+function tname(ty){return lang==="hi"&&TYPE[ty]?TYPE[ty].hi:(TYPE[ty]?TYPE[ty].n:ty);}
+function qtext(q){return lang==="hi"&&q.qHi?q.qHi:q.q;}
+function qopts(q){return lang==="hi"&&q.optsHi?q.optsHi:(q.opts||[]);}
+function qexp(q){return lang==="hi"&&q.expHi?q.expHi:q.exp;}
+
+/* ---------- Data helpers ---------- */
+function customQ(){try{return JSON.parse(localStorage.getItem("itp_custom")||"[]");}catch(e){return [];}}
+function allQ(){return QUESTIONS.concat(customQ());}
+function results(){try{return JSON.parse(localStorage.getItem("itp_results")||"[]");}catch(e){return [];}}
+function saveResult(r){var a=results();a.unshift(r);localStorage.setItem("itp_results",JSON.stringify(a.slice(0,100)));}
+function classes(){var s={};allQ().forEach(function(q){s[q.cls]=1;});return Object.keys(s).map(Number).sort(function(a,b){return a-b;});}
+function subjectsOf(cls){var s={};allQ().forEach(function(q){if(q.cls===cls)s[q.sub]=1;});return Object.keys(s);}
+function chaptersOf(cls,sub){var s={};allQ().forEach(function(q){if(q.cls===cls&&q.sub===sub)s[q.chap]=1;});return Object.keys(s);}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+/* ---------- Analytics ---------- */
+function overview(){var rs=results();var solved=0,corr=0,att=0;rs.forEach(function(r){solved+=r.attempted;att+=r.attempted;corr+=r.correct;});
+ return {tests:rs.length,solved:solved,acc:att?Math.round(corr/att*100):0,streak:streak(rs)};}
+function streak(rs){if(!rs.length)return 0;var d={};rs.forEach(function(r){d[new Date(r.at).toDateString()]=1;});var n=0,day=new Date();
+ if(!d[day.toDateString()])day.setDate(day.getDate()-1);while(d[day.toDateString()]){n++;day.setDate(day.getDate()-1);}return n;}
+function chapterStats(){var m={};results().forEach(function(r){(r.ans||[]).forEach(function(a){if(!a.att)return;var k=r.cls+"|"+r.sub+"|"+a.chap;if(!m[k])m[k]={cls:r.cls,sub:r.sub,chap:a.chap,total:0,correct:0};m[k].total++;if(a.correct)m[k].correct++;});});
+ return Object.keys(m).map(function(k){var s=m[k];s.acc=Math.round(s.correct/s.total*100);return s;});}
+function weakChapters(){return chapterStats().filter(function(s){return s.total>=2&&s.acc<60;}).sort(function(a,b){return a.acc-b.acc;}).slice(0,6);}
+function subjectStats(){var m={};results().forEach(function(r){if(!m[r.sub])m[r.sub]={sub:r.sub,total:0,correct:0};m[r.sub].total+=r.attempted;m[r.sub].correct+=r.correct;});
+ return Object.keys(m).map(function(k){var s=m[k];s.acc=s.total?Math.round(s.correct/s.total*100):0;return s;}).sort(function(a,b){return b.acc-a.acc;});}
+
+/* ---------- Generator ---------- */
+function availCount(){var g=state.gen;var p=allQ().filter(function(q){return q.cls===g.cls&&q.sub===g.sub;});
+ if(g.mode!=="full"&&g.chaps.length)p=p.filter(function(q){return g.chaps.indexOf(q.chap)>=0;});
+ if(g.mode==="pyq")p=p.filter(function(q){return q.pyq&&q.pyq.length;});return p.length;}
+function generate(){var g=state.gen;var p=allQ().filter(function(q){return q.cls===g.cls&&q.sub===g.sub;});
+ if(g.mode!=="full"&&g.chaps.length)p=p.filter(function(q){return g.chaps.indexOf(q.chap)>=0;});
+ if(g.mode==="pyq")p=p.filter(function(q){return q.pyq&&q.pyq.length;});
+ var sel;if(g.diff==="mixed"){sel=shuffle(p);}else{var ex=shuffle(p.filter(function(q){return q.diff===g.diff;}));var rest=shuffle(p.filter(function(q){return q.diff!==g.diff;}));sel=ex.concat(rest);}
+ sel=sel.slice(0,Math.min(g.count,p.length));
+ var totalMarks=sel.reduce(function(s,q){return s+q.marks;},0);
+ var dur=g.mode==="board"?180:Math.max(5,Math.round(totalMarks*1.25));
+ state.test={questions:sel,totalMarks:totalMarks,dur:dur,mode:g.mode,diff:g.diff,cls:g.cls,sub:g.sub};
+ state.cur=0;state.resp={};state.secLeft=dur*60;
+ setView("running");startTimer();}
+function startTimer(){if(state.timer)clearInterval(state.timer);state.timer=setInterval(function(){state.secLeft--;var el=document.getElementById("timer");
+ if(el){var m=Math.floor(state.secLeft/60),s=state.secLeft%60;el.textContent="⏱ "+t("timeLeft")+": "+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;el.className="timer"+(state.secLeft<=60?" warn":"");}
+ if(state.secLeft<=0){clearInterval(state.timer);submitTest(true);}},1000);}
+
+/* ---------- Submit & result ---------- */
+function submitTest(auto){if(!auto&&!confirm(t("confirm")))return;if(state.timer)clearInterval(state.timer);
+ var ansArr=state.test.questions.map(function(q){var r=state.resp[q.id];var obj=q.opts&&q.ans!=null;
+  var att=obj?(r&&r.idx!=null):(r&&r.txt&&r.txt.trim().length>0);var correct=obj?(r&&r.idx===q.ans):false;
+  return {id:q.id,chap:q.chap,att:!!att,correct:!!correct,marks:q.marks,awarded:correct?q.marks:0,idx:r?r.idx:null,txt:r?r.txt:""};});
+ var res={id:state.test.cls+"-"+Date.now(),at:Date.now(),cls:state.test.cls,sub:state.test.sub,mode:state.test.mode,
+  totalQ:state.test.questions.length,totalMarks:state.test.totalMarks,
+  awarded:ansArr.reduce(function(s,a){return s+a.awarded;},0),correct:ansArr.filter(function(a){return a.correct;}).length,
+  attempted:ansArr.filter(function(a){return a.att;}).length,dur:state.test.dur*60-state.secLeft,ans:ansArr,questions:state.test.questions};
+ saveResult(res);state.lastResult=res;setView("result");}
+
+/* ---------- Navigation ---------- */
+function setView(v){if(v!=="running"&&state.timer){clearInterval(state.timer);state.timer=null;}state.view=v;render();window.scrollTo(0,0);}
+function setLang(l){lang=l;localStorage.setItem("itp_lang",l);document.documentElement.lang=l;render();}
+function setTheme(th){theme=th;localStorage.setItem("itp_theme",th);document.documentElement.setAttribute("data-theme",th);render();}
+function toggleTheme(){setTheme(theme==="light"?"dark":"light");}
+function toggleLang(){setLang(lang==="en"?"hi":"en");}
+window.ITP={setView:setView,generate:generate,submitTest:submitTest,toggleTheme:toggleTheme,toggleLang:toggleLang};
+
+/* ---------- Generator interactions ---------- */
+ITP.gcls=function(c){state.gen.cls=c;var subs=subjectsOf(c);if(subs.indexOf(state.gen.sub)<0)state.gen.sub=subs[0];state.gen.chaps=[];render();};
+ITP.gsub=function(s){state.gen.sub=s;state.gen.chaps=[];render();};
+ITP.gtog=function(ch){var i=state.gen.chaps.indexOf(ch);if(i>=0)state.gen.chaps.splice(i,1);else state.gen.chaps.push(ch);render();};
+ITP.gset=function(f,v){state.gen[f]=v;render();};
+ITP.gcount=function(v){state.gen.count=+v;var el=document.getElementById("countlbl");if(el)el.textContent=v;};
+ITP.genGo=function(){if(availCount()===0)return;state.view="generating";render();setTimeout(generate,650);};
+
+/* ---------- Runner interactions ---------- */
+ITP.sel=function(i){var q=state.test.questions[state.cur];state.resp[q.id]={idx:i};render();};
+ITP.txt=function(v){var q=state.test.questions[state.cur];state.resp[q.id]={txt:v};};
+ITP.nav=function(d){var n=state.cur+d;if(n>=0&&n<state.test.questions.length){state.cur=n;render();}};
+ITP.goto=function(i){state.cur=i;render();};
+ITP.clr=function(){var q=state.test.questions[state.cur];delete state.resp[q.id];render();};
+
+/* ---------- Result ---------- */
+ITP.toggleReview=function(){state._rev=!state._rev;render();};
+
+/* ---------- PYQ ---------- */
+ITP.pcls=function(c){state.pyq=state.pyq||{};state.pyq.cls=c;var subs=subjectsOf(c);if(subs.indexOf(state.pyq.sub)<0)state.pyq.sub=subs[0];render();};
+ITP.psub=function(s){state.pyq=state.pyq||{};state.pyq.sub=s;render();};
+ITP.startPyq=function(){var p=state.pyq||{cls:10,sub:"science"};state.gen.cls=p.cls;state.gen.sub=p.sub;state.gen.chaps=[];state.gen.mode="pyq";state.gen.diff="mixed";state.gen.count=8;ITP.genGo();};
+
+/* ---------- Analytics ---------- */
+ITP.reset=function(){if(confirm("Clear all saved attempts?")){localStorage.removeItem("itp_results");render();}};
+
+/* ---------- Admin ---------- */
+ITP.acls=function(c){state.admin.cls=+c;var subs=subjectsOf(+c);if(subs.indexOf(state.admin.sub)<0)state.admin.sub=subs[0]||"science";render();};
+ITP.asub=function(s){state.admin.sub=s;render();};
+ITP.achap=function(c){state.admin.chap=c;};
+ITP.adiff=function(d){state.admin.diff=d;};
+ITP.aopt=function(i,v){state.admin.opts[i]=v;};
+ITP.acorrect=function(i){state.admin.correct=i;render();};
+ITP.aprompt=function(v){state.admin._q=v;};
+ITP.asave=function(){var a=state.admin;if(!a._q||a._q.trim().length<3||a.opts.some(function(o){return !o.trim();}))return;
+ var q={id:"c"+Date.now(),cls:a.cls,sub:a.sub,chap:a.chap||chaptersOf(a.cls,a.sub)[0],type:"mcq",diff:a.diff,marks:1,q:a._q.trim(),opts:a.opts.map(function(o){return o.trim();}),ans:a.correct};
+ var c=customQ();c.unshift(q);localStorage.setItem("itp_custom",JSON.stringify(c));
+ state.admin.opts=["","","",""];state.admin._q="";state.admin.correct=0;alert("Question saved to the bank!");render();};
+
+/* ===================== RENDER ===================== */
+var NAV=[["dash","🏠","dash"],["gen","🤖","gen"],["pyq","📜","pyq"],["ana","📊","ana"],["admin","🧑‍🏫","admin"]];
+function topbar(){
+ var n=NAV.map(function(x){return '<button class="'+(state.view===x[0]||(x[0]==="gen"&&state.view==="generating")?"active":"")+'" onclick="ITP.setView(\''+x[0]+'\')">'+t(x[2])+'</button>';}).join("");
+ return '<div class="topbar"><div class="brand"><span class="logo">∞</span><span>Infinity Test Panel<small>'+t("tagline")+'</small></span></div>'+
+  '<nav class="nav">'+n+'</nav><div class="actions">'+
+  '<button class="icon-btn" onclick="ITP.toggleLang()" title="Language">'+(lang==="en"?"हिं":"EN")+'</button>'+
+  '<button class="icon-btn" onclick="ITP.toggleTheme()" title="Theme">'+(theme==="light"?"🌙":"☀️")+'</button></div></div>';}
+function bottomnav(){return '<div class="bnav">'+NAV.map(function(x){return '<button class="'+(state.view===x[0]?"active":"")+'" onclick="ITP.setView(\''+x[0]+'\')"><span class="bi">'+x[1]+'</span>'+t(x[2])+'</button>';}).join("")+'</div>';}
+function stat(ic,v,l){return '<div class="card stat"><div class="ic">'+ic+'</div><span class="v">'+v+'</span><span class="l">'+l+'</span></div>';}
+
+function viewDash(){
+ var o=overview();var rs=results();var weak=weakChapters();
+ var stats='<div class="grid c4" style="margin-top:18px">'+stat("📝",o.tests,t("testsTaken"))+stat("🎯",o.acc+"%",t("avgAcc"))+stat("✅",o.solved,t("solved"))+stat("🔥",o.streak,t("streak"))+'</div>';
+ var recent=rs.length?rs.slice(0,5).map(function(r){var acc=r.attempted?Math.round(r.correct/r.attempted*100):0;
+   return '<div class="row"><div><strong>'+(SUBJ[r.sub]?SUBJ[r.sub].ic:"📘")+' Class '+r.cls+' · '+sname(r.sub)+'</strong><div class="muted" style="font-size:.8rem">'+new Date(r.at).toLocaleDateString()+'</div></div><div style="text-align:right"><strong>'+r.awarded+'/'+r.totalMarks+'</strong><div class="muted" style="font-size:.8rem">'+acc+'% '+t("accuracy")+'</div></div></div>';}).join(""):'<div class="empty"><div class="e">🚀</div><p>'+t("noTests")+'</p></div>';
+ var weakHtml=weak.length?weak.map(function(w){return '<div class="row"><div><strong>'+cname(w.chap)+'</strong><div class="muted" style="font-size:.8rem">'+sname(w.sub)+'</div></div><span class="chip active">'+w.acc+'%</span></div>';}).join(""):'<div class="empty"><div class="e">🌱</div><p>'+t("noWeak")+'</p></div>';
+ return '<section class="hero"><div class="deco"></div><h1>'+t("welcome")+'! 👋</h1><p>'+t("sub")+'</p><div class="ha">'+
+  '<button class="btn primary" onclick="ITP.setView(\'gen\')">🤖 '+t("genTest")+'</button>'+
+  '<button class="btn" onclick="ITP.gset(\'mode\',\'board\');ITP.setView(\'gen\')">🎓 '+t("boardMock")+'</button>'+
+  '<button class="btn" onclick="ITP.setView(\'pyq\')">📜 '+t("pracPyq")+'</button></div></section>'+stats+
+  '<div class="grid c2" style="margin-top:18px"><div class="card pad"><div class="sectitle" style="margin:0 0 10px"><h2>📋 '+t("recent")+'</h2></div>'+recent+'</div>'+
+  '<div class="card pad"><div class="sectitle" style="margin:0 0 10px"><h2>🧠 '+t("weak")+'</h2></div>'+weakHtml+'</div></div>';}
+
+function viewGen(){
+ var g=state.gen;var clsChips=classes().map(function(c){return '<button class="chip '+(g.cls===c?"active":"")+'" onclick="ITP.gcls('+c+')">Class '+c+'</button>';}).join("");
+ var subTiles=subjectsOf(g.cls).map(function(s){return '<button class="tile '+(g.sub===s?"active":"")+'" onclick="ITP.gsub(\''+s+'\')"><span class="ic">'+SUBJ[s].ic+'</span>'+sname(s)+'</button>';}).join("");
+ var chapChips=g.mode==="full"?'<p class="muted">Full syllabus — all chapters included.</p>':chaptersOf(g.cls,g.sub).map(function(c){return '<button class="chip '+(g.chaps.indexOf(c)>=0?"active":"")+'" onclick="ITP.gtog(\''+c+'\')">'+cname(c)+'</button>';}).join("");
+ var modes=[["chapter","Chapter"],["full","Full Syllabus"],["board","Board Mock"],["pyq","PYQ"],["revision","Revision"]];
+ var modeChips=modes.map(function(m){return '<button class="chip '+(g.mode===m[0]?"active":"")+'" onclick="ITP.gset(\'mode\',\''+m[0]+'\')">'+m[1]+'</button>';}).join("");
+ var diffs=["easy","medium","hard","mixed"];var diffChips=diffs.map(function(d){return '<button class="chip '+(g.diff===d?"active":"")+'" '+(g.mode==="pyq"?"disabled":"")+' onclick="ITP.gset(\'diff\',\''+d+'\')">'+t(d)+'</button>';}).join("");
+ var av=availCount();var maxc=Math.max(1,Math.min(20,av||1));if(g.count>maxc)g.count=maxc;
+ return '<div class="sectitle" style="margin-top:0"><div><h2>🤖 '+t("genTitle")+'</h2><p class="muted" style="margin:0">'+t("genSub")+'</p></div></div>'+
+  '<div class="grid c2"><div class="card pad">'+
+   '<div class="field"><label>'+t("selClass")+'</label><div class="optrow">'+clsChips+'</div></div>'+
+   '<div class="field"><label>'+t("selSub")+'</label><div class="tiles">'+subTiles+'</div></div>'+
+   '<div class="field"><label>'+t("selChap")+' <span class="muted">('+(g.chaps.length||"all")+')</span></label><div class="optrow">'+chapChips+'</div></div></div>'+
+  '<div class="card pad">'+
+   '<div class="field"><label>'+t("mode")+'</label><div class="optrow">'+modeChips+'</div></div>'+
+   '<div class="field"><label>'+t("diff")+'</label><div class="optrow">'+diffChips+'</div></div>'+
+   '<div class="field"><label>'+t("num")+': <strong id="countlbl">'+g.count+'</strong> <span class="muted">/ '+av+' '+t("avail")+'</span></label>'+
+    '<input type="range" min="1" max="'+maxc+'" value="'+g.count+'" oninput="ITP.gcount(this.value)"></div>'+
+   (av===0?'<p class="muted" style="color:var(--hard)">⚠️ '+t("noQ")+'</p>':'<p class="muted" style="font-size:.85rem">≈ '+Math.max(5,Math.round(g.count*1.25))+' min · BSEB pattern</p>')+
+   '<button class="btn primary block" '+(av===0?"disabled":"")+' onclick="ITP.genGo()">🤖 '+t("generate")+'</button></div></div>';}
+
+function viewGenerating(){return '<div class="empty" style="padding-top:80px"><div class="spin"></div><h2>🤖 '+t("generating")+'</h2><p>BSEB pattern · NCERT concepts</p></div>';}
+
+function viewRunning(){
+ var test=state.test;var q=test.questions[state.cur];var r=state.resp[q.id]||{};var obj=q.opts&&q.ans!=null;
+ var m=Math.floor(state.secLeft/60),s=state.secLeft%60;
+ var optsHtml=obj?'<div class="opts">'+qopts(q).map(function(o,i){return '<button class="opt '+(r.idx===i?"sel":"")+'" onclick="ITP.sel('+i+')"><span class="k">'+KEYS[i]+'</span><span>'+esc(o)+'</span></button>';}).join("")+'</div>'
+   :'<textarea placeholder="'+(lang==="hi"?"अपना उत्तर लिखें...":"Write your answer here...")+'" oninput="ITP.txt(this.value)">'+esc(r.txt||"")+'</textarea><p class="muted" style="font-size:.8rem">✍️ '+(lang==="hi"?"विषयनिष्ठ — जमा करने पर आदर्श उत्तर देखें।":"Subjective — see the model answer after submitting.")+'</p>';
+ var palette='<div class="pgrid">'+test.questions.map(function(qq,i){var rr=state.resp[qq.id];var done=rr&&(rr.idx!=null||(rr.txt&&rr.txt.trim()));return '<button class="pbtn '+(done?"done":"")+' '+(i===state.cur?"cur":"")+'" onclick="ITP.goto('+i+')">'+(i+1)+'</button>';}).join("")+'</div>';
+ var att=Object.keys(state.resp).filter(function(k){var x=state.resp[k];return x.idx!=null||(x.txt&&x.txt.trim());}).length;
+ var pyqB=q.pyq&&q.pyq.length?'<span class="badge pyq">PYQ '+q.pyq.join(", ")+'</span>':"";
+ return '<div class="rhead"><div class="brand"><span class="logo">∞</span><strong>Infinity Test Panel</strong></div>'+
+  '<div id="timer" class="timer'+(state.secLeft<=60?" warn":"")+'">⏱ '+t("timeLeft")+': '+(m<10?"0":"")+m+':'+(s<10?"0":"")+s+'</div>'+
+  '<button class="btn primary" onclick="ITP.submitTest(false)">'+t("submit")+'</button></div>'+
+  '<div class="runner"><div class="card pad"><div class="qmeta"><span class="badge type">'+tname(q.type)+'</span><span class="badge '+q.diff+'">'+t(q.diff)+'</span><span class="chip sm">'+q.marks+' '+t("marks")+'</span>'+pyqB+
+   '<span class="muted" style="margin-left:auto;font-weight:700">'+t("question")+' '+(state.cur+1)+'/'+test.questions.length+'</span></div>'+
+   '<div class="qprompt">'+esc(qtext(q))+'</div>'+optsHtml+
+   '<div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;align-items:center">'+
+    '<button class="btn" '+(state.cur===0?"disabled":"")+' onclick="ITP.nav(-1)">← '+t("prev")+'</button>'+
+    '<button class="btn ghost" onclick="ITP.clr()">'+t("clear")+'</button>'+
+    '<div style="margin-left:auto">'+(state.cur<test.questions.length-1?'<button class="btn primary" onclick="ITP.nav(1)">'+t("next")+' →</button>':'<button class="btn primary" onclick="ITP.submitTest(false)">'+t("submit")+'</button>')+'</div></div></div>'+
+   '<aside class="card pad palette"><strong>'+att+'/'+test.questions.length+' '+t("attempted")+'</strong>'+palette+
+   '<button class="btn primary block" onclick="ITP.submitTest(false)">'+t("submit")+'</button></aside></div>';}
+
+function viewResult(){
+ var r=state.lastResult;if(!r)return '<div class="empty"><div class="e">📊</div><p>No result.</p></div>';
+ var pct=r.totalMarks?Math.round(r.awarded/r.totalMarks*100):0;var acc=r.attempted?Math.round(r.correct/r.attempted*100):0;
+ var avg=r.attempted?Math.round(r.dur/r.attempted):0;var verdict=pct>=75?t("great"):pct>=40?t("ok"):t("low");
+ var color=pct>=75?"var(--easy)":pct>=40?"var(--med)":"var(--hard)";
+ var ring='<div class="ring" style="background:conic-gradient(var(--brand) '+pct+'%,var(--s2) 0)"><div class="in"><div><b>'+pct+'%</b><span class="muted" style="font-size:.78rem">'+r.awarded+'/'+r.totalMarks+' '+t("marks")+'</span></div></div></div>';
+ var mini='<div class="grid c4" style="margin-top:12px">'+
+   miniCard(t("correct"),r.correct,"var(--easy)")+miniCard(t("incorrect"),r.attempted-r.correct,"var(--hard)")+
+   miniCard(t("skipped"),r.totalQ-r.attempted,"var(--muted)")+miniCard(t("accuracy"),acc+"%","var(--brand)")+'</div>'+
+   '<div class="grid c2" style="margin-top:12px">'+miniCard(t("timeTaken"),Math.floor(r.dur/60)+"m "+(r.dur%60)+"s")+miniCard(t("avgQ"),avg+"s")+'</div>';
+ var rev=state._rev!==false?'<div style="margin-top:18px"><h3>🔍 '+t("review")+'</h3>'+r.questions.map(function(q,i){return reviewItem(q,i,r);}).join("")+'</div>':"";
+ return '<div class="card pad" style="text-align:center"><h2>🎉 '+t("resTitle")+'</h2><p class="muted" style="margin-top:0">'+(SUBJ[r.sub]?SUBJ[r.sub].ic:"")+' Class '+r.cls+' · '+sname(r.sub)+'</p>'+ring+
+  '<p style="font-weight:700;margin-top:6px;color:'+color+'">'+verdict+'</p>'+mini+
+  '<div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap">'+
+   '<button class="btn" onclick="ITP.toggleReview()">🔍 '+t("review")+'</button>'+
+   '<button class="btn" onclick="ITP.setView(\'gen\')">🔁 '+t("retake")+'</button>'+
+   '<button class="btn primary" onclick="ITP.setView(\'dash\')">🏠 '+t("home")+'</button></div></div>'+rev;}
+function miniCard(l,v,c){return '<div class="card pad" style="padding:12px;text-align:center"><div style="font-size:1.3rem;font-weight:800;'+(c?"color:"+c:"")+'">'+v+'</div><div class="muted" style="font-size:.78rem">'+l+'</div></div>';}
+function reviewItem(q,i,r){
+ var a=null;for(var j=0;j<r.ans.length;j++){if(r.ans[j].id===q.id){a=r.ans[j];break;}}
+ var obj=q.opts&&q.ans!=null;var cls=!a||!a.att?"skip":a.correct?"correct":"wrong";
+ var body;
+ if(obj){body='<div class="opts">'+qopts(q).map(function(o,k){var isC=k===q.ans;var isCh=a&&a.idx===k;var cc=isC?"correct":isCh?"wrong":"";return '<div class="opt '+cc+'"><span class="k">'+KEYS[k]+'</span><span>'+esc(o)+'</span><span style="margin-left:auto;font-size:.78rem;font-weight:700">'+(isC?"✓ "+t("correctAns"):isCh?t("yourAns"):"")+'</span></div>';}).join("")+'</div>';}
+ else{body='<div class="exp"><strong>'+t("yourAns")+':</strong><p style="margin:4px 0 0;white-space:pre-wrap">'+(a&&a.txt&&a.txt.trim()?esc(a.txt):"— "+t("unattempted")+" —")+'</p></div>'+
+   (q.ansText?'<div class="exp" style="border-left:3px solid var(--easy)"><strong>'+t("correctAns")+':</strong><p style="margin:4px 0 0;white-space:pre-wrap">'+esc(q.ansText)+'</p></div>':"");}
+ var steps=q.steps&&q.steps.length?'<div class="exp"><strong>🪜 '+t("solution")+':</strong><ol class="steps">'+q.steps.map(function(s){return '<li>'+esc(s)+'</li>';}).join("")+'</ol></div>':"";
+ var exp=qexp(q)?'<div class="exp"><strong>💡 '+t("explain")+':</strong><p style="margin:4px 0 0">'+esc(qexp(q))+'</p></div>':"";
+ var pyqB=q.pyq&&q.pyq.length?'<span class="badge pyq">PYQ '+q.pyq.join(", ")+'</span>':"";
+ return '<div class="rev '+cls+'"><div class="qmeta"><strong>'+t("question")+' '+(i+1)+'</strong><span class="badge '+q.diff+'">'+t(q.diff)+'</span>'+pyqB+'<span style="margin-left:auto">'+(!a||!a.att?"➖":a.correct?"✅":"❌")+'</span></div><div class="qprompt" style="font-size:1rem;margin:6px 0 12px">'+esc(qtext(q))+'</div>'+body+steps+exp+'</div>';}
+
+function viewPyq(){
+ state.pyq=state.pyq||{cls:10,sub:"science"};var p=state.pyq;
+ var clsChips=classes().map(function(c){return '<button class="chip '+(p.cls===c?"active":"")+'" onclick="ITP.pcls('+c+')">Class '+c+'</button>';}).join("");
+ var subChips=subjectsOf(p.cls).map(function(s){return '<button class="chip '+(p.sub===s?"active":"")+'" onclick="ITP.psub(\''+s+'\')">'+SUBJ[s].ic+' '+sname(s)+'</button>';}).join("");
+ var list=allQ().filter(function(q){return q.cls===p.cls&&q.sub===p.sub&&q.pyq&&q.pyq.length;}).sort(function(a,b){return b.pyq.length-a.pyq.length;});
+ var items=list.length?list.map(function(q){var rep=q.pyq.length>=2;return '<div class="card pad" style="margin-bottom:12px"><div class="qmeta"><span class="badge type">'+tname(q.type)+'</span><span class="badge '+q.diff+'">'+t(q.diff)+'</span><span class="chip sm">'+cname(q.chap)+'</span>'+(rep?'<span class="badge pyq">🔁 '+t("repeated")+'</span>':"")+'<span class="muted" style="margin-left:auto;font-size:.8rem">'+t("appeared")+': '+q.pyq.join(", ")+'</span></div><p style="margin:8px 0 0;color:var(--text);white-space:pre-wrap">'+esc(qtext(q))+'</p></div>';}).join(""):'<div class="empty"><div class="e">🗂️</div><p>No PYQs for this selection.</p></div>';
+ return '<div class="sectitle" style="margin-top:0"><div><h2>📜 '+t("pyqTitle")+'</h2><p class="muted" style="margin:0">'+t("pyqSub")+'</p></div>'+(list.length?'<button class="btn primary" onclick="ITP.startPyq()">▶ '+t("startPyq")+'</button>':"")+'</div>'+
+  '<div class="card pad"><div class="field" style="margin-bottom:12px"><label>'+t("selClass")+'</label><div class="optrow">'+clsChips+'</div></div>'+
+  '<div class="field" style="margin-bottom:0"><label>'+t("selSub")+'</label><div class="optrow">'+subChips+'</div></div></div>'+
+  '<div style="margin-top:16px">'+items+'</div>';}
+
+function viewAna(){
+ var rs=results();if(!rs.length)return '<div class="empty" style="padding-top:70px"><div class="e">📊</div><h2>'+t("anaTitle")+'</h2><p>'+t("noWeak")+'</p><button class="btn primary" onclick="ITP.setView(\'gen\')">🤖 '+t("genTest")+'</button></div>';
+ var o=overview();var trend=rs.slice().reverse().slice(-10).map(function(r,i){return {l:"#"+(i+1),v:r.attempted?Math.round(r.correct/r.attempted*100):0};});
+ var bars='<div class="bars">'+trend.map(function(d){return '<div class="bcol"><span class="bval">'+d.v+'%</span><div class="bar" style="height:'+d.v+'%"></div><span class="blab">'+d.l+'</span></div>';}).join("")+'</div>';
+ var subs=subjectStats().map(function(s){return '<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:.85rem;font-weight:600"><span>'+SUBJ[s.sub].ic+' '+sname(s.sub)+'</span><span class="muted">'+s.acc+'%</span></div><div class="prog"><span style="width:'+s.acc+'%"></span></div></div>';}).join("");
+ var weak=weakChapters();var weakHtml=weak.length?weak.map(function(w){return '<div class="row"><div><strong>'+cname(w.chap)+'</strong><div class="muted" style="font-size:.8rem">'+sname(w.sub)+'</div></div><span class="chip active">'+w.acc+'%</span></div>';}).join(""):'<p class="muted">'+t("noWeak")+'</p>';
+ return '<div class="sectitle" style="margin-top:0"><div><h2>📊 '+t("anaTitle")+'</h2><p class="muted" style="margin:0">'+t("anaSub")+'</p></div><button class="btn ghost" onclick="ITP.reset()">🗑 '+t("reset")+'</button></div>'+
+  '<div class="grid c4">'+stat("📝",o.tests,t("testsTaken"))+stat("🎯",o.acc+"%",t("avgAcc"))+stat("✅",o.solved,t("solved"))+stat("🔥",o.streak,t("streak"))+'</div>'+
+  '<div class="grid c2" style="margin-top:16px"><div class="card pad"><h3>📈 '+t("accTrend")+'</h3>'+bars+'</div>'+
+  '<div class="card pad"><h3>📚 '+t("subjAcc")+'</h3>'+subs+'</div></div>'+
+  '<div class="card pad" style="margin-top:16px"><h3>🧠 '+t("weak")+'</h3>'+weakHtml+'</div>';}
+
+function viewAdmin(){
+ var a=state.admin;var all=allQ();var custom=customQ();
+ var chaps=chaptersOf(a.cls,a.sub);if(chaps.indexOf(a.chap)<0)a.chap=chaps[0]||"";
+ var clsOpt=classes().map(function(c){return '<option value="'+c+'" '+(a.cls===c?"selected":"")+'>Class '+c+'</option>';}).join("");
+ var subOpt=subjectsOf(a.cls).map(function(s){return '<option value="'+s+'" '+(a.sub===s?"selected":"")+'>'+sname(s)+'</option>';}).join("");
+ var chapOpt=chaps.map(function(c){return '<option value="'+c+'" '+(a.chap===c?"selected":"")+'>'+cname(c)+'</option>';}).join("");
+ var diffOpt=["easy","medium","hard"].map(function(d){return '<option value="'+d+'" '+(a.diff===d?"selected":"")+'>'+t(d)+'</option>';}).join("");
+ var optInputs=a.opts.map(function(o,i){return '<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center"><button class="chip '+(a.correct===i?"active":"")+'" style="min-width:38px" onclick="ITP.acorrect('+i+')">'+KEYS[i]+'</button><input type="text" value="'+esc(o)+'" placeholder="Option '+KEYS[i]+'" oninput="ITP.aopt('+i+',this.value)"></div>';}).join("");
+ var byClass={};all.forEach(function(q){byClass[q.cls]=(byClass[q.cls]||0)+1;});
+ var summary=Object.keys(byClass).sort(function(x,y){return x-y;}).map(function(c){return '<div class="row"><span>Class '+c+'</span><strong>'+byClass[c]+'</strong></div>';}).join("");
+ return '<div class="sectitle" style="margin-top:0"><div><h2>🧑‍🏫 '+t("adminTitle")+'</h2><p class="muted" style="margin:0">'+t("adminSub")+'</p></div></div>'+
+  '<div class="grid c4">'+stat("📚",all.length,t("total"))+stat("🧑‍🏫",custom.length,"Teacher-added")+stat("🏫",classes().length,"Classes")+stat("📜",all.filter(function(q){return q.pyq&&q.pyq.length;}).length,"PYQs")+'</div>'+
+  '<div class="grid c2" style="margin-top:16px"><div class="card pad"><h3>➕ '+t("addQ")+'</h3>'+
+   '<div class="field"><label>'+t("selClass")+' / '+t("selSub")+'</label><div style="display:flex;gap:8px"><select onchange="ITP.acls(this.value)">'+clsOpt+'</select><select onchange="ITP.asub(this.value)">'+subOpt+'</select></div></div>'+
+   '<div class="field"><label>'+t("selChap")+'</label><div style="display:flex;gap:8px"><select onchange="ITP.achap(this.value)">'+chapOpt+'</select><select onchange="ITP.adiff(this.value)">'+diffOpt+'</select></div></div>'+
+   '<div class="field"><label>'+t("qText")+'</label><textarea placeholder="Type the question..." oninput="ITP.aprompt(this.value)">'+esc(a._q||"")+'</textarea></div>'+
+   '<div class="field"><label>'+t("opt")+'</label>'+optInputs+'</div>'+
+   '<button class="btn primary" onclick="ITP.asave()">💾 '+t("saveQ")+'</button></div>'+
+  '<div class="card pad"><h3>📊 '+t("bank")+'</h3>'+summary+'</div></div>';}
+
+function viewAbout(){
+ var live=[["🤖","AI Auto Test Generator","Balances papers by class, subject, chapter & difficulty."],["🧪","7 test modes","Chapter, Full Syllabus, Board Mock, PYQ, Revision & more."],["⏱️","Exam simulation","Timer, question palette, OMR-style answering."],["📜","PYQ integration","Bihar Board questions with repeated-question highlights."],["📊","Analytics","Accuracy, weak-chapter detection, streaks & trends."],["🧑‍🏫","Teacher panel","Add questions to the live bank."],["🌐","Bilingual + themes","Hindi/English, dark/light, mobile-first, offline."]];
+ var road=[["🧠","LLM generation & doubt solver"],["🗣️","Voice assistant + subjective auto-grading"],["☁️","Cloud backend, login, ranks & PDF export"],["📚","Full licensed PYQ bank + NEET/JEE foundation"]];
+ return '<section class="hero"><div class="deco"></div><h1>∞ Infinity Test Panel</h1><p>'+t("tagline")+' — Class 6 to 12.</p></section>'+
+  '<div class="grid c2" style="margin-top:16px"><div class="card pad"><h3>✅ Live in this build</h3>'+live.map(function(f){return '<div class="row"><div><strong>'+f[0]+' '+f[1]+'</strong><div class="muted" style="font-size:.85rem">'+f[2]+'</div></div></div>';}).join("")+'</div>'+
+  '<div class="card pad"><h3>🚧 Roadmap</h3>'+road.map(function(f){return '<div class="row"><strong>'+f[0]+' '+f[1]+'</strong></div>';}).join("")+'<p class="muted" style="font-size:.82rem;margin-top:10px">MVP foundation — built to plug in these phases without rewrites.</p></div></div>';}
+
+function render(){
+ var v=state.view,body;
+ if(v==="dash")body=viewDash();else if(v==="gen")body=viewGen();else if(v==="generating")body=viewGenerating();
+ else if(v==="running")body=viewRunning();else if(v==="result")body=viewResult();else if(v==="pyq")body=viewPyq();
+ else if(v==="ana")body=viewAna();else if(v==="admin")body=viewAdmin();else if(v==="about")body=viewAbout();else body=viewDash();
+ var chrome=(v==="running"||v==="generating")?"":topbar();
+ var bn=(v==="running"||v==="generating")?"":bottomnav();
+ document.getElementById("app").innerHTML=chrome+'<div class="wrap fade">'+body+'</div>'+bn;}
+
+document.documentElement.setAttribute("data-theme",theme);document.documentElement.lang=lang;render();
+
+</script>
+</body>
+</html>
