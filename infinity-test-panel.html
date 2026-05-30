@@ -459,384 +459,669 @@ function shuffle(arr){var a=[].concat(arr);for(var i=a.length-1;i>0;i--){var j=r
 function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%t;a=t}return a}
 
 // ============== CHAPTER-SPECIFIC MATH GENERATORS ==============
+// ============== CHAPTER-SPECIFIC MATH GENERATORS (EXPANDED - 15000+ Questions) ==============
 var MATH_GENERATORS = {
 hcf_lcm: function(ch){
-  var a=randInt(12,100),b=randInt(12,100);
-  var h=gcd(a,b),l=a*b/h;
-  var isHcf=Math.random()>0.5;
-  var ans=isHcf?h:l;
-  var wrong=[ans+randInt(1,10),ans-randInt(1,Math.max(1,ans-1)),isHcf?l:h];
-  wrong=wrong.filter(function(w){return w>0&&w!==ans});
-  while(wrong.length<3)wrong.push(ans+randInt(2,20));
-  return{prompt:'Find the '+(isHcf?'HCF':'LCM')+' of '+a+' and '+b+'.',options:shuffle([ans].concat(wrong.slice(0,3)).map(String)),correct:String(ans),explanation:(isHcf?'HCF':'LCM')+'('+a+', '+b+') = '+ans+'. Using prime factorization method.',difficulty:'medium',type:'MCQ',chapter:ch,steps:['Find prime factors of '+a,'Find prime factors of '+b,(isHcf?'HCF = product of common factors':'LCM = product of all factors with highest power'),'Answer = '+ans]};
+  var templates=[
+    function(){var a=randInt(12,100),b=randInt(12,100);var h=gcd(a,b),l=a*b/h;var isHcf=Math.random()>0.5;var ans=isHcf?h:l;var wrong=[ans+randInt(1,10),Math.max(1,ans-randInt(1,5)),isHcf?l:h];wrong=wrong.filter(function(w){return w>0&&w!==ans});while(wrong.length<3)wrong.push(ans+randInt(2,20));return{prompt:'Find the '+(isHcf?'HCF':'LCM')+' of '+a+' and '+b+'.',options:shuffle([ans].concat(wrong.slice(0,3)).map(String)),correct:String(ans),explanation:(isHcf?'HCF':'LCM')+'('+a+', '+b+') = '+ans};},
+    function(){var a=randInt(10,50),b=randInt(10,50),c=randInt(10,50);var h=gcd(gcd(a,b),c);return{prompt:'Find the HCF of '+a+', '+b+' and '+c+'.',options:shuffle([String(h),String(h+randInt(1,5)),String(h*2),String(Math.max(1,h-1))]),correct:String(h),explanation:'Find HCF of first two, then HCF with third = '+h};},
+    function(){var h=randInt(2,12);var m1=randInt(2,6),m2=randInt(3,7);var a=h*m1,b=h*m2;var l=a*b/gcd(a,b);return{prompt:'Numbers '+a+' and '+b+' have LCM:',options:shuffle([String(l),String(a*b),String(h),String(a+b)]),correct:String(l),explanation:'LCM('+a+','+b+') = ('+a+'x'+b+')/HCF = '+l};},
+    function(){var a=randInt(20,80),b=randInt(20,80);var l=a*b/gcd(a,b);return{prompt:'LCM of '+a+' and '+b+' is:',options:shuffle([String(l),String(l+a),String(a*b),String(Math.max(a,b))]),correct:String(l),explanation:'LCM('+a+','+b+') = '+l};},
+    function(){var p=pick([2,3,5,7]);var a=p*p*randInt(2,5);return{prompt:'Prime factorization of '+a+' is:',options:shuffle([p+'^2 x '+(a/(p*p)),p+' x '+(a/p),(a-1)+' x 1',p+'^3']),correct:p+'^2 x '+(a/(p*p)),explanation:a+' = '+p+' x '+p+' x '+(a/(p*p))};},
+    function(){var a=randInt(100,300),b=randInt(50,200);var h=gcd(a,b);return{prompt:'HCF of '+a+' and '+b+' using Euclid division:',options:shuffle([String(h),String(h+randInt(2,8)),String(Math.max(1,h-randInt(1,3))),String(a-b>0?a-b:b-a)]),correct:String(h),explanation:'Apply division algorithm: HCF('+a+','+b+') = '+h};},
+    function(){var a=randInt(10,40),b=randInt(10,40);var l=a*b/gcd(a,b);return{prompt:'Smallest number divisible by both '+a+' and '+b+':',options:shuffle([String(l),String(a*b),String(a+b),String(l+a)]),correct:String(l),explanation:'LCM('+a+','+b+') = '+l};},
+    function(){var n=randInt(2,12);var sq=n*n;return{prompt:'HCF of '+sq+' and '+n+' is:',options:shuffle([String(n),String(sq),String(1),String(n*n)]),correct:String(n),explanation:n+' divides '+sq+', so HCF = '+n};},
+    function(){var a=randInt(6,30),b=randInt(6,30);var h=gcd(a,b);var l=a*b/h;return{prompt:'If HCF('+a+','+b+')='+h+', their LCM is:',options:shuffle([String(l),String(a*b),String(a+b),String(h)]),correct:String(l),explanation:'LCM = product/HCF = '+(a*b)+'/'+h+' = '+l};},
+    function(){var a=randInt(4,20),b=randInt(4,20);var h=gcd(a,b);return{prompt:'Are '+a+' and '+b+' coprime?',options:shuffle([h===1?'Yes, HCF is 1':'No, HCF is '+h,h===1?'No':'Yes','Cannot determine','Always coprime']),correct:h===1?'Yes, HCF is 1':'No, HCF is '+h,explanation:'Two numbers are coprime if HCF=1. HCF('+a+','+b+')='+h};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 real_numbers: function(ch){
-  var types=[
-    function(){var a=randInt(2,50),b=randInt(2,50);var h=gcd(a,b);return{prompt:'Find the HCF of '+a+' and '+b+' using Euclids division algorithm.',options:shuffle([String(h),String(h+randInt(1,5)),String(Math.max(1,h-randInt(1,3))),String(a)]),correct:String(h),explanation:'Using Euclids division: HCF('+a+','+b+') = '+h}},
-    function(){var n=randInt(2,20);var sq=n*n;return{prompt:'Is the square root of '+sq+' rational or irrational?',options:shuffle(['Rational','Irrational','Neither','Cannot determine']),correct:'Rational',explanation:'sqrt('+sq+') = '+n+', which is a whole number, hence rational.'}},
-    function(){var p=pick([2,3,5,7,11,13]);var n=p*randInt(2,10);return{prompt:'The prime factorization of '+n+' includes which prime?',options:shuffle([String(p),String(p+1),String(p+2),String(p>2?p-1:17)]),correct:String(p),explanation:n+' = '+p+' x '+(n/p)+'. So '+p+' is a prime factor.'}}
-  ];
-  var gen=pick(types);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
+  var templates=[
+    function(){var a=randInt(2,50),b=randInt(2,50);var h=gcd(a,b);return{prompt:'Find the HCF of '+a+' and '+b+' using Euclids division.',options:shuffle([String(h),String(h+randInt(1,5)),String(Math.max(1,h-randInt(1,3))),String(a)]),correct:String(h),explanation:'HCF('+a+','+b+') = '+h};},
+    function(){var n=randInt(2,20);var sq=n*n;return{prompt:'sqrt('+sq+') is:',options:shuffle(['Rational (equals '+n+')','Irrational','Neither','Undefined']),correct:'Rational (equals '+n+')',explanation:'sqrt('+sq+') = '+n+', a whole number, hence rational.'};},
+    function(){var p=pick([2,3,5,7,11,13]);var n=p*randInt(2,10);return{prompt:'Prime factorization of '+n+' includes:',options:shuffle([String(p),String(p+1),String(p+2),String(p>2?p-1:17)]),correct:String(p),explanation:n+' = '+p+' x '+(n/p)};},
+    function(){var n=pick([2,3,5,6,7,10,11,13]);return{prompt:'sqrt('+n+') is:',options:shuffle(['Irrational','Rational','Integer','Zero']),correct:'Irrational',explanation:n+' is not a perfect square, so sqrt('+n+') is irrational.'};},
+    function(){return{prompt:'Decimal expansion of a rational number is:',options:shuffle(['Either terminating or repeating','Always non-terminating','Non-repeating always','Undefined']),correct:'Either terminating or repeating',explanation:'Rational numbers have terminating or repeating decimal expansions.'};},
+    function(){var n=randInt(2,15);return{prompt:'Between '+n+' and '+(n+1)+', there exist:',options:shuffle(['Infinite irrational numbers','No irrationals','Exactly one','Exactly two']),correct:'Infinite irrational numbers',explanation:'Between any two numbers exist infinitely many irrationals.'};},
+    function(){return{prompt:'Sum of rational and irrational number is:',options:shuffle(['Always irrational','Always rational','Sometimes zero','Always integer']),correct:'Always irrational',explanation:'Rational + irrational = irrational always.'};},
+    function(){var n=randInt(1,20);var d=pick([2,4,5,8,10,16,20,25]);return{prompt:n+'/'+d+' has terminating decimal because:',options:shuffle(['Denominator = 2^a x 5^b only','Numerator is odd','Denominator is even','Numerator < denominator']),correct:'Denominator = 2^a x 5^b only',explanation:'Fraction terminates iff denominator (lowest terms) has only 2 and 5 as factors.'};},
+    function(){return{prompt:'Every rational number can be expressed as:',options:shuffle(['p/q where q is non-zero integer','Any decimal','Only whole number','Irrational form']),correct:'p/q where q is non-zero integer',explanation:'Rational = p/q, p and q integers, q not zero.'};},
+    function(){return{prompt:'Product of two irrational numbers is:',options:shuffle(['Sometimes rational, sometimes irrational','Always irrational','Always rational','Always zero']),correct:'Sometimes rational, sometimes irrational',explanation:'sqrt(2) x sqrt(2) = 2 (rational), but sqrt(2) x sqrt(3) = sqrt(6) (irrational).'};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 polynomials: function(ch){
-  var types=[
-    function(){var a=randInt(1,5),b=randInt(1,5);var sum=a+b,prod=a*b;return{prompt:'If the zeroes of p(x) = x^2 - '+sum+'x + '+prod+' are alpha and beta, find alpha + beta.',options:shuffle([String(sum),String(prod),String(sum+1),String(prod-1)]),correct:String(sum),explanation:'For ax^2+bx+c, sum of zeroes = -b/a = '+sum}},
-    function(){var r1=randInt(1,6),r2=randInt(1,6);return{prompt:'Find a zero of the polynomial p(x) = x^2 - '+(r1+r2)+'x + '+(r1*r2)+'.',options:shuffle([String(r1),String(r1+r2),String(r1*r2),String(r2+1)]),correct:String(r1),explanation:'p('+r1+') = '+r1+'^2 - '+(r1+r2)+'('+r1+') + '+(r1*r2)+' = 0. So x='+r1+' is a zero.'}},
-    function(){var d=randInt(2,5);return{prompt:'What is the degree of the polynomial 3x^'+d+' + 2x^'+(d-1)+' - 7?',options:shuffle([String(d),String(d-1),String(d+1),'0']),correct:String(d),explanation:'The highest power of x is '+d+', so degree = '+d+'.'}}
-  ];
-  var gen=pick(types);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
+  var templates=[
+    function(){var a=randInt(1,5),b=randInt(1,5);var sum=a+b,prod=a*b;return{prompt:'Sum of zeroes of x^2 - '+sum+'x + '+prod+' is:',options:shuffle([String(sum),String(prod),String(sum+1),String(prod-1)]),correct:String(sum),explanation:'Sum of zeroes = -b/a = '+sum};},
+    function(){var r1=randInt(1,6),r2=randInt(1,6);return{prompt:'One zero of x^2 - '+(r1+r2)+'x + '+(r1*r2)+' is:',options:shuffle([String(r1),String(r1+r2),String(r1*r2),String(r2+1)]),correct:String(r1),explanation:'p('+r1+') = 0, verified by substitution.'};},
+    function(){var d=randInt(2,6);return{prompt:'Degree of 4x^'+d+' - x^'+(d-1)+' + 7 is:',options:shuffle([String(d),String(d-1),String(d+1),'0']),correct:String(d),explanation:'Highest power = '+d};},
+    function(){var a=randInt(1,4),b=randInt(1,4);return{prompt:'Quadratic with zeroes '+a+' and '+b+':',options:shuffle(['x^2-'+(a+b)+'x+'+(a*b),'x^2+'+(a+b)+'x+'+(a*b),'x^2-'+(a*b)+'x+'+(a+b),'x^2+'+(a*b)+'x-'+(a+b)]),correct:'x^2-'+(a+b)+'x+'+(a*b),explanation:'p(x)=x^2-(sum)x+(product)'};},
+    function(){var a=randInt(1,5),b=randInt(1,5);return{prompt:'Product of zeroes of x^2 - '+(a+b)+'x + '+(a*b)+':',options:shuffle([String(a*b),String(a+b),String(a-b),'0']),correct:String(a*b),explanation:'Product = c/a = '+(a*b)};},
+    function(){var n=randInt(2,6);return{prompt:'A degree '+n+' polynomial has at most how many zeroes?',options:shuffle([String(n),String(n+1),String(n-1),'Infinite']),correct:String(n),explanation:'Degree n polynomial has at most n real zeroes.'};},
+    function(){return{prompt:'Zeroes of x^2 - 9 are:',options:shuffle(['3 and -3','9 and -9','3 and 3','0 and 9']),correct:'3 and -3',explanation:'x^2-9=(x-3)(x+3)=0'};},
+    function(){var k=randInt(3,8);return{prompt:'If one zero of x^2 - '+k+'x + '+(k-1)+' is 1, the other is:',options:shuffle([String(k-1),String(k),String(1),'0']),correct:String(k-1),explanation:'Sum='+k+', so other = '+k+'-1 = '+(k-1)};},
+    function(){return{prompt:'Graph of quadratic polynomial is:',options:shuffle(['Parabola','Straight line','Circle','Hyperbola']),correct:'Parabola',explanation:'ax^2+bx+c always graphs as a parabola.'};},
+    function(){var n=randInt(2,5);return{prompt:'A polynomial of degree '+n+' has at most how many turning points?',options:shuffle([String(n-1),String(n),String(n+1),String(2*n)]),correct:String(n-1),explanation:'Degree n polynomial has at most (n-1) turning points.'};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 coordinate_geometry: function(ch){
-  var types=[
-    function(){var x1=randInt(-5,5),y1=randInt(-5,5),x2=randInt(-5,5),y2=randInt(-5,5);var dist=Math.round(Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1))*100)/100;var wrong=[dist+randInt(1,3),Math.abs(dist-randInt(1,2)),Math.round((Math.abs(x2-x1)+Math.abs(y2-y1))*100)/100];return{prompt:'Find the distance between points ('+x1+','+y1+') and ('+x2+','+y2+').',options:shuffle([String(dist),String(wrong[0]),String(wrong[1]),String(wrong[2])]),correct:String(dist),explanation:'Distance = sqrt[('+x2+'-'+x1+')^2 + ('+y2+'-'+y1+')^2] = '+dist,steps:['d = sqrt[(x2-x1)^2 + (y2-y1)^2]','d = sqrt['+(x2-x1)+'^2 + '+(y2-y1)+'^2]','d = '+dist]}},
-    function(){var x1=randInt(-5,5),y1=randInt(-5,5),x2=randInt(-5,5),y2=randInt(-5,5);var mx=(x1+x2)/2,my=(y1+y2)/2;var ans='('+mx+', '+my+')';var w1='('+(mx+1)+', '+my+')';var w2='('+mx+', '+(my+1)+')';var w3='('+(x1+x2)+', '+(y1+y2)+')';return{prompt:'Find the midpoint of the line segment joining ('+x1+','+y1+') and ('+x2+','+y2+').',options:shuffle([ans,w1,w2,w3]),correct:ans,explanation:'Midpoint = ((x1+x2)/2, (y1+y2)/2) = '+ans}}
-  ];
-  var gen=pick(types);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
+  var templates=[
+    function(){var x1=randInt(-5,5),y1=randInt(-5,5),x2=randInt(-5,5),y2=randInt(-5,5);var d2=(x2-x1)*(x2-x1)+(y2-y1)*(y2-y1);var dist=Math.round(Math.sqrt(d2)*100)/100;return{prompt:'Distance between ('+x1+','+y1+') and ('+x2+','+y2+'):',options:shuffle([String(dist),String(dist+1),String(Math.abs(x2-x1)+Math.abs(y2-y1)),String(Math.round(dist/2*100)/100)]),correct:String(dist),explanation:'d = sqrt[(x2-x1)^2+(y2-y1)^2] = '+dist};},
+    function(){var x1=randInt(-4,4),y1=randInt(-4,4),x2=randInt(-4,4),y2=randInt(-4,4);var mx=(x1+x2)/2,my=(y1+y2)/2;return{prompt:'Midpoint of ('+x1+','+y1+') and ('+x2+','+y2+'):',options:shuffle(['('+mx+','+my+')','('+(mx+1)+','+my+')','('+mx+','+(my+1)+')','('+(x1+x2)+','+(y1+y2)+')']),correct:'('+mx+','+my+')',explanation:'Midpoint = ((x1+x2)/2,(y1+y2)/2)'};},
+    function(){var a=randInt(1,6),b=randInt(1,6);var dist=Math.round(Math.sqrt(a*a+b*b)*100)/100;return{prompt:'Distance of ('+a+','+b+') from origin:',options:shuffle([String(dist),String(a+b),String(a*b),String(Math.abs(a-b))]),correct:String(dist),explanation:'sqrt('+a+'^2+'+b+'^2) = '+dist};},
+    function(){var x1=randInt(0,5),y1=randInt(0,5),x2=randInt(0,5),y2=randInt(0,5),x3=randInt(0,5),y3=randInt(0,5);var area=Math.abs(x1*(y2-y3)+x2*(y3-y1)+x3*(y1-y2))/2;return{prompt:'Area of triangle ('+x1+','+y1+'),('+x2+','+y2+'),('+x3+','+y3+'):',options:shuffle([String(area),String(area+1),String(area*2),String(Math.max(1,area-1))]),correct:String(area),explanation:'Area = |x1(y2-y3)+x2(y3-y1)+x3(y1-y2)|/2 = '+area};},
+    function(){return{prompt:'Points on x-axis have:',options:shuffle(['y-coordinate = 0','x-coordinate = 0','Both coordinates = 0','Equal coordinates']),correct:'y-coordinate = 0',explanation:'All points on x-axis have y = 0.'};},
+    function(){return{prompt:'Points on y-axis have:',options:shuffle(['x-coordinate = 0','y-coordinate = 0','Both = 0','Neither = 0']),correct:'x-coordinate = 0',explanation:'All points on y-axis have x = 0.'};},
+    function(){var k=randInt(1,5);return{prompt:'Area of triangle (0,0),('+k+',0),(0,'+k+'):',options:shuffle([String(k*k/2),String(k*k),String(k),String(2*k)]),correct:String(k*k/2),explanation:'(1/2) x base x height = (1/2)('+k+')('+k+') = '+(k*k/2)};},
+    function(){var m=randInt(1,5),c=randInt(1,5);return{prompt:'y-intercept of line y = '+m+'x + '+c+' is:',options:shuffle([String(c),String(m),String(m+c),String(m*c)]),correct:String(c),explanation:'When x=0, y = '+c+'. So y-intercept = '+c};},
+    function(){var x1=randInt(1,5),y1=randInt(1,5),x2=randInt(1,5),y2=randInt(1,5);var d=x1+x2+y1+y2;return{prompt:'Centroid of triangle (0,0),('+2*x1+',0),(0,'+3*y1+') is:',options:shuffle(['('+(2*x1/3).toFixed(1)+','+y1+')','('+x1+','+y1+')','(0,0)','('+2*x1+','+3*y1+')']),correct:'('+(2*x1/3).toFixed(1)+','+y1+')',explanation:'Centroid = ((x1+x2+x3)/3, (y1+y2+y3)/3)'};},
+    function(){return{prompt:'Section formula divides line in ratio m:n at:',options:shuffle(['((mx2+nx1)/(m+n), (my2+ny1)/(m+n))','((x1+x2)/2, (y1+y2)/2)','(mx1+nx2, my1+ny2)','(x2-x1, y2-y1)']),correct:'((mx2+nx1)/(m+n), (my2+ny1)/(m+n))',explanation:'Internal division formula: P = ((mx2+nx1)/(m+n), (my2+ny1)/(m+n))'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 linear_equations: function(ch){
-  var x=randInt(1,10),y=randInt(1,10);
-  var a1=randInt(1,5),b1=randInt(1,5),c1=a1*x+b1*y;
-  var a2=randInt(1,5),b2=randInt(1,5),c2=a2*x+b2*y;
-  var ans='x='+x+', y='+y;
-  var w1='x='+(x+1)+', y='+(y-1);
-  var w2='x='+(x-1)+', y='+(y+1);
-  var w3='x='+y+', y='+x;
-  return{prompt:'Solve: '+a1+'x + '+b1+'y = '+c1+' and '+a2+'x + '+b2+'y = '+c2,options:shuffle([ans,w1,w2,w3]),correct:ans,explanation:'Solving simultaneously: x='+x+', y='+y,difficulty:'medium',type:'MCQ',chapter:ch,steps:[a1+'x + '+b1+'y = '+c1,a2+'x + '+b2+'y = '+c2,'Using elimination/substitution method','x = '+x+', y = '+y]};
+  var templates=[
+    function(){var x=randInt(1,10),y=randInt(1,10);var a1=randInt(1,5),b1=randInt(1,5),c1=a1*x+b1*y;var a2=randInt(1,5),b2=randInt(1,5),c2=a2*x+b2*y;return{prompt:'Solve: '+a1+'x + '+b1+'y = '+c1+' and '+a2+'x + '+b2+'y = '+c2,options:shuffle(['x='+x+', y='+y,'x='+(x+1)+', y='+(y-1),'x='+(x-1)+', y='+(y+1),'x='+y+', y='+x]),correct:'x='+x+', y='+y,explanation:'Solving simultaneously: x='+x+', y='+y};},
+    function(){var a=randInt(2,6),x=randInt(1,8);var rhs=a*x;return{prompt:'Solve: '+a+'x = '+rhs,options:shuffle([String(x),String(x+1),String(rhs),String(a)]),correct:String(x),explanation:a+'x = '+rhs+', x = '+rhs+'/'+a+' = '+x};},
+    function(){var m=randInt(1,5),c=randInt(-5,5);var cStr=c>=0?'+ '+c:'- '+Math.abs(c);return{prompt:'Slope of y = '+m+'x '+cStr+' is:',options:shuffle([String(m),String(c),String(-m),String(m+1)]),correct:String(m),explanation:'y = mx + c form. Slope m = '+m};},
+    function(){var x=randInt(1,8);var eq_val=3*x+5;return{prompt:'If 3x + 5 = '+eq_val+', x = ?',options:shuffle([String(x),String(x+1),String(x-1),String(eq_val)]),correct:String(x),explanation:'3x = '+(eq_val-5)+', x = '+x};},
+    function(){return{prompt:'Parallel lines have:',options:shuffle(['No solution (inconsistent)','Unique solution','Infinite solutions','Two solutions']),correct:'No solution (inconsistent)',explanation:'Parallel lines never intersect, so no common solution.'};},
+    function(){return{prompt:'Coincident lines have:',options:shuffle(['Infinitely many solutions','No solution','Unique solution','Two solutions']),correct:'Infinitely many solutions',explanation:'Coincident lines overlap completely - every point is a solution.'};},
+    function(){return{prompt:'Intersecting lines have:',options:shuffle(['Exactly one solution','No solution','Infinite solutions','Two solutions']),correct:'Exactly one solution',explanation:'Two distinct intersecting lines meet at exactly one point.'};},
+    function(){var x=randInt(1,5),y=randInt(1,5);return{prompt:'If x + y = '+(x+y)+' and x - y = '+(x-y)+', find x.',options:shuffle([String(x),String(y),String(x+y),String(x-y)]),correct:String(x),explanation:'Adding: 2x = '+(2*x)+', x = '+x};},
+    function(){var a=randInt(2,5),b=randInt(1,5),c=randInt(1,20);return{prompt:'The equation '+a+'x + '+b+'y = '+c+' has:',options:shuffle(['Infinitely many solutions','One solution','No solution','Exactly two solutions']),correct:'Infinitely many solutions',explanation:'A single linear equation in two variables has infinitely many solutions.'};},
+    function(){return{prompt:'Graphical method of solving equations finds:',options:shuffle(['Point of intersection of lines','Area between lines','Slope of lines','Y-intercept only']),correct:'Point of intersection of lines',explanation:'Solution = coordinates of intersection point of the two lines.'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 quadratic_equations: function(ch){
-  var r1=randInt(1,10),r2=randInt(1,10);
-  var b=-(r1+r2),c=r1*r2;
-  var bStr=b>=0?'+ '+b:'- '+(-b),cStr=c>=0?'+ '+c:'- '+(-c);
-  var ans='x = '+r1+', x = '+r2;
-  var w1='x = '+(r1+1)+', x = '+(r2-1);
-  var w2='x = '+(r1*2)+', x = '+r2;
-  var w3='x = '+(-r1)+', x = '+(-r2);
-  return{prompt:'Find the roots of: x^2 '+bStr+'x '+cStr+' = 0',options:shuffle([ans,w1,w2,w3]),correct:ans,explanation:'Factoring: (x-'+r1+')(x-'+r2+') = 0, so x = '+r1+' or x = '+r2,difficulty:'medium',type:'MCQ',chapter:ch,steps:['x^2 '+bStr+'x '+cStr+' = 0','Split middle term or use formula','(x-'+r1+')(x-'+r2+') = 0','x = '+r1+' or x = '+r2]};
+  var templates=[
+    function(){var r1=randInt(1,10),r2=randInt(1,10);var b=-(r1+r2),c=r1*r2;var bStr=b>=0?'+ '+b:'- '+(-b),cStr=c>=0?'+ '+c:'- '+(-c);return{prompt:'Roots of x^2 '+bStr+'x '+cStr+' = 0:',options:shuffle(['x='+r1+', x='+r2,'x='+(r1+1)+', x='+(r2-1),'x='+(-r1)+', x='+(-r2),'x='+(r1*2)+', x='+r2]),correct:'x='+r1+', x='+r2,explanation:'Factoring: (x-'+r1+')(x-'+r2+') = 0'};},
+    function(){var r=randInt(1,8);var eq='x^2 - '+(2*r)+'x + '+(r*r);return{prompt:'The roots of '+eq+' = 0 are:',options:shuffle(['x = '+r+' (repeated)','x = '+r+' and x = -'+r,'x = '+(r+1)+' and x = '+(r-1),'x = 0 and x = '+(2*r)]),correct:'x = '+r+' (repeated)',explanation:'x^2 - '+(2*r)+'x + '+(r*r)+' = (x-'+r+')^2 = 0'};},
+    function(){var a=randInt(1,3),b=randInt(1,10),c=randInt(1,5);var disc=b*b-4*a*c;var nature=disc>0?'Real and distinct':disc===0?'Real and equal':'No real roots';return{prompt:'Nature of roots of '+a+'x^2 + '+b+'x + '+c+' = 0 (D='+disc+'):',options:shuffle([nature,'Real and distinct','Real and equal','No real roots']),correct:nature,explanation:'D = b^2-4ac = '+disc+'. '+(disc>0?'D>0: distinct real roots':disc===0?'D=0: equal real roots':'D<0: no real roots')};},
+    function(){var r1=randInt(1,6),r2=randInt(1,6);return{prompt:'Sum of roots of x^2 - '+(r1+r2)+'x + '+(r1*r2)+' = 0:',options:shuffle([String(r1+r2),String(r1*r2),String(r1-r2),String(r1)]),correct:String(r1+r2),explanation:'Sum of roots = -b/a = '+(r1+r2)};},
+    function(){var r1=randInt(1,6),r2=randInt(1,6);return{prompt:'Product of roots of x^2 - '+(r1+r2)+'x + '+(r1*r2)+' = 0:',options:shuffle([String(r1*r2),String(r1+r2),String(r1-r2),'0']),correct:String(r1*r2),explanation:'Product of roots = c/a = '+(r1*r2)};},
+    function(){return{prompt:'Discriminant D = 0 means roots are:',options:shuffle(['Real and equal','Real and unequal','Complex/imaginary','Zero']),correct:'Real and equal',explanation:'D=0: perfect square trinomial, equal (repeated) real roots.'};},
+    function(){return{prompt:'Quadratic formula gives x = :',options:shuffle(['(-b +/- sqrt(b^2-4ac)) / 2a','(-b + c) / 2a','b^2 - 4ac','a + b + c']),correct:'(-b +/- sqrt(b^2-4ac)) / 2a',explanation:'Standard quadratic formula for ax^2+bx+c=0.'};},
+    function(){var k=randInt(1,5);return{prompt:'If sum of roots is '+(2*k)+' and product is '+(k*k)+', the equation is:',options:shuffle(['x^2 - '+(2*k)+'x + '+(k*k)+' = 0','x^2 + '+(2*k)+'x + '+(k*k)+' = 0','x^2 - '+(k*k)+'x + '+(2*k)+' = 0','x^2 + '+(k*k)+' = 0']),correct:'x^2 - '+(2*k)+'x + '+(k*k)+' = 0',explanation:'x^2 - (sum)x + (product) = 0'};},
+    function(){return{prompt:'A quadratic equation has at most:',options:shuffle(['2 roots','3 roots','1 root','Infinite roots']),correct:'2 roots',explanation:'Degree 2 polynomial has at most 2 roots.'};},
+    function(){var a=randInt(2,5);return{prompt:'Solve: x^2 = '+(a*a),options:shuffle(['x = +/-'+a,'x = '+a+' only','x = -'+a+' only','x = '+(a*a)]),correct:'x = +/-'+a,explanation:'x^2 = '+(a*a)+' gives x = '+a+' or x = -'+a};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 arithmetic_progressions: function(ch){
-  var a=randInt(1,20),d=randInt(1,10),n=randInt(5,20);
-  var an=a+(n-1)*d;
-  var wrong=[a+n*d,an+d,an-randInt(1,5)];
-  return{prompt:'Find the '+n+'th term of AP: '+a+', '+(a+d)+', '+(a+2*d)+', ...',options:shuffle([an].concat(wrong).map(String)),correct:String(an),explanation:'a_n = a + (n-1)d = '+a+' + '+(n-1)+' x '+d+' = '+an,difficulty:'medium',type:'MCQ',chapter:ch,steps:['First term a = '+a+', common difference d = '+d,'a_n = a + (n-1)d','a_'+n+' = '+a+' + ('+(n-1)+') x '+d+' = '+an]};
+  var templates=[
+    function(){var a=randInt(1,10),d=randInt(1,5),n=randInt(5,15);var an=a+(n-1)*d;return{prompt:'Find the '+n+'th term of AP: '+a+', '+(a+d)+', '+(a+2*d)+'...',options:shuffle([String(an),String(an+d),String(an-d),String(a*n)]),correct:String(an),explanation:'a_n = a + (n-1)d = '+a+' + '+(n-1)+'('+d+') = '+an};},
+    function(){var a=randInt(1,10),d=randInt(1,5),n=randInt(5,12);var sum=n*(2*a+(n-1)*d)/2;return{prompt:'Sum of first '+n+' terms of AP '+a+', '+(a+d)+', '+(a+2*d)+'...',options:shuffle([String(sum),String(sum+n),String(sum-d),String(n*a)]),correct:String(sum),explanation:'S_n = n/2[2a + (n-1)d] = '+sum};},
+    function(){var a=randInt(2,10),d=randInt(1,5);return{prompt:'Common difference of AP: '+a+', '+(a+d)+', '+(a+2*d)+', '+(a+3*d)+':',options:shuffle([String(d),String(a),String(2*d),String(d+1)]),correct:String(d),explanation:'d = second term - first term = '+(a+d)+' - '+a+' = '+d};},
+    function(){var a=randInt(1,5),d=randInt(2,4),n=randInt(8,15);var an=a+(n-1)*d;return{prompt:'Which term of AP '+a+', '+(a+d)+', '+(a+2*d)+'... is '+an+'?',options:shuffle([String(n)+'th',String(n+1)+'th',String(n-1)+'th',String(n+2)+'th']),correct:String(n)+'th',explanation:'a_n = '+an+' = '+a+' + (n-1)'+d+'. n = '+n};},
+    function(){var a=randInt(1,10),l=randInt(50,100),n=randInt(10,20);var s=n*(a+l)/2;return{prompt:'Sum of AP with first term '+a+', last term '+l+', '+n+' terms:',options:shuffle([String(s),String(n*a),String(n*l),String(a+l)]),correct:String(s),explanation:'S = n/2(a+l) = '+n+'/2('+a+'+'+l+') = '+s};},
+    function(){var a=randInt(1,5),d=randInt(1,3);var t5=a+4*d,t10=a+9*d;return{prompt:'If 5th term of AP is '+t5+' and 10th term is '+t10+', find d:',options:shuffle([String(d),String(2*d),String(a),String(t10-t5)]),correct:String(d),explanation:'a_10 - a_5 = 5d. '+t10+'-'+t5+'='+5*d+', d='+d};},
+    function(){return{prompt:'In an AP, d = 0 means:',options:shuffle(['All terms are equal','Terms increase','Terms decrease','Not an AP']),correct:'All terms are equal',explanation:'d=0: a, a, a, a... (constant sequence).'};},
+    function(){var n=randInt(5,15);var sum=n*(n+1)/2;return{prompt:'Sum of first '+n+' natural numbers:',options:shuffle([String(sum),String(n*n),String(sum+n),String(n*(n-1)/2)]),correct:String(sum),explanation:'Sum = n(n+1)/2 = '+n+'('+(n+1)+')/2 = '+sum};},
+    function(){var a=randInt(1,5),d=randInt(2,5);return{prompt:'Is -'+d+', '+(a-d)+', '+a+', '+(a+d)+' an AP?',options:shuffle(['Check if common difference is constant','Always yes','Always no','Only if a>0']),correct:'Check if common difference is constant',explanation:'AP requires constant difference between consecutive terms.'};},
+    function(){var a=randInt(5,20),d=randInt(-4,-1);var n=Math.floor(-a/d)+2;return{prompt:'First negative term of AP '+a+', '+(a+d)+', '+(a+2*d)+'... is term number:',options:shuffle([String(n),String(n-1),String(n+1),String(n+2)]),correct:String(n),explanation:'a_n < 0 when '+a+' + (n-1)('+d+') < 0. First negative at n='+n};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 trigonometry: function(ch){
-  var angles=[{a:30,sin:'1/2',cos:'sqrt(3)/2',tan:'1/sqrt(3)'},{a:45,sin:'1/sqrt(2)',cos:'1/sqrt(2)',tan:'1'},{a:60,sin:'sqrt(3)/2',cos:'1/2',tan:'sqrt(3)'}];
-  var ang=pick(angles);
-  var funcs=[{f:'sin',v:ang.sin},{f:'cos',v:ang.cos},{f:'tan',v:ang.tan}];
-  var fn=pick(funcs);
-  var others=funcs.filter(function(x){return x.f!==fn.f}).map(function(x){return x.v});
-  others.push(pick(['2','0','sqrt(2)']));
-  return{prompt:'What is the value of '+fn.f+'('+ang.a+')?',options:shuffle([fn.v].concat(others.slice(0,3))),correct:fn.v,explanation:fn.f+'('+ang.a+') = '+fn.v+' (standard trigonometric value)',difficulty:'easy',type:'MCQ',chapter:ch};
+  var templates=[
+    function(){var angles=[0,30,45,60,90];var sinVals=['0','1/2','1/sqrt(2)','sqrt(3)/2','1'];var idx=randInt(0,4);return{prompt:'sin '+angles[idx]+' degrees = ?',options:shuffle([sinVals[idx],sinVals[(idx+1)%5],sinVals[(idx+2)%5],sinVals[(idx+3)%5]]),correct:sinVals[idx],explanation:'Standard value: sin '+angles[idx]+' = '+sinVals[idx]};},
+    function(){var angles=[0,30,45,60,90];var cosVals=['1','sqrt(3)/2','1/sqrt(2)','1/2','0'];var idx=randInt(0,4);return{prompt:'cos '+angles[idx]+' degrees = ?',options:shuffle([cosVals[idx],cosVals[(idx+1)%5],cosVals[(idx+2)%5],cosVals[(idx+3)%5]]),correct:cosVals[idx],explanation:'Standard value: cos '+angles[idx]+' = '+cosVals[idx]};},
+    function(){var angles=[0,30,45,60];var tanVals=['0','1/sqrt(3)','1','sqrt(3)'];var idx=randInt(0,3);return{prompt:'tan '+angles[idx]+' degrees = ?',options:shuffle([tanVals[idx],tanVals[(idx+1)%4],tanVals[(idx+2)%4],tanVals[(idx+3)%4]]),correct:tanVals[idx],explanation:'tan '+angles[idx]+' = '+tanVals[idx]};},
+    function(){return{prompt:'sin^2(A) + cos^2(A) = ?',options:shuffle(['1','0','sin(2A)','2']),correct:'1',explanation:'Fundamental trigonometric identity: sin^2 + cos^2 = 1.'};},
+    function(){return{prompt:'sec^2(A) - tan^2(A) = ?',options:shuffle(['1','0','sec(A)','tan(A)']),correct:'1',explanation:'Identity: 1 + tan^2 = sec^2, so sec^2 - tan^2 = 1.'};},
+    function(){return{prompt:'cosec^2(A) - cot^2(A) = ?',options:shuffle(['1','0','cosec(A)','cot(A)']),correct:'1',explanation:'Identity: 1 + cot^2 = cosec^2, so cosec^2 - cot^2 = 1.'};},
+    function(){var a=randInt(10,80);return{prompt:'sin(90 - '+a+') = ?',options:shuffle(['cos '+a,'sin '+a,'tan '+a,'-sin '+a]),correct:'cos '+a,explanation:'sin(90-A) = cosA (complementary angle identity).'};},
+    function(){var a=randInt(10,80);return{prompt:'cos(90 - '+a+') = ?',options:shuffle(['sin '+a,'cos '+a,'-cos '+a,'tan '+a]),correct:'sin '+a,explanation:'cos(90-A) = sinA (complementary angle identity).'};},
+    function(){return{prompt:'If sin A = 3/5, then cos A = ?',options:shuffle(['4/5','3/5','5/3','5/4']),correct:'4/5',explanation:'sin^2+cos^2=1. cos^2=1-9/25=16/25. cosA=4/5.'};},
+    function(){return{prompt:'tan A = sin A / ?',options:shuffle(['cos A','sin A','tan A','1']),correct:'cos A',explanation:'tan A = sin A / cos A (definition of tangent).'};},
+    function(){return{prompt:'If tan A = 1, then A = ?',options:shuffle(['45 degrees','30 degrees','60 degrees','90 degrees']),correct:'45 degrees',explanation:'tan 45 = 1. So A = 45 degrees.'};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 probability: function(ch){
-  var total=randInt(6,20),favorable=randInt(1,total-1);
-  var g=gcd(favorable,total);
-  var simplified=(favorable/g)+'/'+(total/g);
-  var wrong=[(favorable+1)+'/'+total,(total-favorable)+'/'+total,favorable+'/'+(total+1)];
-  return{prompt:'A bag contains '+total+' balls. '+favorable+' are red. What is the probability of drawing a red ball?',options:shuffle([simplified].concat(wrong)),correct:simplified,explanation:'P(red) = favorable/total = '+favorable+'/'+total+' = '+simplified,difficulty:'easy',type:'MCQ',chapter:ch};
+  var templates=[
+    function(){var n=randInt(1,6);return{prompt:'Probability of getting '+n+' on a fair die:',options:shuffle(['1/6','1/3','1/2','1']),correct:'1/6',explanation:'Fair die has 6 equally likely outcomes. P('+n+') = 1/6.'};},
+    function(){return{prompt:'Probability of getting head in a coin toss:',options:shuffle(['1/2','1','0','1/4']),correct:'1/2',explanation:'Two equally likely outcomes (H,T). P(H) = 1/2.'};},
+    function(){var r=randInt(2,5),total=randInt(8,15);return{prompt:'A bag has '+r+' red and '+(total-r)+' blue balls. P(red):',options:shuffle([r+'/'+total,(total-r)+'/'+total,'1/2',r+'/'+(total+1)]),correct:r+'/'+total,explanation:'P(red) = favorable/total = '+r+'/'+total};},
+    function(){return{prompt:'Probability of a sure event is:',options:shuffle(['1','0','1/2','Infinity']),correct:'1',explanation:'A certain/sure event has probability = 1.'};},
+    function(){return{prompt:'Probability of an impossible event:',options:shuffle(['0','1','1/2','-1']),correct:'0',explanation:'Impossible events have probability = 0.'};},
+    function(){return{prompt:'P(E) + P(not E) = ?',options:shuffle(['1','0','P(E)','2P(E)']),correct:'1',explanation:'Complementary rule: P(E) + P(E complement) = 1.'};},
+    function(){var n=randInt(1,6);return{prompt:'P(getting a number > '+n+' on a die):',options:shuffle([String((6-n))+'/6',n+'/6','1/6','1/2']),correct:String((6-n))+'/6',explanation:'Numbers > '+n+': '+(6-n)+' outcomes. P = '+(6-n)+'/6.'};},
+    function(){return{prompt:'P(getting even number on die):',options:shuffle(['3/6 = 1/2','2/6','4/6','1/6']),correct:'3/6 = 1/2',explanation:'Even numbers: 2,4,6 = 3 outcomes. P = 3/6 = 1/2.'};},
+    function(){var r=randInt(3,8),b=randInt(3,8);var total=r+b;return{prompt:'Bag has '+r+' red, '+b+' blue balls. P(not red):',options:shuffle([b+'/'+total,r+'/'+total,'1/2','1']),correct:b+'/'+total,explanation:'P(not red) = 1 - P(red) = 1 - '+r+'/'+total+' = '+b+'/'+total};},
+    function(){return{prompt:'Range of probability P(E) is:',options:shuffle(['0 to 1 inclusive','-1 to 1','0 to infinity','0 to 1 exclusive']),correct:'0 to 1 inclusive',explanation:'0 <= P(E) <= 1 for any event E.'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 statistics: function(ch){
-  var nums=[];for(var i=0;i<5;i++)nums.push(randInt(10,50));
-  var sum=nums.reduce(function(a,b){return a+b},0);
-  var mean=sum/5;
-  var wrong=[mean+randInt(1,5),mean-randInt(1,3),sum];
-  return{prompt:'Find the mean of: '+nums.join(', '),options:shuffle([mean].concat(wrong).map(String)),correct:String(mean),explanation:'Mean = ('+nums.join('+')+')/5 = '+sum+'/5 = '+mean,difficulty:'easy',type:'MCQ',chapter:ch};
-},
-geometry_triangles: function(ch){
-  var types=[
-    function(){var b=randInt(4,20),h=randInt(3,15);var area=0.5*b*h;var wrong=[b*h,area+randInt(1,10),area-randInt(1,5)];return{prompt:'Find the area of a triangle with base '+b+' cm and height '+h+' cm.',options:shuffle([area].concat(wrong).map(function(v){return v+' sq cm'})),correct:area+' sq cm',explanation:'Area = 1/2 x base x height = 1/2 x '+b+' x '+h+' = '+area+' sq cm'}},
-    function(){var a=randInt(3,10),b=randInt(3,10),c=randInt(Math.abs(a-b)+1,a+b-1);return{prompt:'Can a triangle be formed with sides '+a+' cm, '+b+' cm, and '+c+' cm?',options:shuffle(['Yes, triangle inequality satisfied','No, sum of two sides is not greater','Cannot determine','Only if right triangle']),correct:'Yes, triangle inequality satisfied',explanation:'Sum of any two sides > third side: '+a+'+'+b+'>'+c+', '+a+'+'+c+'>'+b+', '+b+'+'+c+'>'+a+'. Triangle inequality satisfied.'}},
-    function(){var a=randInt(3,12),b=randInt(3,12);var hyp=Math.round(Math.sqrt(a*a+b*b)*100)/100;return{prompt:'In a right triangle, if legs are '+a+' cm and '+b+' cm, find the hypotenuse.',options:shuffle([String(hyp),String(a+b),String(Math.round(hyp)+1),String(a*b)].map(function(v){return v+' cm'})),correct:hyp+' cm',explanation:'By Pythagoras: h = sqrt('+a+'^2 + '+b+'^2) = sqrt('+(a*a+b*b)+') = '+hyp+' cm'}}
-  ];
-  var gen=pick(types);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
-},
-circles_geometry: function(ch){
-  var r=randInt(2,14);
-  var types=[
-    function(){var area=Math.round(3.14*r*r*100)/100;var wrong=[Math.round(2*3.14*r*100)/100,Math.round(3.14*r*100)/100,area+randInt(5,20)];return{prompt:'Find the area of a circle with radius '+r+' cm. (Use pi = 3.14)',options:shuffle([area].concat(wrong).map(function(v){return v+' sq cm'})),correct:area+' sq cm',explanation:'Area = pi x r^2 = 3.14 x '+r+'^2 = '+area+' sq cm'}},
-    function(){var circ=Math.round(2*3.14*r*100)/100;var wrong=[Math.round(3.14*r*r*100)/100,Math.round(3.14*r*100)/100,circ+randInt(2,10)];return{prompt:'Find the circumference of a circle with radius '+r+' cm. (Use pi = 3.14)',options:shuffle([circ].concat(wrong).map(function(v){return v+' cm'})),correct:circ+' cm',explanation:'Circumference = 2 x pi x r = 2 x 3.14 x '+r+' = '+circ+' cm'}}
-  ];
-  var gen=pick(types);var res=gen();res.difficulty='easy';res.type='MCQ';res.chapter=ch;return res;
-},
-mensuration: function(ch){
-  var types=[
-    function(){var l=randInt(3,15),w=randInt(3,15),h=randInt(3,10);var vol=l*w*h;var wrong=[l*w+w*h+l*h,2*(l*w+w*h+l*h),vol+randInt(5,30)];return{prompt:'Find the volume of a cuboid with dimensions '+l+' cm x '+w+' cm x '+h+' cm.',options:shuffle([vol].concat(wrong).map(function(v){return v+' cubic cm'})),correct:vol+' cubic cm',explanation:'Volume = l x w x h = '+l+' x '+w+' x '+h+' = '+vol+' cubic cm'}},
-    function(){var r2=randInt(2,10);var sa=Math.round(4*3.14*r2*r2*100)/100;var wrong=[Math.round(3.14*r2*r2*100)/100,Math.round(2*3.14*r2*100)/100,sa+randInt(5,20)];return{prompt:'Find the surface area of a sphere with radius '+r2+' cm. (pi=3.14)',options:shuffle([sa].concat(wrong).map(function(v){return v+' sq cm'})),correct:sa+' sq cm',explanation:'SA = 4 x pi x r^2 = 4 x 3.14 x '+r2+'^2 = '+sa+' sq cm'}}
-  ];
-  var gen=pick(types);var res=gen();res.difficulty='medium';res.type='MCQ';res.chapter=ch;return res;
+  var templates=[
+    function(){var nums=[randInt(10,50),randInt(10,50),randInt(10,50),randInt(10,50),randInt(10,50)];var mean=Math.round(nums.reduce(function(a,b){return a+b},0)/nums.length*100)/100;return{prompt:'Mean of '+nums.join(', ')+' is:',options:shuffle([String(mean),String(mean+1),String(nums[0]),String(mean-1)]),correct:String(mean),explanation:'Mean = sum/count = '+(nums.reduce(function(a,b){return a+b},0))+'/5 = '+mean};},
+    function(){var nums=[randInt(5,20),randInt(5,20),randInt(5,20),randInt(5,20),randInt(5,20)].sort(function(a,b){return a-b});var median=nums[2];return{prompt:'Median of '+nums.join(', ')+' (already sorted):',options:shuffle([String(median),String(nums[0]),String(nums[4]),String((nums[0]+nums[4])/2)]),correct:String(median),explanation:'Middle value of 5 sorted numbers = '+median};},
+    function(){var mode=randInt(5,30);var nums=[mode,mode,mode,randInt(5,30),randInt(5,30)];return{prompt:'Mode of '+shuffle(nums).join(', ')+':',options:shuffle([String(mode),String(nums[3]),String(nums[4]),'No mode']),correct:String(mode),explanation:'Mode = most frequent value = '+mode+' (appears 3 times)'};},
+    function(){var nums=[randInt(10,50),randInt(10,50),randInt(10,50),randInt(10,50)];var range=Math.max.apply(null,nums)-Math.min.apply(null,nums);return{prompt:'Range of '+nums.join(', ')+':',options:shuffle([String(range),String(range+1),String(Math.max.apply(null,nums)),String(Math.min.apply(null,nums))]),correct:String(range),explanation:'Range = max - min = '+Math.max.apply(null,nums)+' - '+Math.min.apply(null,nums)+' = '+range};},
+    function(){return{prompt:'Mean is affected by:',options:shuffle(['Extreme values (outliers)','Only the middle value','Number of observations only','Nothing']),correct:'Extreme values (outliers)',explanation:'Mean is sensitive to extreme values (outliers) unlike median.'};},
+    function(){return{prompt:'Median of even number of observations is:',options:shuffle(['Average of two middle values','The larger middle value','The smaller middle value','Sum of all values']),correct:'Average of two middle values',explanation:'For even n, median = average of (n/2)th and (n/2+1)th values.'};},
+    function(){return{prompt:'A data set can have:',options:shuffle(['Multiple modes or no mode','Only one mode','Exactly two modes','Mode equals mean always']),correct:'Multiple modes or no mode',explanation:'Data may be bimodal, multimodal, or have no mode (all values unique).'};},
+    function(){return{prompt:'For a symmetric distribution:',options:shuffle(['Mean = Median = Mode','Mean > Median','Mean < Mode','They are unrelated']),correct:'Mean = Median = Mode',explanation:'In perfectly symmetric distribution, all three measures of central tendency are equal.'};},
+    function(){var n=randInt(5,10);var sum=n*randInt(10,30);var mean=sum/n;return{prompt:'If mean of '+n+' observations is '+mean+', their sum is:',options:shuffle([String(sum),String(sum+n),String(mean),String(n)]),correct:String(sum),explanation:'Sum = mean x n = '+mean+' x '+n+' = '+sum};},
+    function(){return{prompt:'Ogive is a graph of:',options:shuffle(['Cumulative frequency','Frequency only','Mean values','Raw data']),correct:'Cumulative frequency',explanation:'Ogive (cumulative frequency curve) shows running total of frequencies.'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 algebra_basic: function(ch){
-  var a=randInt(2,10),b=randInt(1,20),x=randInt(1,15);
-  var rhs=a*x+b;
-  var wrong=[x+randInt(1,5),x-randInt(1,3),x*2];
-  return{prompt:'Solve for x: '+a+'x + '+b+' = '+rhs,options:shuffle([x].concat(wrong).map(String)),correct:String(x),explanation:a+'x = '+rhs+' - '+b+' = '+(rhs-b)+', so x = '+(rhs-b)+'/'+a+' = '+x,difficulty:'medium',type:'MCQ',chapter:ch,steps:[a+'x + '+b+' = '+rhs,a+'x = '+(rhs-b),'x = '+(rhs-b)+'/'+a+' = '+x]};
+  var templates=[
+    function(){var a=randInt(2,8),b=randInt(1,10),x=randInt(1,10);var rhs=a*x+b;return{prompt:'Solve: '+a+'x + '+b+' = '+rhs,options:shuffle([String(x),String(x+1),String(x-1),String(rhs)]),correct:String(x),explanation:a+'x = '+(rhs-b)+', x = '+x};},
+    function(){var a=randInt(2,5),b=randInt(2,5);return{prompt:'Simplify: '+a+'x + '+b+'x',options:shuffle([(a+b)+'x',String(a*b)+'x',a+'x',b+'x']),correct:(a+b)+'x',explanation:'Like terms: '+a+'x + '+b+'x = '+(a+b)+'x'};},
+    function(){var a=randInt(1,5),b=randInt(1,5);var result=(a+b)*(a+b);return{prompt:'Expand (x + '+a+')^2 when x = '+b+':',options:shuffle([String(result),String(a*a+b*b),String(2*a*b),String((a+b)*2)]),correct:String(result),explanation:'('+b+' + '+a+')^2 = '+(a+b)+'^2 = '+result};},
+    function(){var a=randInt(1,5),b=randInt(1,5);return{prompt:'(x+'+a+')(x+'+b+') expands to:',options:shuffle(['x^2+'+(a+b)+'x+'+(a*b),'x^2+'+(a*b)+'x+'+(a+b),'x^2-'+(a+b)+'x+'+(a*b),'x^2+'+(a+b)+'x-'+(a*b)]),correct:'x^2+'+(a+b)+'x+'+(a*b),explanation:'FOIL: x^2 + ('+a+'+'+b+')x + '+a+'x'+b+' = x^2+'+(a+b)+'x+'+(a*b)};},
+    function(){var a=randInt(2,6);return{prompt:'(a+b)^2 = ?',options:shuffle(['a^2 + 2ab + b^2','a^2 + b^2','a^2 - 2ab + b^2','2(a+b)']),correct:'a^2 + 2ab + b^2',explanation:'Standard identity: (a+b)^2 = a^2 + 2ab + b^2.'};},
+    function(){return{prompt:'(a-b)^2 = ?',options:shuffle(['a^2 - 2ab + b^2','a^2 + 2ab + b^2','a^2 - b^2','(a+b)(a-b)']),correct:'a^2 - 2ab + b^2',explanation:'Standard identity: (a-b)^2 = a^2 - 2ab + b^2.'};},
+    function(){return{prompt:'(a+b)(a-b) = ?',options:shuffle(['a^2 - b^2','a^2 + b^2','a^2 - 2ab + b^2','2ab']),correct:'a^2 - b^2',explanation:'Difference of squares: (a+b)(a-b) = a^2 - b^2.'};},
+    function(){var a=randInt(2,9);return{prompt:'If x + 1/x = '+a+', then x^2 + 1/x^2 = ?',options:shuffle([String(a*a-2),String(a*a),String(a*a+2),String(2*a)]),correct:String(a*a-2),explanation:'(x+1/x)^2 = x^2+2+1/x^2. So x^2+1/x^2 = '+a+'^2 - 2 = '+(a*a-2)};},
+    function(){var coeff=randInt(2,5);var x=randInt(1,8);return{prompt:'Evaluate '+coeff+'x^2 when x = '+x+':',options:shuffle([String(coeff*x*x),String(coeff*x),String(coeff+x*x),String((coeff*x)*(coeff*x))]),correct:String(coeff*x*x),explanation:coeff+'('+x+')^2 = '+coeff+' x '+(x*x)+' = '+(coeff*x*x)};},
+    function(){return{prompt:'The degree of expression 5x^3 - 2x + 7 is:',options:shuffle(['3','1','0','5']),correct:'3',explanation:'Highest power of variable = 3.'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
+},
+geometry_triangles: function(ch){
+  var templates=[
+    function(){var a=randInt(30,80),b=randInt(30,80);var c=180-a-b;return{prompt:'In a triangle, if two angles are '+a+' and '+b+' degrees, the third is:',options:shuffle([String(c),String(c+10),String(180),String(a+b)]),correct:String(c),explanation:'Angle sum = 180. Third angle = 180-'+a+'-'+b+' = '+c};},
+    function(){return{prompt:'Sum of angles of a triangle is:',options:shuffle(['180 degrees','360 degrees','90 degrees','270 degrees']),correct:'180 degrees',explanation:'Angle sum property: all angles of a triangle add to 180.'};},
+    function(){return{prompt:'An equilateral triangle has:',options:shuffle(['All sides equal, all angles 60','Two sides equal','No sides equal','Right angle']),correct:'All sides equal, all angles 60',explanation:'Equilateral: all sides and angles (60 each) are equal.'};},
+    function(){return{prompt:'In an isosceles triangle:',options:shuffle(['Two sides are equal','All sides equal','No sides equal','All angles different']),correct:'Two sides are equal',explanation:'Isosceles triangle has exactly two equal sides.'};},
+    function(){var a=randInt(3,12),b=randInt(3,12);var c=Math.round(Math.sqrt(a*a+b*b)*100)/100;return{prompt:'In right triangle with legs '+a+' and '+b+', hypotenuse:',options:shuffle([String(c),String(a+b),String(a*b),String(c+1)]),correct:String(c),explanation:'Pythagoras: h = sqrt('+a+'^2+'+b+'^2) = sqrt('+(a*a+b*b)+') = '+c};},
+    function(){return{prompt:'Exterior angle of a triangle equals:',options:shuffle(['Sum of two opposite interior angles','Sum of all angles','One interior angle','180 degrees']),correct:'Sum of two opposite interior angles',explanation:'Exterior angle theorem: exterior = sum of remote interior angles.'};},
+    function(){return{prompt:'Two triangles are congruent if:',options:shuffle(['SSS, SAS, ASA, or RHS holds','Only if all angles match','Only if same area','Only if equilateral']),correct:'SSS, SAS, ASA, or RHS holds',explanation:'Congruence criteria: SSS, SAS, ASA, AAS, or RHS.'};},
+    function(){return{prompt:'BPT (Basic Proportionality Theorem) states:',options:shuffle(['A line parallel to one side divides other two proportionally','All triangles are similar','Angles are equal','Sides are equal']),correct:'A line parallel to one side divides other two proportionally',explanation:'BPT: DE parallel to BC implies AD/DB = AE/EC.'};},
+    function(){var a=randInt(20,70);return{prompt:'If angle A = '+a+' in triangle ABC (right-angled at B), angle C:',options:shuffle([String(90-a),String(180-a),String(a),'90']),correct:String(90-a),explanation:'A+B+C=180. B=90, so C=180-90-'+a+'='+(90-a)};},
+    function(){return{prompt:'Midpoint theorem states:',options:shuffle(['Line joining midpoints is parallel to third side and half its length','Medians bisect each other','All medians are equal','Midpoint divides in 1:1']),correct:'Line joining midpoints is parallel to third side and half its length',explanation:'Midpoint theorem: segment joining midpoints of two sides is parallel to and half the third side.'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
+},
+circles_geometry: function(ch){
+  var templates=[
+    function(){var r=randInt(3,15);var area=Math.round(3.14159*r*r*100)/100;return{prompt:'Area of circle with radius '+r+' cm:',options:shuffle([String(area)+' cm^2',String(2*3.14*r)+' cm^2',String(r*r)+' cm^2',String(area+10)+' cm^2']),correct:String(area)+' cm^2',explanation:'Area = pi*r^2 = 3.14 x '+r+'^2 = '+area+' cm^2'};},
+    function(){var r=randInt(3,15);var circ=Math.round(2*3.14159*r*100)/100;return{prompt:'Circumference of circle with radius '+r+' cm:',options:shuffle([String(circ)+' cm',String(3.14*r*r)+' cm',String(r*2)+' cm',String(circ+5)+' cm']),correct:String(circ)+' cm',explanation:'C = 2*pi*r = 2 x 3.14 x '+r+' = '+circ+' cm'};},
+    function(){return{prompt:'Angle in a semicircle is:',options:shuffle(['90 degrees','180 degrees','45 degrees','60 degrees']),correct:'90 degrees',explanation:'Angle inscribed in a semicircle is always 90 degrees.'};},
+    function(){return{prompt:'Tangent to a circle is perpendicular to:',options:shuffle(['Radius at point of contact','Diameter','Chord','Another tangent']),correct:'Radius at point of contact',explanation:'Tangent is perpendicular to the radius drawn to the point of tangency.'};},
+    function(){return{prompt:'Equal chords are equidistant from:',options:shuffle(['The center','The circumference','Each other','The diameter']),correct:'The center',explanation:'Equal chords of a circle are at equal distances from the center.'};},
+    function(){var r=randInt(5,20);var angle=pick([60,90,120,180]);var area=Math.round(angle/360*3.14159*r*r*100)/100;return{prompt:'Area of sector with radius '+r+' cm and angle '+angle+' degrees:',options:shuffle([String(area)+' cm^2',String(3.14*r*r)+' cm^2',String(area*2)+' cm^2',String(r*angle)+' cm^2']),correct:String(area)+' cm^2',explanation:'Sector area = (angle/360)*pi*r^2 = ('+angle+'/360)*3.14*'+r+'^2 = '+area};},
+    function(){return{prompt:'Number of tangents from external point to circle:',options:shuffle(['2','1','0','Infinite']),correct:'2',explanation:'From any external point, exactly 2 tangents can be drawn to a circle.'};},
+    function(){return{prompt:'Angle subtended by arc at center vs at circumference:',options:shuffle(['Center angle is double','They are equal','Circumference angle is double','No relation']),correct:'Center angle is double',explanation:'Central angle = 2 x inscribed angle (subtended by same arc).'};},
+    function(){var d=randInt(6,30);var r=d/2;return{prompt:'If diameter = '+d+' cm, radius = ?',options:shuffle([String(r)+' cm',String(d)+' cm',String(2*d)+' cm',String(r+1)+' cm']),correct:String(r)+' cm',explanation:'Radius = diameter/2 = '+d+'/2 = '+r+' cm'};},
+    function(){return{prompt:'Cyclic quadrilateral has opposite angles summing to:',options:shuffle(['180 degrees','360 degrees','90 degrees','270 degrees']),correct:'180 degrees',explanation:'In cyclic quadrilateral, opposite angles are supplementary (sum = 180).'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
+},
+mensuration: function(ch){
+  var templates=[
+    function(){var l=randInt(3,15),b=randInt(3,15),h=randInt(3,10);var vol=l*b*h;return{prompt:'Volume of cuboid '+l+'x'+b+'x'+h+' cm:',options:shuffle([String(vol)+' cm^3',String(l*b)+' cm^3',String(2*(l*b+b*h+h*l))+' cm^3',String(vol+10)+' cm^3']),correct:String(vol)+' cm^3',explanation:'V = l x b x h = '+l+' x '+b+' x '+h+' = '+vol+' cm^3'};},
+    function(){var r=randInt(3,10),h=randInt(5,15);var vol=Math.round(3.14159*r*r*h*100)/100;return{prompt:'Volume of cylinder (r='+r+', h='+h+') cm:',options:shuffle([String(vol)+' cm^3',String(3.14*r*r)+' cm^3',String(2*3.14*r*h)+' cm^3',String(vol+20)+' cm^3']),correct:String(vol)+' cm^3',explanation:'V = pi*r^2*h = 3.14 x '+r+'^2 x '+h+' = '+vol};},
+    function(){var a=randInt(3,12);var sa=6*a*a;return{prompt:'Total surface area of cube with side '+a+' cm:',options:shuffle([String(sa)+' cm^2',String(a*a*a)+' cm^2',String(4*a*a)+' cm^2',String(sa+a)+' cm^2']),correct:String(sa)+' cm^2',explanation:'TSA = 6a^2 = 6 x '+a+'^2 = '+sa+' cm^2'};},
+    function(){var a=randInt(3,10),b=randInt(3,10),c=randInt(3,10);var s=(a+b+c)/2;var area=Math.round(Math.sqrt(s*(s-a)*(s-b)*(s-c))*100)/100;return{prompt:'Area of triangle (Herons formula) with sides '+a+','+b+','+c+':',options:shuffle([String(area)+' sq units',String(a*b/2)+' sq units',String(s)+' sq units',String(area+5)+' sq units']),correct:String(area)+' sq units',explanation:'s='+(a+b+c)+'/2='+s+'. Area=sqrt[s(s-a)(s-b)(s-c)]='+area};},
+    function(){var r=randInt(2,8);var vol=Math.round(4/3*3.14159*r*r*r*100)/100;return{prompt:'Volume of sphere with radius '+r+' cm:',options:shuffle([String(vol)+' cm^3',String(3.14*r*r)+' cm^3',String(4*3.14*r*r)+' cm^3',String(vol+10)+' cm^3']),correct:String(vol)+' cm^3',explanation:'V = (4/3)pi*r^3 = (4/3)(3.14)('+r+'^3) = '+vol};},
+    function(){var l=randInt(5,15),b=randInt(3,10);var area=l*b;return{prompt:'Area of rectangle '+l+' cm x '+b+' cm:',options:shuffle([String(area)+' cm^2',String(2*(l+b))+' cm^2',String(l+b)+' cm^2',String(area+l)+' cm^2']),correct:String(area)+' cm^2',explanation:'Area = l x b = '+l+' x '+b+' = '+area+' cm^2'};},
+    function(){var l=randInt(5,15),b=randInt(3,10);var peri=2*(l+b);return{prompt:'Perimeter of rectangle '+l+' x '+b+' cm:',options:shuffle([String(peri)+' cm',String(l*b)+' cm',String(l+b)+' cm',String(peri+2)+' cm']),correct:String(peri)+' cm',explanation:'P = 2(l+b) = 2('+l+'+'+b+') = '+peri+' cm'};},
+    function(){var r=randInt(3,10),h=randInt(5,15);var csa=Math.round(2*3.14159*r*h*100)/100;return{prompt:'CSA of cylinder (r='+r+', h='+h+'):',options:shuffle([String(csa)+' cm^2',String(3.14*r*r)+' cm^2',String(3.14*r*r*h)+' cm^2',String(csa+10)+' cm^2']),correct:String(csa)+' cm^2',explanation:'CSA = 2*pi*r*h = 2(3.14)('+r+')('+h+') = '+csa};},
+    function(){var a=randInt(3,12);var vol=a*a*a;return{prompt:'Volume of cube with edge '+a+' cm:',options:shuffle([String(vol)+' cm^3',String(6*a*a)+' cm^3',String(a*a)+' cm^3',String(vol+a)+' cm^3']),correct:String(vol)+' cm^3',explanation:'V = a^3 = '+a+'^3 = '+vol};},
+    function(){var r=randInt(3,10);var sa=Math.round(4*3.14159*r*r*100)/100;return{prompt:'Surface area of sphere (r='+r+'):',options:shuffle([String(sa)+' cm^2',String(3.14*r*r)+' cm^2',String(sa/2)+' cm^2',String(sa+10)+' cm^2']),correct:String(sa)+' cm^2',explanation:'SA = 4*pi*r^2 = 4(3.14)('+r+'^2) = '+sa};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 fractions_decimals: function(ch){
-  var n1=randInt(1,9),d1=randInt(2,12),n2=randInt(1,9),d2=randInt(2,12);
-  var num=n1*d2+n2*d1,den=d1*d2;
-  var g=gcd(num,den);num/=g;den/=g;
-  var ans=num+'/'+den;
-  var opts=[ans,randInt(1,20)+'/'+randInt(2,15),randInt(1,20)+'/'+randInt(2,15),randInt(1,20)+'/'+randInt(2,15)];
-  return{prompt:'Simplify: '+n1+'/'+d1+' + '+n2+'/'+d2,options:shuffle(opts),correct:ans,explanation:'LCM of '+d1+' and '+d2+'. Sum simplifies to '+ans,difficulty:'medium',type:'MCQ',chapter:ch};
-},
-percentage_ratio: function(ch){
-  var p=randInt(5,95),n=randInt(20,500);
-  var ans=p*n/100;
-  var wrong=[ans+randInt(1,20),ans-randInt(1,15),p+n];
-  return{prompt:'Find '+p+'% of '+n+'.',options:shuffle([ans].concat(wrong).map(String)),correct:String(ans),explanation:p+'% of '+n+' = ('+p+'/100) x '+n+' = '+ans,difficulty:'easy',type:'MCQ',chapter:ch};
+  var templates=[
+    function(){var n1=randInt(1,9),d1=randInt(2,10),n2=randInt(1,9),d2=d1;var sum_n=n1+n2;return{prompt:n1+'/'+d1+' + '+n2+'/'+d2+' = ?',options:shuffle([sum_n+'/'+d1,String(n1+n2)+'/'+(d1+d2),String(n1*n2)+'/'+d1,String(sum_n)]),correct:sum_n+'/'+d1,explanation:'Same denominator: ('+n1+'+'+n2+')/'+d1+' = '+sum_n+'/'+d1};},
+    function(){var n=randInt(1,9),d=randInt(2,10);var dec=Math.round(n/d*1000)/1000;return{prompt:'Convert '+n+'/'+d+' to decimal:',options:shuffle([String(dec),String(d/n),String(n*d),String(dec+0.1)]),correct:String(dec),explanation:n+'/'+d+' = '+dec};},
+    function(){var a=randInt(1,5),b=randInt(2,8);return{prompt:'Reciprocal of '+a+'/'+b+' is:',options:shuffle([b+'/'+a,a+'/'+b,String(a*b),'1']),correct:b+'/'+a,explanation:'Reciprocal: flip numerator and denominator.'};},
+    function(){return{prompt:'A rational number between 1/3 and 1/2:',options:shuffle(['5/12','1/6','2/3','1']),correct:'5/12',explanation:'1/3 = 4/12, 1/2 = 6/12. So 5/12 is between them.'};},
+    function(){var n=randInt(2,8),d=randInt(2,8);var g=gcd(n,d);return{prompt:'Simplify '+n+'/'+d+':',options:shuffle([(n/g)+'/'+(d/g),n+'/'+d,(n*2)+'/'+(d*2),d+'/'+n]),correct:(n/g)+'/'+(d/g),explanation:'GCD('+n+','+d+')='+g+'. Simplified: '+(n/g)+'/'+(d/g)};},
+    function(){var a=randInt(1,5),b=randInt(2,6),c=randInt(1,5),d=randInt(2,6);var prod_n=a*c,prod_d=b*d;var g=gcd(prod_n,prod_d);return{prompt:a+'/'+b+' x '+c+'/'+d+' = ?',options:shuffle([(prod_n/g)+'/'+(prod_d/g),(a+c)+'/'+(b+d),String(a*c*b*d),(a*d)+'/'+(b*c)]),correct:(prod_n/g)+'/'+(prod_d/g),explanation:'Multiply numerators and denominators: '+(prod_n/g)+'/'+(prod_d/g)};},
+    function(){return{prompt:'0.333... as a fraction is:',options:shuffle(['1/3','3/10','1/30','3/9']),correct:'1/3',explanation:'0.333... = 1/3 (repeating decimal).'};},
+    function(){var n=randInt(1,9);return{prompt:'0.'+n+' as a fraction is:',options:shuffle([n+'/10',n+'/100','1/'+n,n+'/9']),correct:n+'/10',explanation:'0.'+n+' = '+n+'/10'};},
+    function(){var a=randInt(2,9),b=randInt(2,9);return{prompt:'Compare: '+a+'/'+b+' and '+(a+1)+'/'+(b+1),options:shuffle(['Need to cross multiply to compare','First is always larger','Second is always larger','They are equal']),correct:'Need to cross multiply to compare',explanation:'Cross multiply: '+a+'x'+(b+1)+' vs '+(a+1)+'x'+b+' to determine which is larger.'};},
+    function(){var whole=randInt(1,5),n=randInt(1,7),d=randInt(2,8);var improper=whole*d+n;return{prompt:'Convert '+whole+' '+n+'/'+d+' to improper fraction:',options:shuffle([improper+'/'+d,(whole+n)+'/'+d,whole+'/'+d,n+'/'+(d*whole)]),correct:improper+'/'+d,explanation:whole+' '+n+'/'+d+' = ('+whole+'x'+d+'+'+n+')/'+d+' = '+improper+'/'+d};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='easy';r.type='MCQ';r.chapter=ch;return r;
 },
 integers_numbers: function(ch){
-  var a=randInt(-50,50),b=randInt(-50,50);
-  var ops=['+','-','*'];var op=pick(ops);
-  var ans=op==='+'?a+b:op==='-'?a-b:a*b;
-  var wrong=[ans+randInt(1,10),ans-randInt(1,10),ans+randInt(11,30)];
-  return{prompt:'Calculate: ('+a+') '+op+' ('+b+') = ?',options:shuffle([String(ans)].concat(wrong.map(String))),correct:String(ans),explanation:'('+a+') '+op+' ('+b+') = '+ans,difficulty:op==='*'?'medium':'easy',type:'MCQ',chapter:ch};
+  var templates=[
+    function(){var a=randInt(-20,20),b=randInt(-20,20);var sum=a+b;return{prompt:'('+a+') + ('+b+') = ?',options:shuffle([String(sum),String(sum+1),String(a-b),String(a*b)]),correct:String(sum),explanation:a+' + '+b+' = '+sum};},
+    function(){var a=randInt(-15,15),b=randInt(-15,15);var prod=a*b;return{prompt:'('+a+') x ('+b+') = ?',options:shuffle([String(prod),String(a+b),String(prod+1),String(-prod)]),correct:String(prod),explanation:a+' x '+b+' = '+prod};},
+    function(){var n=randInt(2,20);return{prompt:'Is '+n+' prime or composite?',options:shuffle([n<=1?'Neither':([2,3,5,7,11,13,17,19].indexOf(n)>=0?'Prime':'Composite'),'Prime','Composite','Neither']),correct:n<=1?'Neither':([2,3,5,7,11,13,17,19].indexOf(n)>=0?'Prime':'Composite'),explanation:([2,3,5,7,11,13,17,19].indexOf(n)>=0?n+' has no factors other than 1 and itself.':n+' has factors other than 1 and itself.')};},
+    function(){var a=randInt(-10,10);return{prompt:'Absolute value of '+a+' is:',options:shuffle([String(Math.abs(a)),String(a),String(-a),String(a*a)]),correct:String(Math.abs(a)),explanation:'|'+a+'| = '+Math.abs(a)};},
+    function(){var a=randInt(2,12);return{prompt:'Additive inverse of '+a+' is:',options:shuffle([String(-a),String(a),String(1/a),'0']),correct:String(-a),explanation:'Additive inverse of '+a+' is -'+a+' (sum = 0).'};},
+    function(){return{prompt:'Product of a negative and positive number is:',options:shuffle(['Negative','Positive','Zero','Cannot determine']),correct:'Negative',explanation:'(-) x (+) = negative always.'};},
+    function(){return{prompt:'Product of two negative numbers is:',options:shuffle(['Positive','Negative','Zero','Undefined']),correct:'Positive',explanation:'(-) x (-) = positive.'};},
+    function(){var n=randInt(10,100);var divs=[];for(var i=1;i<=n;i++){if(n%i===0)divs.push(i);}var numDivs=divs.length;return{prompt:'Number of factors of '+n+':',options:shuffle([String(numDivs),String(numDivs+1),String(numDivs-1),String(n)]),correct:String(numDivs),explanation:n+' has '+numDivs+' factors.'};},
+    function(){var a=randInt(2,9),b=randInt(2,5);var result=Math.pow(a,b);return{prompt:a+'^'+b+' = ?',options:shuffle([String(result),String(a*b),String(result+a),String(a+b)]),correct:String(result),explanation:a+'^'+b+' = '+result};},
+    function(){var n=randInt(100,999);var sum=0;var s=String(n);for(var i=0;i<s.length;i++)sum+=parseInt(s[i]);var div3=n%3===0;return{prompt:'Is '+n+' divisible by 3?',options:shuffle([div3?'Yes (digit sum '+sum+' divisible by 3)':'No (digit sum '+sum+' not divisible by 3)','Yes','No','Cannot determine']),correct:div3?'Yes (digit sum '+sum+' divisible by 3)':'No (digit sum '+sum+' not divisible by 3)',explanation:'Divisibility by 3: sum of digits = '+sum+'. '+(div3?sum+' is divisible by 3.':sum+' is not divisible by 3.')};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='easy';r.type='MCQ';r.chapter=ch;return r;
 },
 exponents_powers: function(ch){
-  var base=randInt(2,5),exp=randInt(2,4);
-  var ans=Math.pow(base,exp);
-  var wrong=[base*exp,ans+randInt(1,10),Math.pow(base,exp+1)];
-  return{prompt:'Find the value of '+base+'^'+exp+'.',options:shuffle([ans].concat(wrong).map(String)),correct:String(ans),explanation:base+'^'+exp+' = '+ans,difficulty:'easy',type:'MCQ',chapter:ch};
+  var templates=[
+    function(){var a=randInt(2,5),b=randInt(2,4);var r=Math.pow(a,b);return{prompt:a+'^'+b+' = ?',options:shuffle([String(r),String(a*b),String(r+1),String(a+b)]),correct:String(r),explanation:a+'^'+b+' = '+r};},
+    function(){var a=randInt(2,5);return{prompt:a+'^0 = ?',options:shuffle(['1','0',String(a),'Undefined']),correct:'1',explanation:'Any non-zero number raised to power 0 equals 1.'};},
+    function(){var a=randInt(2,4),m=randInt(2,4),n=randInt(2,4);return{prompt:a+'^'+m+' x '+a+'^'+n+' = '+a+'^?',options:shuffle([String(m+n),String(m*n),String(m-n),String(a)]),correct:String(m+n),explanation:'a^m x a^n = a^(m+n) = '+a+'^'+(m+n)};},
+    function(){var a=randInt(2,4),m=randInt(3,6),n=randInt(1,3);return{prompt:a+'^'+m+' / '+a+'^'+n+' = '+a+'^?',options:shuffle([String(m-n),String(m+n),String(m*n),String(m/n)]),correct:String(m-n),explanation:'a^m / a^n = a^(m-n) = '+a+'^'+(m-n)};},
+    function(){var a=randInt(2,4),m=randInt(2,3),n=randInt(2,3);return{prompt:'('+a+'^'+m+')^'+n+' = '+a+'^?',options:shuffle([String(m*n),String(m+n),String(m-n),String(a)]),correct:String(m*n),explanation:'(a^m)^n = a^(m*n) = '+a+'^'+(m*n)};},
+    function(){var n=randInt(4,25);var sq=Math.round(Math.sqrt(n));var isSq=(sq*sq===n);return{prompt:'Is '+n+' a perfect square?',options:shuffle([isSq?'Yes, sqrt = '+sq:'No',isSq?'No':'Yes','Cannot determine','Always']),correct:isSq?'Yes, sqrt = '+sq:'No',explanation:isSq?n+' = '+sq+'^2, so it is a perfect square.':n+' is not a perfect square.'};},
+    function(){var n=randInt(2,5);var cube=n*n*n;return{prompt:'Cube root of '+cube+' is:',options:shuffle([String(n),String(n*n),String(cube),String(n+1)]),correct:String(n),explanation:n+'^3 = '+cube+', so cube root of '+cube+' = '+n};},
+    function(){var a=randInt(2,5);return{prompt:a+'^(-1) = ?',options:shuffle(['1/'+a,String(-a),String(a),'0']),correct:'1/'+a,explanation:'a^(-1) = 1/a = 1/'+a};},
+    function(){var a=randInt(2,10);var sq=a*a;return{prompt:'Square root of '+sq+' is:',options:shuffle([String(a),String(sq),String(a+1),String(a-1)]),correct:String(a),explanation:'sqrt('+sq+') = '+a+' since '+a+'^2 = '+sq};},
+    function(){var a=randInt(2,5),b=randInt(2,5);var p=Math.pow(a,b);return{prompt:'Express '+p+' as a power of '+a+':',options:shuffle([a+'^'+b,a+'^'+(b+1),a+'^'+(b-1),p+'^1']),correct:a+'^'+b,explanation:a+'^'+b+' = '+p};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='easy';r.type='MCQ';r.chapter=ch;return r;
+},
+percentage_ratio: function(ch){
+  var templates=[
+    function(){var p=randInt(10,90),n=randInt(100,500);var ans=Math.round(p*n/100);return{prompt:p+'% of '+n+' = ?',options:shuffle([String(ans),String(ans+10),String(p*n),String(n-p)]),correct:String(ans),explanation:p+'% of '+n+' = ('+p+'/100) x '+n+' = '+ans};},
+    function(){var a=randInt(1,10),b=randInt(1,10);var total=a+b;return{prompt:'Ratio of '+a+' to '+(a+b)+' as fraction:',options:shuffle([a+'/'+total,a+'/'+b,b+'/'+a,total+'/'+a]),correct:a+'/'+total,explanation:'Ratio '+a+':'+(a+b)+' = '+a+'/'+total};},
+    function(){var sp=randInt(50,200),cp=randInt(30,150);var prof=sp-cp;var profPct=Math.round(prof/cp*100);return{prompt:'CP='+cp+', SP='+sp+'. Profit % = ?',options:shuffle([profPct+'%',(profPct+5)+'%',prof+'%',sp+'%']),correct:profPct+'%',explanation:'Profit = '+(sp-cp)+'. Profit% = ('+prof+'/'+cp+') x 100 = '+profPct+'%'};},
+    function(){var r1=randInt(2,8),r2=randInt(2,8);var total=randInt(50,200);var p1=Math.round(total*r1/(r1+r2));return{prompt:'Divide '+total+' in ratio '+r1+':'+r2+'. First part:',options:shuffle([String(p1),String(total-p1),String(total),String(r1)]),correct:String(p1),explanation:'First part = '+total+' x '+r1+'/'+(r1+r2)+' = '+p1};},
+    function(){var principal=randInt(1,10)*1000,rate=randInt(5,15),time=randInt(1,5);var si=principal*rate*time/100;return{prompt:'SI on Rs.'+principal+' at '+rate+'% for '+time+' years:',options:shuffle(['Rs.'+si,'Rs.'+(si+100),'Rs.'+(principal+si),'Rs.'+principal]),correct:'Rs.'+si,explanation:'SI = PRT/100 = '+principal+'x'+rate+'x'+time+'/100 = '+si};},
+    function(){var n=randInt(20,100);var pct=randInt(10,50);var inc=Math.round(n*(1+pct/100));return{prompt:n+' increased by '+pct+'% becomes:',options:shuffle([String(inc),String(n+pct),String(n*pct),String(inc+1)]),correct:String(inc),explanation:n+' + '+pct+'% of '+n+' = '+n+' + '+(n*pct/100)+' = '+inc};},
+    function(){var a=randInt(2,6),b=randInt(2,6);return{prompt:'If A:B = '+a+':'+b+' and B:C = '+b+':'+(b+randInt(1,3))+', find A:C:',options:shuffle([a+':'+(b+randInt(1,3)),'Cannot determine without more info',a+':'+b,b+':'+(b+randInt(1,3))]),correct:'Cannot determine without more info',explanation:'Need consistent B value to find A:C ratio.'};},
+    function(){var n=randInt(50,200);var pct=randInt(10,40);var dec=Math.round(n*(1-pct/100));return{prompt:n+' decreased by '+pct+'%:',options:shuffle([String(dec),String(n-pct),String(n+dec),String(dec-1)]),correct:String(dec),explanation:n+' - '+pct+'% of '+n+' = '+n+' - '+(n*pct/100)+' = '+dec};},
+    function(){var part=randInt(10,80),total=randInt(100,500);var pct=Math.round(part/total*100);return{prompt:part+' out of '+total+' as percentage:',options:shuffle([pct+'%',(pct+5)+'%',part+'%',total+'%']),correct:pct+'%',explanation:'('+part+'/'+total+') x 100 = '+pct+'%'};},
+    function(){var a=randInt(2,5),b=randInt(2,5),c=randInt(2,5);return{prompt:'Simplify ratio '+(a*2)+':'+(b*2)+':'+(c*2)+':',options:shuffle([a+':'+b+':'+c,(a*2)+':'+(b*2)+':'+(c*2),'1:1:1',a+':'+b]),correct:a+':'+b+':'+c,explanation:'Divide all by 2: '+a+':'+b+':'+c};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 sets_functions: function(ch){
-  var types=[
-    function(){var a=[1,2,3,4,5],b=[3,4,5,6,7];return{prompt:'If A = {1,2,3,4,5} and B = {3,4,5,6,7}, find A intersection B.',options:shuffle(['{3,4,5}','{1,2,3,4,5,6,7}','{1,2}','{6,7}']),correct:'{3,4,5}',explanation:'A intersection B = elements common to both = {3,4,5}'}},
-    function(){return{prompt:'If n(A) = 10, n(B) = 15, n(A intersection B) = 5, find n(A union B).',options:shuffle(['20','25','15','30']),correct:'20',explanation:'n(A union B) = n(A) + n(B) - n(A intersection B) = 10 + 15 - 5 = 20'}},
-    function(){return{prompt:'The number of subsets of a set with 3 elements is:',options:shuffle(['8','6','3','9']),correct:'8',explanation:'Number of subsets = 2^n = 2^3 = 8'}}
-  ];
-  var gen=pick(types);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
-},
-sequences_series: function(ch){
-  var a=randInt(1,10),r2=randInt(2,4),n=randInt(3,6);
-  var term=a*Math.pow(r2,n-1);
-  var wrong=[a*Math.pow(r2,n),term+randInt(1,10),a*r2*n];
-  return{prompt:'Find the '+n+'th term of GP: '+a+', '+(a*r2)+', '+(a*r2*r2)+', ...',options:shuffle([term].concat(wrong).map(String)),correct:String(term),explanation:'a_n = a * r^(n-1) = '+a+' * '+r2+'^'+(n-1)+' = '+term,difficulty:'medium',type:'MCQ',chapter:ch};
-},
-matrices_determinants: function(ch){
-  var a=randInt(1,5),b=randInt(1,5),c=randInt(1,5),d=randInt(1,5);
-  var det=a*d-b*c;
-  var wrong=[a*d+b*c,a+d,det+randInt(1,5)];
-  return{prompt:'Find the determinant of matrix [['+a+','+b+'],['+c+','+d+']].',options:shuffle([det].concat(wrong).map(String)),correct:String(det),explanation:'det = ad - bc = '+a+'*'+d+' - '+b+'*'+c+' = '+det,difficulty:'medium',type:'MCQ',chapter:ch};
-},
-limits_derivatives: function(ch){
-  var n=randInt(2,6);
-  var types=[
-    function(){return{prompt:'Find d/dx (x^'+n+').',options:shuffle([n+'x^'+(n-1),(n+1)+'x^'+n,'x^'+(n+1)+'/'+(n+1),n+'x^'+(n+1)]),correct:n+'x^'+(n-1),explanation:'d/dx (x^n) = nx^(n-1) = '+n+'x^'+(n-1)}},
-    function(){return{prompt:'Find lim(x->0) sin(x)/x.',options:shuffle(['1','0','infinity','Does not exist']),correct:'1',explanation:'This is a standard limit: lim(x->0) sin(x)/x = 1'}},
-    function(){var a2=randInt(2,5);return{prompt:'Find d/dx ('+a2+'x^2 + 3x + 1).',options:shuffle([(2*a2)+'x + 3',a2+'x^2 + 3',(2*a2)+'x',a2+'x + 3']),correct:(2*a2)+'x + 3',explanation:'d/dx('+a2+'x^2) = '+(2*a2)+'x, d/dx(3x) = 3, d/dx(1) = 0. Total = '+(2*a2)+'x + 3'}}
-  ];
-  var gen=pick(types);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
-},
-integrals: function(ch){
-  var n=randInt(2,5);
-  var types=[
-    function(){return{prompt:'Find the integral of x^'+n+' dx.',options:shuffle(['x^'+(n+1)+'/'+(n+1)+' + C',(n+1)+'x^'+(n+1)+' + C',n+'x^'+(n-1)+' + C','x^'+n+'/'+n+' + C']),correct:'x^'+(n+1)+'/'+(n+1)+' + C',explanation:'Integral of x^n = x^(n+1)/(n+1) + C = x^'+(n+1)+'/'+(n+1)+' + C'}},
-    function(){return{prompt:'Integral of cos(x) dx equals:',options:shuffle(['sin(x) + C','-sin(x) + C','cos(x) + C','-cos(x) + C']),correct:'sin(x) + C',explanation:'d/dx(sin x) = cos x, so integral of cos x = sin x + C'}}
-  ];
-  var gen=pick(types);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
-},
-vector_algebra: function(ch){
-  var a1=randInt(1,5),a2=randInt(1,5),a3=randInt(1,5);
-  var mag=Math.round(Math.sqrt(a1*a1+a2*a2+a3*a3)*100)/100;
-  var wrong=[a1+a2+a3,Math.round(mag)+1,a1*a2];
-  return{prompt:'Find the magnitude of vector ('+a1+'i + '+a2+'j + '+a3+'k).',options:shuffle([String(mag)].concat(wrong.map(String))),correct:String(mag),explanation:'|v| = sqrt('+a1+'^2 + '+a2+'^2 + '+a3+'^2) = sqrt('+(a1*a1+a2*a2+a3*a3)+') = '+mag,difficulty:'medium',type:'MCQ',chapter:ch};
-},
-complex_numbers: function(ch){
-  var a=randInt(1,8),b=randInt(1,8);
-  var mod=Math.round(Math.sqrt(a*a+b*b)*100)/100;
-  var wrong=[a+b,Math.round(mod)+1,a*b];
-  return{prompt:'Find the modulus of the complex number ('+a+' + '+b+'i).',options:shuffle([String(mod)].concat(wrong.map(String))),correct:String(mod),explanation:'|z| = sqrt(a^2 + b^2) = sqrt('+a+'^2 + '+b+'^2) = '+mod,difficulty:'medium',type:'MCQ',chapter:ch};
+  var templates=[
+    function(){return{prompt:'If A = {1,2,3} and B = {2,3,4}, then A union B:',options:shuffle(['{1,2,3,4}','{2,3}','{1,4}','{1,2,3,4,5}']),correct:'{1,2,3,4}',explanation:'Union: all elements from both sets = {1,2,3,4}.'};},
+    function(){return{prompt:'A intersection B contains:',options:shuffle(['Elements common to both A and B','All elements','Elements in A only','Empty set always']),correct:'Elements common to both A and B',explanation:'Intersection = elements present in both sets.'};},
+    function(){var n=randInt(3,8);return{prompt:'Number of subsets of a set with '+n+' elements:',options:shuffle([String(Math.pow(2,n)),String(2*n),String(n*n),String(n)]),correct:String(Math.pow(2,n)),explanation:'Number of subsets = 2^n = 2^'+n+' = '+Math.pow(2,n)};},
+    function(){return{prompt:'Empty set is denoted by:',options:shuffle(['phi or {}','{0}','{phi}','{ }']),correct:'phi or {}',explanation:'Empty set (null set) is denoted by phi or {}.'};},
+    function(){return{prompt:'If f(x) = 2x + 3, then f(2) = ?',options:shuffle(['7','5','4','9']),correct:'7',explanation:'f(2) = 2(2) + 3 = 4 + 3 = 7'};},
+    function(){return{prompt:'Domain of f(x) = 1/x:',options:shuffle(['All real numbers except 0','All real numbers','Only positive numbers','Only integers']),correct:'All real numbers except 0',explanation:'f(x) = 1/x is undefined at x = 0.'};},
+    function(){return{prompt:'A function is one-to-one (injective) if:',options:shuffle(['Different inputs give different outputs','All outputs are same','Domain equals range','It has inverse']),correct:'Different inputs give different outputs',explanation:'Injective: f(a) = f(b) implies a = b.'};},
+    function(){return{prompt:'n(A union B) = n(A) + n(B) - ?',options:shuffle(['n(A intersection B)','n(A)','n(B)','0']),correct:'n(A intersection B)',explanation:'Inclusion-exclusion: n(AuB) = n(A) + n(B) - n(AnB).'};},
+    function(){return{prompt:'Universal set contains:',options:shuffle(['All elements under consideration','Only common elements','Empty elements','Infinite elements only']),correct:'All elements under consideration',explanation:'Universal set U contains all objects relevant to the discussion.'};},
+    function(){return{prompt:'Complement of set A contains:',options:shuffle(['Elements in U but not in A','Elements in A','Elements in both A and U','Empty set']),correct:'Elements in U but not in A',explanation:'A complement = U - A (elements in universal set not in A).'};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
 },
 permutations_combinations: function(ch){
-  var n=randInt(4,8),r3=randInt(2,Math.min(4,n));
-  var perm=1;for(var i=0;i<r3;i++)perm*=(n-i);
-  var wrong=[perm+randInt(1,20),perm*2,n*r3];
-  return{prompt:'Find P('+n+','+r3+') (permutations of '+n+' things taken '+r3+' at a time).',options:shuffle([perm].concat(wrong).map(String)),correct:String(perm),explanation:'P('+n+','+r3+') = '+n+'!/('+(n-r3)+')! = '+perm,difficulty:'medium',type:'MCQ',chapter:ch};
+  var templates=[
+    function(){var n=randInt(4,8);var fact=1;for(var i=2;i<=n;i++)fact*=i;return{prompt:n+'! = ?',options:shuffle([String(fact),String(fact+n),String(n*n),String(fact-1)]),correct:String(fact),explanation:n+'! = '+n+'x'+(n-1)+'x...x1 = '+fact};},
+    function(){return{prompt:'nP0 = ?',options:shuffle(['1','0','n','n!']),correct:'1',explanation:'nP0 = n!/(n-0)! = n!/n! = 1.'};},
+    function(){return{prompt:'nC0 = ?',options:shuffle(['1','0','n','n!']),correct:'1',explanation:'nC0 = n!/(0! x n!) = 1.'};},
+    function(){return{prompt:'nCn = ?',options:shuffle(['1','0','n','n!']),correct:'1',explanation:'nCn = n!/(n! x 0!) = 1.'};},
+    function(){var n=randInt(5,10),r=randInt(2,4);var ncr=1;for(var i=0;i<r;i++)ncr=ncr*(n-i)/(i+1);return{prompt:n+'C'+r+' = ?',options:shuffle([String(ncr),String(ncr+1),String(n*r),String(ncr-1)]),correct:String(ncr),explanation:n+'C'+r+' = '+n+'!/('+ r+'!('+(n-r)+')!) = '+ncr};},
+    function(){return{prompt:'Number of ways to arrange n objects in a line:',options:shuffle(['n!','2^n','n^2','2n']),correct:'n!',explanation:'Permutation of n objects = n! arrangements.'};},
+    function(){return{prompt:'nCr = nC(n-r). This means:',options:shuffle(['Choosing r is same as leaving (n-r)','r = n-r always','nCr = 0','Only when r = n']),correct:'Choosing r is same as leaving (n-r)',explanation:'Symmetry: choosing r items from n = choosing which (n-r) to leave.'};},
+    function(){var n=randInt(5,10);return{prompt:'nC1 = ? (when n='+n+')',options:shuffle([String(n),'1','0',String(n*n)]),correct:String(n),explanation:'nC1 = n. Choosing 1 from '+n+' = '+n+' ways.'};},
+    function(){return{prompt:'Combination is used when:',options:shuffle(['Order does not matter','Order matters','Only for numbers','Only for letters']),correct:'Order does not matter',explanation:'Combination: selection without regard to order.'};},
+    function(){return{prompt:'Permutation is used when:',options:shuffle(['Order matters','Order does not matter','Only for identical items','Never']),correct:'Order matters',explanation:'Permutation: arrangement where order is important.'};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
+},
+matrices_determinants: function(ch){
+  var templates=[
+    function(){var a=randInt(1,5),b=randInt(1,5),c=randInt(1,5),d=randInt(1,5);var det=a*d-b*c;return{prompt:'Determinant of |'+a+' '+b+'| / |'+c+' '+d+'| is:',options:shuffle([String(det),String(a*d+b*c),String(det+1),String(a+d)]),correct:String(det),explanation:'det = ad - bc = '+a+'('+d+') - '+b+'('+c+') = '+det};},
+    function(){return{prompt:'A square matrix with all zeros is called:',options:shuffle(['Null/Zero matrix','Identity matrix','Diagonal matrix','Scalar matrix']),correct:'Null/Zero matrix',explanation:'All elements zero = null matrix or zero matrix.'};},
+    function(){return{prompt:'Identity matrix has:',options:shuffle(['1s on diagonal, 0s elsewhere','All 1s','All 0s','Random values']),correct:'1s on diagonal, 0s elsewhere',explanation:'Identity matrix I: diagonal entries = 1, off-diagonal = 0.'};},
+    function(){var n=randInt(2,4);return{prompt:'Order of a '+n+'x'+n+' matrix:',options:shuffle([n+'x'+n,String(n*n),String(2*n),n+'x'+(n+1)]),correct:n+'x'+n,explanation:'A '+n+'x'+n+' matrix has order '+n+'x'+n+' ('+n+' rows, '+n+' columns).'};},
+    function(){return{prompt:'(AB)^T = ?',options:shuffle(['B^T . A^T','A^T . B^T','(AB)','A . B']),correct:'B^T . A^T',explanation:'Transpose of product reverses order: (AB)^T = B^T A^T.'};},
+    function(){return{prompt:'A matrix is singular if:',options:shuffle(['Its determinant is 0','Its determinant is 1','It is square','It has inverse']),correct:'Its determinant is 0',explanation:'Singular matrix: det = 0 (no inverse exists).'};},
+    function(){return{prompt:'Two matrices can be multiplied if:',options:shuffle(['Columns of first = rows of second','They have same order','Both are square','They are equal']),correct:'Columns of first = rows of second',explanation:'For A(mxn) x B(nxp), n must match.'};},
+    function(){return{prompt:'A^(-1) exists if:',options:shuffle(['det(A) is not 0','det(A) = 0','A is not square','A has all zeros']),correct:'det(A) is not 0',explanation:'Inverse exists only for non-singular matrices (det not 0).'};},
+    function(){return{prompt:'Trace of a matrix is:',options:shuffle(['Sum of diagonal elements','Product of all elements','Determinant','Number of rows']),correct:'Sum of diagonal elements',explanation:'Trace = sum of elements on the main diagonal.'};},
+    function(){return{prompt:'A symmetric matrix satisfies:',options:shuffle(['A = A^T','A = -A^T','A = A^(-1)','det(A) = 0']),correct:'A = A^T',explanation:'Symmetric: matrix equals its transpose (a_ij = a_ji).'};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='medium';r.type='MCQ';r.chapter=ch;return r;
+},
+limits_derivatives: function(ch){
+  var templates=[
+    function(){var n=randInt(2,6);return{prompt:'lim(x->0) sin(x)/x = ?',options:shuffle(['1','0','Infinity','Does not exist']),correct:'1',explanation:'Standard limit: lim(x->0) sin(x)/x = 1.'};},
+    function(){var a=randInt(2,5),n=randInt(2,4);return{prompt:'d/dx('+a+'x^'+n+') = ?',options:shuffle([String(a*n)+'x^'+String(n-1),String(a)+'x^'+n,String(n)+'x^'+String(a),String(a*n)+'x^'+n]),correct:String(a*n)+'x^'+String(n-1),explanation:'Power rule: d/dx(ax^n) = anx^(n-1) = '+(a*n)+'x^'+(n-1)};},
+    function(){return{prompt:'d/dx(sin x) = ?',options:shuffle(['cos x','-cos x','sin x','-sin x']),correct:'cos x',explanation:'Derivative of sin x = cos x.'};},
+    function(){return{prompt:'d/dx(cos x) = ?',options:shuffle(['-sin x','sin x','cos x','-cos x']),correct:'-sin x',explanation:'Derivative of cos x = -sin x.'};},
+    function(){return{prompt:'d/dx(e^x) = ?',options:shuffle(['e^x','xe^(x-1)','1/x','x.e^x']),correct:'e^x',explanation:'e^x is its own derivative: d/dx(e^x) = e^x.'};},
+    function(){return{prompt:'d/dx(ln x) = ?',options:shuffle(['1/x','x','ln x','e^x']),correct:'1/x',explanation:'Derivative of natural log: d/dx(ln x) = 1/x.'};},
+    function(){return{prompt:'d/dx(constant) = ?',options:shuffle(['0','1','constant','Undefined']),correct:'0',explanation:'Derivative of any constant = 0.'};},
+    function(){var a=randInt(2,5);return{prompt:'lim(x->'+a+') (x^2 - '+(a*a)+')/(x - '+a+') = ?',options:shuffle([String(2*a),String(a),'0','Infinity']),correct:String(2*a),explanation:'Factor: (x-'+a+')(x+'+a+')/(x-'+a+') = x+'+a+'. At x='+a+': '+(2*a)};},
+    function(){return{prompt:'Product rule: d/dx(uv) = ?',options:shuffle(["u'v + uv'","u'v'","uv' - u'v","u'/v'"]),correct:"u'v + uv'",explanation:"Product rule: (uv)' = u'v + uv'."};},
+    function(){return{prompt:'Chain rule: d/dx[f(g(x))] = ?',options:shuffle(["f'(g(x)).g'(x)","f'(x).g'(x)","f(g'(x))","f'(x)+g'(x)"]),correct:"f'(g(x)).g'(x)",explanation:"Chain rule: derivative of composite = outer' x inner'."}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='hard';r.type='MCQ';r.chapter=ch;return r;
+},
+integrals: function(ch){
+  var templates=[
+    function(){var n=randInt(2,5);return{prompt:'Integral of x^'+n+' dx = ?',options:shuffle(['x^'+(n+1)+'/'+(n+1)+' + C','x^'+n+'/'+n+' + C',(n+1)+'x^'+n+' + C','x^'+(n-1)+' + C']),correct:'x^'+(n+1)+'/'+(n+1)+' + C',explanation:'Power rule: integral of x^n = x^(n+1)/(n+1) + C'};},
+    function(){return{prompt:'Integral of sin x dx = ?',options:shuffle(['-cos x + C','cos x + C','sin x + C','-sin x + C']),correct:'-cos x + C',explanation:'Integral of sin x = -cos x + C.'};},
+    function(){return{prompt:'Integral of cos x dx = ?',options:shuffle(['sin x + C','-sin x + C','cos x + C','-cos x + C']),correct:'sin x + C',explanation:'Integral of cos x = sin x + C.'};},
+    function(){return{prompt:'Integral of e^x dx = ?',options:shuffle(['e^x + C','xe^x + C','e^x/x + C','x + C']),correct:'e^x + C',explanation:'Integral of e^x = e^x + C.'};},
+    function(){return{prompt:'Integral of 1/x dx = ?',options:shuffle(['ln|x| + C','x + C','1/x^2 + C','-1/x + C']),correct:'ln|x| + C',explanation:'Integral of 1/x = ln|x| + C.'};},
+    function(){return{prompt:'Integral of 0 dx = ?',options:shuffle(['C (constant)','0','1','x']),correct:'C (constant)',explanation:'Integral of zero is just the constant of integration.'};},
+    function(){var a=randInt(2,5);return{prompt:'Integral of '+a+' dx = ?',options:shuffle([a+'x + C',a+'^2/2 + C','x^'+a+' + C',a+'/x + C']),correct:a+'x + C',explanation:'Integral of constant k = kx + C.'};},
+    function(){return{prompt:'Definite integral gives:',options:shuffle(['Area under the curve','Slope of curve','Equation of tangent','Maximum value']),correct:'Area under the curve',explanation:'Definite integral from a to b = net area under curve between a and b.'};},
+    function(){return{prompt:'Fundamental theorem of calculus connects:',options:shuffle(['Integration and differentiation','Addition and subtraction','Algebra and geometry','Limits and series']),correct:'Integration and differentiation',explanation:'FTC: integration and differentiation are inverse operations.'};},
+    function(){return{prompt:'C in indefinite integral represents:',options:shuffle(['Arbitrary constant of integration','Coefficient','Cosine','Circumference']),correct:'Arbitrary constant of integration',explanation:'C accounts for the family of antiderivatives (constant disappears in differentiation).'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='hard';r.type='MCQ';r.chapter=ch;return r;
+},
+vector_algebra: function(ch){
+  var templates=[
+    function(){return{prompt:'A vector has:',options:shuffle(['Both magnitude and direction','Only magnitude','Only direction','Neither']),correct:'Both magnitude and direction',explanation:'Vectors have both magnitude (size) and direction.'};},
+    function(){return{prompt:'Unit vector has magnitude:',options:shuffle(['1','0','Infinity','Variable']),correct:'1',explanation:'Unit vector: magnitude = 1, used to indicate direction only.'};},
+    function(){var a=randInt(1,5),b=randInt(1,5);var mag=Math.round(Math.sqrt(a*a+b*b)*100)/100;return{prompt:'Magnitude of vector ('+a+'i + '+b+'j):',options:shuffle([String(mag),String(a+b),String(a*b),String(mag+1)]),correct:String(mag),explanation:'|v| = sqrt('+a+'^2 + '+b+'^2) = sqrt('+(a*a+b*b)+') = '+mag};},
+    function(){return{prompt:'Dot product of perpendicular vectors:',options:shuffle(['0','1','Infinity','-1']),correct:'0',explanation:'a.b = |a||b|cos(90) = 0 for perpendicular vectors.'};},
+    function(){return{prompt:'Cross product gives:',options:shuffle(['A vector perpendicular to both','A scalar','Zero always','Same vector']),correct:'A vector perpendicular to both',explanation:'a x b is perpendicular to both a and b.'};},
+    function(){return{prompt:'i.i = j.j = k.k = ?',options:shuffle(['1','0','i','j']),correct:'1',explanation:'Dot product of unit vector with itself = 1.'};},
+    function(){return{prompt:'i x i = ?',options:shuffle(['0 (zero vector)','i','j','k']),correct:'0 (zero vector)',explanation:'Cross product of parallel vectors = zero vector.'};},
+    function(){return{prompt:'If a and b are parallel, a x b = ?',options:shuffle(['Zero vector','a + b','a.b','|a||b|']),correct:'Zero vector',explanation:'Cross product of parallel vectors = 0 (sin 0 = 0).'};},
+    function(){var a1=randInt(1,4),a2=randInt(1,4),b1=randInt(1,4),b2=randInt(1,4);var dot=a1*b1+a2*b2;return{prompt:'('+a1+'i+'+a2+'j).('+b1+'i+'+b2+'j) = ?',options:shuffle([String(dot),String(a1*b2+a2*b1),String(dot+1),String(a1+b1)]),correct:String(dot),explanation:'Dot product = '+a1+'('+b1+') + '+a2+'('+b2+') = '+dot};},
+    function(){return{prompt:'Position vector of point (3,4,5) is:',options:shuffle(['3i + 4j + 5k','3 + 4 + 5','sqrt(50)','(3,4,5)']),correct:'3i + 4j + 5k',explanation:'Position vector from origin to (3,4,5) = 3i + 4j + 5k.'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='hard';r.type='MCQ';r.chapter=ch;return r;
+},
+complex_numbers: function(ch){
+  var templates=[
+    function(){return{prompt:'The value of i^2 is:',options:shuffle(['-1','1','i','-i']),correct:'-1',explanation:'By definition, i = sqrt(-1), so i^2 = -1.'};},
+    function(){return{prompt:'i^4 = ?',options:shuffle(['1','-1','i','-i']),correct:'1',explanation:'i^4 = (i^2)^2 = (-1)^2 = 1.'};},
+    function(){var a=randInt(1,5),b=randInt(1,5),c=randInt(1,5),d=randInt(1,5);return{prompt:'('+a+'+'+b+'i) + ('+c+'+'+d+'i) = ?',options:shuffle([(a+c)+'+'+(b+d)+'i',(a*c)+'+'+(b*d)+'i',(a+c)+'-'+(b+d)+'i',(a-c)+'+'+(b-d)+'i']),correct:(a+c)+'+'+(b+d)+'i',explanation:'Add real parts and imaginary parts separately.'};},
+    function(){var a=randInt(1,5),b=randInt(1,5);var mod=Math.round(Math.sqrt(a*a+b*b)*100)/100;return{prompt:'Modulus of '+a+'+'+b+'i:',options:shuffle([String(mod),String(a+b),String(a*b),String(mod+1)]),correct:String(mod),explanation:'|z| = sqrt(a^2+b^2) = sqrt('+(a*a+b*b)+') = '+mod};},
+    function(){var a=randInt(1,5),b=randInt(1,5);return{prompt:'Conjugate of '+a+'+'+b+'i:',options:shuffle([a+'-'+b+'i',a+'+'+b+'i','-'+a+'+'+b+'i','-'+a+'-'+b+'i']),correct:a+'-'+b+'i',explanation:'Conjugate: change sign of imaginary part.'};},
+    function(){return{prompt:'Real part of 3 + 4i:',options:shuffle(['3','4','5','7']),correct:'3',explanation:'In a + bi, real part = a = 3.'};},
+    function(){return{prompt:'Imaginary part of 3 + 4i:',options:shuffle(['4','3','4i','3i']),correct:'4',explanation:'In a + bi, imaginary part = b = 4.'};},
+    function(){return{prompt:'i^3 = ?',options:shuffle(['-i','i','1','-1']),correct:'-i',explanation:'i^3 = i^2 . i = (-1)(i) = -i.'};},
+    function(){return{prompt:'Every real number is also a:',options:shuffle(['Complex number (with imaginary part 0)','Pure imaginary','Not complex','Irrational']),correct:'Complex number (with imaginary part 0)',explanation:'Real number a = a + 0i (complex with b=0).'};},
+    function(){return{prompt:'z.conjugate(z) = ?',options:shuffle(['|z|^2','0','z^2','2z']),correct:'|z|^2',explanation:'z.z* = (a+bi)(a-bi) = a^2+b^2 = |z|^2.'}}
+  ];var gen=pick(templates);var r=gen();r.difficulty='hard';r.type='MCQ';r.chapter=ch;return r;
 },
 linear_programming: function(ch){
-  return{prompt:'In linear programming, the feasible region is:',options:shuffle(['The intersection of all constraint regions','Always unbounded','A single point','Outside all constraints']),correct:'The intersection of all constraint regions',explanation:'The feasible region is formed by the intersection of all constraints.',difficulty:'medium',type:'MCQ',chapter:ch};
+  var templates=[
+    function(){return{prompt:'In LPP, the objective function is:',options:shuffle(['Linear function to be maximized or minimized','Quadratic function','Constraint','Feasible region']),correct:'Linear function to be maximized or minimized',explanation:'Objective function is what we optimize (max/min) in LPP.'};},
+    function(){return{prompt:'Feasible region is the set of:',options:shuffle(['Points satisfying all constraints','Only corner points','Points outside constraints','Infinite plane']),correct:'Points satisfying all constraints',explanation:'Feasible region: all points that satisfy every constraint simultaneously.'};},
+    function(){return{prompt:'Optimal solution in LPP occurs at:',options:shuffle(['Corner point of feasible region','Center of region','Any point','Outside the region']),correct:'Corner point of feasible region',explanation:'Corner point theorem: optimal value occurs at a vertex of feasible region.'};},
+    function(){return{prompt:'If feasible region is unbounded:',options:shuffle(['Optimal solution may or may not exist','Always has solution','Never has solution','Region is empty']),correct:'Optimal solution may or may not exist',explanation:'Unbounded region: maximum may not exist, but minimum might (or vice versa).'};},
+    function(){return{prompt:'Constraints in LPP are:',options:shuffle(['Linear inequalities','Quadratic equations','Always equalities','Non-linear']),correct:'Linear inequalities',explanation:'LPP constraints are linear inequalities or equations.'};}
+  ];var gen=pick(templates);var r=gen();r.difficulty='hard';r.type='MCQ';r.chapter=ch;return r;
 }
 };
 
-// ============== CHAPTER-SPECIFIC SCIENCE QUESTION POOLS ==============
+
+// ============== SCIENCE CHAPTER POOLS (Class 9-10) - EXPANDED ==============
 var SCIENCE_POOLS = {
 'Matter in Our Surroundings':[
-{prompt:'Which state of matter has fixed shape and volume?',options:['Solid','Liquid','Gas','Plasma'],correct:0,explanation:'Solids have fixed shape and volume due to strong intermolecular forces.'},
-{prompt:'The process of changing from liquid to gas is called:',options:['Evaporation','Condensation','Sublimation','Freezing'],correct:0,explanation:'Evaporation is the process where liquid turns to gas at the surface.'},
-{prompt:'Which has the highest kinetic energy?',options:['Gas particles','Liquid particles','Solid particles','All equal'],correct:0,explanation:'Gas particles have highest KE due to maximum freedom of movement.'},
-{prompt:'Dry ice is an example of:',options:['Sublimation','Evaporation','Melting','Boiling'],correct:0,explanation:'Dry ice (solid CO2) directly converts from solid to gas.'},
-{prompt:'The temperature at which a liquid boils is called:',options:['Boiling point','Melting point','Freezing point','Dew point'],correct:0,explanation:'Boiling point is the temperature at which vapor pressure equals atmospheric pressure.'},
-{prompt:'Latent heat of fusion is the heat needed to:',options:['Convert solid to liquid at melting point','Convert liquid to gas','Raise temperature by 1 degree','Cool a substance'],correct:0,explanation:'Latent heat of fusion is absorbed during solid to liquid conversion without temperature change.'},
-{prompt:'Which factor increases the rate of evaporation?',options:['Increase in temperature','Decrease in surface area','Increase in humidity','Decrease in wind speed'],correct:0,explanation:'Higher temperature gives molecules more energy to escape from the surface.'},
-{prompt:'Plasma is found in:',options:['Stars and sun','Deep ocean','Underground rocks','Glaciers'],correct:0,explanation:'Plasma, the fourth state of matter, exists in stars where atoms are ionized.'}
+{prompt:'Matter is made up of:',options:['Tiny particles','Energy waves','Light only','Nothing'],correct:0,explanation:'Matter consists of tiny particles (atoms/molecules) with spaces between them.'},
+{prompt:'Which state of matter has fixed shape and volume?',options:['Solid','Liquid','Gas','Plasma'],correct:0,explanation:'Solids have fixed shape and fixed volume due to strong intermolecular forces.'},
+{prompt:'Particles in a gas:',options:['Move freely in all directions','Are tightly packed','Have fixed positions','Cannot move'],correct:0,explanation:'Gas particles have high kinetic energy and move freely.'},
+{prompt:'Evaporation causes:',options:['Cooling','Heating','No temperature change','Boiling'],correct:0,explanation:'Evaporation is endothermic - absorbs heat from surroundings causing cooling.'},
+{prompt:'The process of changing gas to liquid:',options:['Condensation','Evaporation','Sublimation','Melting'],correct:0,explanation:'Gas to liquid = condensation (e.g., water vapor to water droplets).'},
+{prompt:'Sublimation is the conversion of:',options:['Solid directly to gas','Liquid to gas','Gas to solid','Solid to liquid'],correct:0,explanation:'Sublimation: solid -> gas without passing through liquid (e.g., dry ice).'},
+{prompt:'Boiling point of water at 1 atm is:',options:['100 degrees C','0 degrees C','50 degrees C','212 degrees C'],correct:0,explanation:'Water boils at 100 C (373 K) at standard atmospheric pressure.'},
+{prompt:'Latent heat of fusion is heat required to:',options:['Convert solid to liquid at melting point','Raise temperature','Convert liquid to gas','Cool a substance'],correct:0,explanation:'Latent heat of fusion: energy to change solid to liquid without temperature change.'},
+{prompt:'Plasma is found in:',options:['Stars and neon signs','Oceans','Rocks','Ice'],correct:0,explanation:'Plasma (ionized gas) exists in stars, lightning, neon signs, and fluorescent tubes.'},
+{prompt:'Increasing pressure on gas:',options:['Decreases volume','Increases volume','No effect','Converts to solid'],correct:0,explanation:'Pressure increase compresses gas particles closer, decreasing volume (Boyles law).'},
+{prompt:'Diffusion is fastest in:',options:['Gases','Liquids','Solids','Vacuum'],correct:0,explanation:'Gases diffuse fastest due to maximum kinetic energy and large intermolecular spacing.'},
+{prompt:'Kelvin scale absolute zero is:',options:['-273 degrees C','0 degrees C','100 degrees C','-100 degrees C'],correct:0,explanation:'Absolute zero = 0 K = -273.15 degrees C (lowest possible temperature).'}
 ],
 'Is Matter Around Us Pure':[
-{prompt:'A homogeneous mixture is also called:',options:['Solution','Suspension','Colloid','Compound'],correct:0,explanation:'Solutions are homogeneous mixtures with uniform composition throughout.'},
-{prompt:'Tyndall effect is shown by:',options:['Colloids','True solutions','Pure water','Elements'],correct:0,explanation:'Colloid particles scatter light, showing the Tyndall effect.'},
-{prompt:'Separation of immiscible liquids is done by:',options:['Separating funnel','Filtration','Evaporation','Distillation'],correct:0,explanation:'A separating funnel uses density difference to separate immiscible liquids.'},
-{prompt:'An element is made up of:',options:['Same type of atoms','Different atoms','Molecules only','Ions only'],correct:0,explanation:'An element consists of only one type of atom.'},
-{prompt:'Brass is an example of:',options:['Alloy (homogeneous mixture)','Compound','Element','Heterogeneous mixture'],correct:0,explanation:'Brass is an alloy of copper and zinc, a homogeneous mixture.'}
+{prompt:'A homogeneous mixture is called:',options:['Solution','Suspension','Colloid','Compound'],correct:0,explanation:'Solution: uniform composition throughout (homogeneous mixture).'},
+{prompt:'Tyndall effect is shown by:',options:['Colloids','True solutions','Elements','Compounds'],correct:0,explanation:'Colloid particles scatter light, showing Tyndall effect (beam becomes visible).'},
+{prompt:'Separation of immiscible liquids uses:',options:['Separating funnel','Filtration','Evaporation','Distillation'],correct:0,explanation:'Separating funnel separates immiscible liquids (like oil and water).'},
+{prompt:'An element contains:',options:['Only one type of atom','Two or more types','Molecules only','Ions only'],correct:0,explanation:'Element: pure substance with only one kind of atom.'},
+{prompt:'Brass is an example of:',options:['Alloy (homogeneous mixture)','Element','Compound','Heterogeneous mixture'],correct:0,explanation:'Brass (copper + zinc) is an alloy, a homogeneous solid mixture.'},
+{prompt:'Chromatography separates based on:',options:['Differential adsorption','Boiling point','Density','Particle size'],correct:0,explanation:'Chromatography: components separate based on different adsorption rates.'},
+{prompt:'Distillation separates liquids based on:',options:['Different boiling points','Color','Density only','Particle size'],correct:0,explanation:'Distillation uses differences in boiling points to separate miscible liquids.'},
+{prompt:'A compound:',options:['Has fixed ratio of elements by mass','Has variable composition','Cannot be broken down','Is always a gas'],correct:0,explanation:'Law of constant proportions: compounds have fixed elemental ratios.'},
+{prompt:'Saturated solution:',options:['Cannot dissolve more solute at given temperature','Has no solute','Is always hot','Is always dilute'],correct:0,explanation:'Saturated solution holds maximum solute at that temperature.'},
+{prompt:'Smoke is a:',options:['Aerosol (solid in gas)','Solution','Gel','Emulsion'],correct:0,explanation:'Smoke: tiny solid particles dispersed in gas (aerosol colloid).'},
+{prompt:'Pure substances have:',options:['Fixed melting and boiling points','Variable boiling points','No definite properties','Multiple compositions'],correct:0,explanation:'Pure substances melt/boil at specific, constant temperatures.'},
+{prompt:'Filtration separates:',options:['Insoluble solid from liquid','Miscible liquids','Gases','Dissolved solids'],correct:0,explanation:'Filtration: solid residue trapped on filter paper, liquid passes through.'}
 ],
 'Atoms and Molecules':[
-{prompt:'What is the atomic number of Carbon?',options:['6','12','8','4'],correct:0,explanation:'Carbon has 6 protons, so its atomic number is 6.'},
-{prompt:'The formula of water is:',options:['H2O','HO2','H2O2','HO'],correct:0,explanation:'Water molecule has 2 hydrogen atoms and 1 oxygen atom: H2O.'},
-{prompt:'One mole of any substance contains:',options:['6.022 x 10^23 particles','6.022 x 10^22 particles','6.022 x 10^24 particles','3.011 x 10^23 particles'],correct:0,explanation:'Avogadro number = 6.022 x 10^23.'},
-{prompt:'The molecular mass of CO2 is:',options:['44 u','28 u','32 u','16 u'],correct:0,explanation:'CO2 = 12 + 2(16) = 44 u.'},
-{prompt:'An atom is electrically:',options:['Neutral','Positive','Negative','Varies'],correct:0,explanation:'Atoms have equal protons and electrons, making them electrically neutral.'},
-{prompt:'The valency of oxygen is:',options:['2','1','3','4'],correct:0,explanation:'Oxygen needs 2 electrons to complete its octet, so valency is 2.'},
-{prompt:'Which scientist proposed the atomic theory?',options:['John Dalton','J.J. Thomson','Rutherford','Bohr'],correct:0,explanation:'John Dalton proposed the first scientific atomic theory in 1803.'},
-{prompt:'The mass of 1 mole of oxygen gas (O2) is:',options:['32 g','16 g','8 g','64 g'],correct:0,explanation:'O2 molecular mass = 2 x 16 = 32 g/mol.'}
+{prompt:'The law of conservation of mass states:',options:['Mass is neither created nor destroyed','Mass always increases','Mass decreases in reactions','Mass equals energy'],correct:0,explanation:'In chemical reactions, total mass of reactants = total mass of products.'},
+{prompt:'One mole of any substance contains:',options:['6.022 x 10^23 particles','6.022 x 10^22','1000 particles','1 million particles'],correct:0,explanation:'Avogadros number: 1 mole = 6.022 x 10^23 particles.'},
+{prompt:'Atomic mass unit (amu) is defined relative to:',options:['Carbon-12 atom','Hydrogen','Oxygen','Nitrogen'],correct:0,explanation:'1 amu = 1/12 the mass of a carbon-12 atom.'},
+{prompt:'Chemical formula of water:',options:['H2O','HO2','H2O2','OH'],correct:0,explanation:'Water molecule: 2 hydrogen atoms + 1 oxygen atom = H2O.'},
+{prompt:'Molecular mass of CO2:',options:['44 u','28 u','32 u','18 u'],correct:0,explanation:'CO2: C(12) + 2xO(16) = 12 + 32 = 44 u.'},
+{prompt:'Valency of oxygen is:',options:['2','1','3','4'],correct:0,explanation:'Oxygen has valency 2 (needs 2 electrons to complete octet).'},
+{prompt:'Formula of sodium chloride:',options:['NaCl','Na2Cl','NaCl2','Na2Cl2'],correct:0,explanation:'Na(+1) and Cl(-1) combine in 1:1 ratio: NaCl.'},
+{prompt:'Molar mass of water (H2O):',options:['18 g/mol','16 g/mol','2 g/mol','20 g/mol'],correct:0,explanation:'H2O: 2(1) + 16 = 18 g/mol.'},
+{prompt:'An ion is:',options:['An atom with net electric charge','A neutral atom','A molecule','An element'],correct:0,explanation:'Ions form when atoms gain or lose electrons (charged species).'},
+{prompt:'Polyatomic ion example:',options:['SO4^2- (sulphate)','Na+','Cl-','Fe'],correct:0,explanation:'Polyatomic ions: group of atoms with charge (SO4^2-, NH4+, CO3^2-).'},
+{prompt:'The formula of calcium oxide:',options:['CaO','Ca2O','CaO2','Ca2O3'],correct:0,explanation:'Ca(+2) and O(-2): cross valencies give CaO.'},
+{prompt:'Atomicity of ozone (O3):',options:['3','2','1','6'],correct:0,explanation:'Atomicity = number of atoms in one molecule. O3 has 3 atoms.'}
 ],
 'Structure of the Atom':[
-{prompt:'Who discovered the electron?',options:['J.J. Thomson','Rutherford','Bohr','Chadwick'],correct:0,explanation:'J.J. Thomson discovered electrons through cathode ray experiments.'},
-{prompt:'Neutrons were discovered by:',options:['Chadwick','Thomson','Rutherford','Dalton'],correct:0,explanation:'James Chadwick discovered neutrons in 1932.'},
-{prompt:'In Rutherford model, the nucleus is:',options:['Small, dense, and positive','Large and negative','Neutral','Spread throughout'],correct:0,explanation:'Rutherford found the nucleus is very small, dense, and positively charged.'},
-{prompt:'The maximum electrons in the second shell are:',options:['8','2','18','32'],correct:0,explanation:'Maximum electrons in nth shell = 2n^2. For n=2: 2(4) = 8.'},
-{prompt:'Isotopes have same:',options:['Atomic number','Mass number','Number of neutrons','Density'],correct:0,explanation:'Isotopes have same atomic number (same protons) but different mass numbers.'}
+{prompt:'Electrons were discovered by:',options:['J.J. Thomson','Rutherford','Bohr','Chadwick'],correct:0,explanation:'Thomson discovered electrons through cathode ray experiments (1897).'},
+{prompt:'Neutrons were discovered by:',options:['Chadwick','Rutherford','Thomson','Bohr'],correct:0,explanation:'James Chadwick discovered neutrons in 1932.'},
+{prompt:'Rutherfords alpha particle experiment showed:',options:['Atom has a small dense nucleus','Atoms are solid spheres','Electrons are in nucleus','Atoms have no empty space'],correct:0,explanation:'Most alpha particles passed through, proving atom is mostly empty with dense nucleus.'},
+{prompt:'Bohrs model proposed:',options:['Electrons orbit in fixed energy levels','Electrons are embedded in positive sphere','Nucleus contains electrons','Atoms are indivisible'],correct:0,explanation:'Bohr: electrons revolve in discrete orbits/shells with fixed energy.'},
+{prompt:'Atomic number equals:',options:['Number of protons','Number of neutrons','Mass number','Number of electrons + neutrons'],correct:0,explanation:'Atomic number (Z) = number of protons in nucleus.'},
+{prompt:'Mass number (A) = :',options:['Protons + Neutrons','Protons only','Electrons only','Protons + Electrons'],correct:0,explanation:'Mass number A = number of protons + number of neutrons.'},
+{prompt:'Isotopes have same:',options:['Atomic number but different mass numbers','Mass number but different atomic numbers','Both same','Neither same'],correct:0,explanation:'Isotopes: same element (same Z), different neutron count (different A).'},
+{prompt:'Maximum electrons in shell n=2:',options:['8','2','18','32'],correct:0,explanation:'Maximum electrons in nth shell = 2n^2. For n=2: 2(4) = 8.'},
+{prompt:'Valence electrons are in:',options:['Outermost shell','Innermost shell','Nucleus','All shells equally'],correct:0,explanation:'Valence electrons occupy the outermost shell and determine chemical properties.'},
+{prompt:'An atom is electrically neutral because:',options:['Number of protons = number of electrons','It has no charges','Neutrons cancel protons','Electrons are neutral'],correct:0,explanation:'Equal protons (+) and electrons (-) make atom electrically neutral.'},
+{prompt:'K shell can hold maximum:',options:['2 electrons','8 electrons','18 electrons','1 electron'],correct:0,explanation:'K shell (n=1): max electrons = 2(1)^2 = 2.'},
+{prompt:'Isobars have same:',options:['Mass number but different atomic numbers','Atomic number','Number of protons','Electronic configuration'],correct:0,explanation:'Isobars: same mass number A, different elements (different Z).'}
 ],
 'The Fundamental Unit of Life':[
-{prompt:'The cell was discovered by:',options:['Robert Hooke','Robert Brown','Schleiden','Schwann'],correct:0,explanation:'Robert Hooke discovered cells in 1665.'},
-{prompt:'The powerhouse of the cell is:',options:['Mitochondria','Nucleus','Ribosome','Golgi body'],correct:0,explanation:'Mitochondria produce ATP through cellular respiration.'},
-{prompt:'Which organelle is called the suicide bag?',options:['Lysosome','Ribosome','Vacuole','ER'],correct:0,explanation:'Lysosomes contain digestive enzymes that can destroy the cell.'},
+{prompt:'The basic structural unit of life is:',options:['Cell','Tissue','Organ','Atom'],correct:0,explanation:'Cell is the fundamental structural and functional unit of all living organisms.'},
+{prompt:'Cell membrane is:',options:['Selectively permeable','Fully permeable','Impermeable','Absent in all cells'],correct:0,explanation:'Cell membrane allows only certain substances to pass (selective permeability).'},
 {prompt:'DNA is found in the:',options:['Nucleus','Cytoplasm','Cell wall','Vacuole'],correct:0,explanation:'DNA is present in the nucleus of a cell.'},
 {prompt:'Plant cells have but animal cells lack:',options:['Cell wall','Cell membrane','Nucleus','Mitochondria'],correct:0,explanation:'Plant cells have a rigid cell wall made of cellulose.'},
 {prompt:'The control center of the cell is:',options:['Nucleus','Mitochondria','Ribosome','ER'],correct:0,explanation:'The nucleus contains genetic material and controls cell activities.'},
 {prompt:'Ribosomes are the site of:',options:['Protein synthesis','Lipid synthesis','Photosynthesis','Respiration'],correct:0,explanation:'Ribosomes translate mRNA into proteins.'},
-{prompt:'Which organelle is involved in packaging and secretion?',options:['Golgi apparatus','Mitochondria','Nucleus','Lysosome'],correct:0,explanation:'Golgi apparatus packages proteins for secretion.'}
+{prompt:'Which organelle is involved in packaging?',options:['Golgi apparatus','Mitochondria','Nucleus','Lysosome'],correct:0,explanation:'Golgi apparatus packages proteins for secretion.'},
+{prompt:'Mitochondria are called:',options:['Powerhouse of the cell','Kitchen of cell','Brain of cell','Storage unit'],correct:0,explanation:'Mitochondria generate ATP (energy currency) through cellular respiration.'},
+{prompt:'Lysosomes contain:',options:['Digestive enzymes','DNA','Chlorophyll','Starch'],correct:0,explanation:'Lysosomes have hydrolytic enzymes that digest cellular waste.'},
+{prompt:'Osmosis is movement of water from:',options:['Dilute to concentrated solution through semipermeable membrane','Concentrated to dilute','Any direction','Only in plants'],correct:0,explanation:'Osmosis: water moves from low solute to high solute concentration.'},
+{prompt:'Prokaryotic cells lack:',options:['Membrane-bound nucleus','Cell membrane','Ribosomes','DNA'],correct:0,explanation:'Prokaryotes (bacteria) have no true nucleus or membrane-bound organelles.'},
+{prompt:'Endoplasmic reticulum is of two types:',options:['Rough ER and Smooth ER','Inner ER and Outer ER','Big ER and Small ER','Plant ER and Animal ER'],correct:0,explanation:'Rough ER has ribosomes (protein synthesis); Smooth ER lacks ribosomes (lipid synthesis).'}
 ],
 'Tissues':[
 {prompt:'Which tissue provides support in plants?',options:['Sclerenchyma','Parenchyma','Meristematic','Phloem'],correct:0,explanation:'Sclerenchyma has thick, lignified walls providing mechanical support.'},
 {prompt:'Blood is a type of:',options:['Connective tissue','Epithelial tissue','Muscular tissue','Nervous tissue'],correct:0,explanation:'Blood connects and transports substances, classified as connective tissue.'},
 {prompt:'Meristematic tissue is found at:',options:['Growing tips of plant','Bark of old trees','Leaf surface','Root center'],correct:0,explanation:'Meristematic tissue is at growing points like root and shoot tips.'},
 {prompt:'Cardiac muscle is found in:',options:['Heart','Stomach','Biceps','Intestine'],correct:0,explanation:'Cardiac muscle is specialized involuntary muscle found only in the heart.'},
-{prompt:'Which tissue transports water in plants?',options:['Xylem','Phloem','Parenchyma','Collenchyma'],correct:0,explanation:'Xylem transports water and minerals from roots to other parts.'}
+{prompt:'Which tissue transports water in plants?',options:['Xylem','Phloem','Parenchyma','Collenchyma'],correct:0,explanation:'Xylem transports water and minerals from roots to other parts.'},
+{prompt:'Phloem transports:',options:['Food (sugars) from leaves','Water from roots','Minerals only','Oxygen'],correct:0,explanation:'Phloem translocates food (sucrose) from source (leaves) to sink (roots, fruits).'},
+{prompt:'Epithelial tissue:',options:['Covers body surfaces and lines organs','Transports blood','Provides movement','Transmits impulses'],correct:0,explanation:'Epithelial tissue forms protective coverings and linings.'},
+{prompt:'Neurons are cells of:',options:['Nervous tissue','Muscular tissue','Epithelial tissue','Connective tissue'],correct:0,explanation:'Neurons (nerve cells) are the structural units of nervous tissue.'},
+{prompt:'Parenchyma in plants:',options:['Stores food and provides padding','Only provides support','Only transports water','Protects from injury'],correct:0,explanation:'Parenchyma: thin-walled living cells for storage, photosynthesis, secretion.'},
+{prompt:'Bone is a type of:',options:['Connective tissue','Muscle tissue','Epithelial tissue','Nervous tissue'],correct:0,explanation:'Bone is hard connective tissue with calcium-rich matrix.'},
+{prompt:'Striated muscles are:',options:['Voluntary (skeletal)','Involuntary','Found in intestines','Found in blood vessels'],correct:0,explanation:'Striated (skeletal) muscles are under voluntary control.'},
+{prompt:'Collenchyma provides:',options:['Flexibility and support','Water transport','Food transport','Reproduction'],correct:0,explanation:'Collenchyma: living cells with thickened corners, providing flexible support.'}
 ],
 'Motion':[
-{prompt:'The SI unit of velocity is:',options:['m/s','km/h','cm/s','m/s^2'],correct:0,explanation:'Velocity is measured in meters per second (m/s) in SI system.'},
-{prompt:'Distance-time graph for uniform motion is:',options:['Straight line','Curve','Parabola','Circle'],correct:0,explanation:'Uniform motion means constant speed, giving a straight line on d-t graph.'},
-{prompt:'Acceleration is the rate of change of:',options:['Velocity','Distance','Displacement','Force'],correct:0,explanation:'Acceleration = change in velocity / time taken.'},
-{prompt:'A body moving in a circle has:',options:['Changing velocity','Constant velocity','Zero acceleration','No force acting'],correct:0,explanation:'Direction changes in circular motion, so velocity (a vector) is not constant.'},
-{prompt:'The area under velocity-time graph gives:',options:['Displacement','Acceleration','Speed','Force'],correct:0,explanation:'Area under v-t graph = displacement of the object.'},
-{prompt:'If a body has zero acceleration, it is in:',options:['Uniform motion or at rest','Non-uniform motion','Circular motion','Free fall'],correct:0,explanation:'Zero acceleration means velocity is constant (uniform motion) or zero (rest).'},
-{prompt:'The slope of distance-time graph gives:',options:['Speed','Acceleration','Force','Momentum'],correct:0,explanation:'Slope of d-t graph = change in distance / change in time = speed.'},
-{prompt:'Negative acceleration is called:',options:['Retardation or deceleration','Free fall','Uniform velocity','Terminal velocity'],correct:0,explanation:'Negative acceleration means the object is slowing down, called retardation.'}
+{prompt:'SI unit of velocity is:',options:['m/s','km/h','cm/s','m/s^2'],correct:0,explanation:'Velocity measured in metres per second (m/s) in SI.'},
+{prompt:'Distance-time graph for uniform motion is:',options:['Straight line','Curve','Parabola','Circle'],correct:0,explanation:'Uniform motion = constant speed = straight line on d-t graph.'},
+{prompt:'Acceleration is rate of change of:',options:['Velocity','Distance','Displacement','Force'],correct:0,explanation:'Acceleration = change in velocity / time taken.'},
+{prompt:'Area under velocity-time graph gives:',options:['Displacement','Acceleration','Speed','Force'],correct:0,explanation:'Area under v-t graph = displacement.'},
+{prompt:'Slope of distance-time graph gives:',options:['Speed','Acceleration','Force','Momentum'],correct:0,explanation:'Slope of d-t graph = speed.'},
+{prompt:'Negative acceleration is called:',options:['Retardation/deceleration','Free fall','Uniform velocity','Terminal velocity'],correct:0,explanation:'Negative acceleration = deceleration (object slowing down).'},
+{prompt:'A body moving in circle has:',options:['Changing velocity','Constant velocity','Zero acceleration','No force'],correct:0,explanation:'Direction changes in circular motion, so velocity changes.'},
+{prompt:'If v=u+at, when u=0, a=5, t=3, v=?',options:['15 m/s','8 m/s','3 m/s','5 m/s'],correct:0,explanation:'v = 0 + 5(3) = 15 m/s.'},
+{prompt:'s = ut + (1/2)at^2 is used when:',options:['Finding displacement','Finding mass','Finding weight','Finding energy'],correct:0,explanation:'Second equation of motion gives displacement.'},
+{prompt:'Uniform circular motion has constant:',options:['Speed but changing velocity','Velocity','Acceleration direction','Nothing constant'],correct:0,explanation:'Speed is constant but velocity changes (direction changes).'},
+{prompt:'Distance is always:',options:['Positive or zero','Negative','Zero only','Equal to displacement'],correct:0,explanation:'Distance (scalar) is path length, always non-negative.'},
+{prompt:'Displacement can be:',options:['Positive, negative or zero','Only positive','Only zero','Always greater than distance'],correct:0,explanation:'Displacement (vector) can be +, -, or 0. Always <= distance.'}
 ],
 'Force and Laws of Motion':[
-{prompt:'Newtons first law is also called:',options:['Law of inertia','Law of acceleration','Law of action-reaction','Law of gravitation'],correct:0,explanation:'First law states objects remain in their state unless acted upon by external force.'},
-{prompt:'The SI unit of force is:',options:['Newton','Joule','Watt','Pascal'],correct:0,explanation:'Force is measured in Newtons (N) in SI system.'},
-{prompt:'Action and reaction forces act on:',options:['Different bodies','Same body','Same point','Nowhere'],correct:0,explanation:'Newton third law: action and reaction act on two different bodies.'},
-{prompt:'A body at rest has:',options:['Zero momentum','Maximum momentum','Infinite momentum','Negative momentum'],correct:0,explanation:'Momentum = mass x velocity. If v=0, momentum is zero.'},
-{prompt:'Inertia depends on:',options:['Mass of the body','Velocity','Acceleration','Force applied'],correct:0,explanation:'Greater the mass, greater the inertia (resistance to change in motion).'}
+{prompt:'Newtons first law is called:',options:['Law of inertia','Law of acceleration','Law of action-reaction','Law of gravitation'],correct:0,explanation:'First law: objects stay at rest/uniform motion unless acted by external force.'},
+{prompt:'SI unit of force is:',options:['Newton','Joule','Watt','Pascal'],correct:0,explanation:'Force measured in Newtons (N) = kg.m/s^2.'},
+{prompt:'Action and reaction act on:',options:['Different bodies','Same body','Same point','Nowhere'],correct:0,explanation:'Newton third law: action-reaction act on two different bodies.'},
+{prompt:'Momentum = :',options:['Mass x velocity','Mass x acceleration','Force x time','Mass / velocity'],correct:0,explanation:'p = mv (momentum = mass times velocity).'},
+{prompt:'Inertia depends on:',options:['Mass of body','Velocity','Acceleration','Force'],correct:0,explanation:'Greater mass = greater inertia (resistance to change).'},
+{prompt:'F = ma is Newtons:',options:['Second law','First law','Third law','Law of gravitation'],correct:0,explanation:'F = ma (force = mass x acceleration) is the second law.'},
+{prompt:'Unit of momentum:',options:['kg.m/s','N/m','J/s','m/s^2'],correct:0,explanation:'Momentum = mass x velocity, unit = kg.m/s.'},
+{prompt:'Impulse equals:',options:['Change in momentum','Force only','Mass only','Velocity only'],correct:0,explanation:'Impulse = F.t = change in momentum.'},
+{prompt:'A body at rest has momentum:',options:['Zero','Maximum','Infinite','Negative'],correct:0,explanation:'p = mv. If v=0, then p=0.'},
+{prompt:'Rocket propulsion uses:',options:['Newtons third law','First law only','No law','Archimedes principle'],correct:0,explanation:'Rocket: gas expelled backward (action), rocket moves forward (reaction).'},
+{prompt:'Conservation of momentum applies when:',options:['No external force acts','Always','Only in collisions','Only for single objects'],correct:0,explanation:'Total momentum is conserved when net external force = 0.'},
+{prompt:'If same force acts on two bodies, lighter one has:',options:['Greater acceleration','Less acceleration','Same acceleration','Zero acceleration'],correct:0,explanation:'F=ma. Same F, smaller m means larger a.'}
 ],
 'Gravitation':[
-{prompt:'The value of g on Earth surface is approximately:',options:['9.8 m/s^2','6.67 x 10^-11','9.8 km/s','10 m/s'],correct:0,explanation:'Acceleration due to gravity g = 9.8 m/s^2 on Earth surface.'},
-{prompt:'Weight of an object on the Moon is:',options:['1/6 of weight on Earth','Same as Earth','1/2 of weight on Earth','Double weight on Earth'],correct:0,explanation:'Moon gravity is 1/6 of Earth, so weight is 1/6 on Moon.'},
-{prompt:'The SI unit of gravitational constant G is:',options:['N m^2/kg^2','m/s^2','N/kg','kg m/s'],correct:0,explanation:'G = 6.67 x 10^-11 N m^2/kg^2.'},
-{prompt:'Free fall means:',options:['Falling under gravity only','Falling with air resistance','Floating in space','Moving at constant speed'],correct:0,explanation:'Free fall is motion under the influence of gravitational force only.'},
-{prompt:'Mass of an object:',options:['Remains same everywhere','Changes with location','Is zero on Moon','Depends on gravity'],correct:0,explanation:'Mass is intrinsic property, remains constant everywhere.'}
+{prompt:'Value of g on Earth surface:',options:['9.8 m/s^2','6.67 x 10^-11','9.8 km/s','10 m/s'],correct:0,explanation:'Acceleration due to gravity g = 9.8 m/s^2 on Earth.'},
+{prompt:'Weight on Moon is:',options:['1/6 of Earth weight','Same as Earth','1/2 of Earth','Double'],correct:0,explanation:'Moon gravity is ~1/6 of Earth.'},
+{prompt:'SI unit of G is:',options:['N.m^2/kg^2','m/s^2','N/kg','kg.m/s'],correct:0,explanation:'G = 6.67 x 10^-11 N.m^2/kg^2.'},
+{prompt:'Free fall means:',options:['Falling under gravity only','Falling with air resistance','Floating','Constant speed fall'],correct:0,explanation:'Free fall: only gravitational force acts.'},
+{prompt:'Mass of object:',options:['Remains same everywhere','Changes with location','Is zero on Moon','Depends on gravity'],correct:0,explanation:'Mass is intrinsic, constant everywhere.'},
+{prompt:'Weight = :',options:['Mass x g','Mass / g','Mass + g','Mass x mass'],correct:0,explanation:'W = mg (weight = mass times acceleration due to gravity).'},
+{prompt:'At center of Earth, g = :',options:['0','9.8','Infinity','4.9'],correct:0,explanation:'At center, g = 0 (mass enclosed = 0).'},
+{prompt:'Gravitational force between two objects depends on:',options:['Their masses and distance between them','Color and shape','Temperature','Speed'],correct:0,explanation:'F = GMm/r^2. Depends on masses and distance.'},
+{prompt:'Universal law of gravitation: F is proportional to:',options:['m1.m2/r^2','m1+m2','m1-m2','r^2'],correct:0,explanation:'F = G(m1.m2)/r^2. Proportional to product of masses, inverse square of distance.'},
+{prompt:'Gravitational force is always:',options:['Attractive','Repulsive','Both','Neither'],correct:0,explanation:'Gravity is always attractive between masses.'},
+{prompt:'Value of G is:',options:['6.67 x 10^-11 N.m^2/kg^2','9.8 m/s^2','6.67 x 10^-8','9.8 N'],correct:0,explanation:'Universal gravitational constant G = 6.674 x 10^-11 N.m^2/kg^2.'},
+{prompt:'If distance doubles, gravitational force becomes:',options:['1/4 of original','1/2 of original','Double','Same'],correct:0,explanation:'F proportional to 1/r^2. Double r: F becomes F/4.'}
 ],
 'Work and Energy':[
-{prompt:'Work is defined as:',options:['Force x displacement in direction of force','Force x time','Mass x velocity','Force x velocity'],correct:0,explanation:'Work W = F x d x cos(theta). For force in direction of displacement: W = Fd.'},
-{prompt:'The SI unit of energy is:',options:['Joule','Watt','Newton','Pascal'],correct:0,explanation:'Energy is measured in Joules (J) in SI system.'},
-{prompt:'Kinetic energy formula is:',options:['1/2 mv^2','mgh','mv','ma'],correct:0,explanation:'KE = 1/2 x mass x velocity^2.'},
-{prompt:'1 kWh equals:',options:['3.6 x 10^6 J','1000 J','3600 J','1 x 10^6 J'],correct:0,explanation:'1 kWh = 1000W x 3600s = 3,600,000 J = 3.6 x 10^6 J.'},
-{prompt:'Power is defined as:',options:['Work done per unit time','Force per unit area','Energy per unit mass','Velocity per unit time'],correct:0,explanation:'Power = Work/Time. Unit: Watt (W).'}
+{prompt:'Work = Force x displacement in direction of force. Unit:',options:['Joule','Newton','Watt','Pascal'],correct:0,explanation:'W = Fd. Unit: Joule (J) = N.m.'},
+{prompt:'SI unit of energy:',options:['Joule','Watt','Newton','Pascal'],correct:0,explanation:'Energy measured in Joules.'},
+{prompt:'Kinetic energy = :',options:['(1/2)mv^2','mgh','mv','ma'],correct:0,explanation:'KE = half x mass x velocity squared.'},
+{prompt:'1 kWh = :',options:['3.6 x 10^6 J','1000 J','3600 J','1 x 10^6 J'],correct:0,explanation:'1 kWh = 1000W x 3600s = 3.6 x 10^6 J.'},
+{prompt:'Power = :',options:['Work/time','Force x time','Energy x time','Mass x velocity'],correct:0,explanation:'Power = rate of doing work = W/t. Unit: Watt.'},
+{prompt:'Potential energy = :',options:['mgh','(1/2)mv^2','mv','Fd'],correct:0,explanation:'Gravitational PE = mass x g x height.'},
+{prompt:'Law of conservation of energy:',options:['Energy cannot be created or destroyed','Energy increases with time','Energy is only kinetic','Energy is always potential'],correct:0,explanation:'Total energy of isolated system remains constant.'},
+{prompt:'When ball falls, PE converts to:',options:['KE','Heat only','Sound only','Nothing'],correct:0,explanation:'During free fall, potential energy converts to kinetic energy.'},
+{prompt:'1 HP = :',options:['746 W','1000 W','500 W','100 W'],correct:0,explanation:'1 horsepower = 746 watts.'},
+{prompt:'Work done against gravity lifting 2kg by 5m (g=10):',options:['100 J','10 J','50 J','200 J'],correct:0,explanation:'W = mgh = 2 x 10 x 5 = 100 J.'},
+{prompt:'Zero work is done when:',options:['Force is perpendicular to displacement','Force is parallel to displacement','Object moves fast','Object is heavy'],correct:0,explanation:'W = Fd cos(90) = 0. Perpendicular force does no work.'},
+{prompt:'Commercial unit of energy:',options:['kilowatt-hour (kWh)','Joule','Watt','Newton-metre'],correct:0,explanation:'Electricity bills use kWh as the commercial unit of energy.'}
 ],
 'Sound':[
-{prompt:'Sound cannot travel through:',options:['Vacuum','Air','Water','Steel'],correct:0,explanation:'Sound needs a material medium to propagate; it cannot travel through vacuum.'},
-{prompt:'The speed of sound is maximum in:',options:['Solids','Liquids','Gases','Vacuum'],correct:0,explanation:'Sound travels fastest in solids due to closely packed particles.'},
-{prompt:'The frequency of sound determines its:',options:['Pitch','Loudness','Quality','Speed'],correct:0,explanation:'Higher frequency = higher pitch of sound.'},
-{prompt:'Echo is produced due to:',options:['Reflection of sound','Refraction of sound','Diffraction','Interference'],correct:0,explanation:'Echo is the repetition of sound due to reflection from a surface.'},
-{prompt:'Ultrasound has frequency:',options:['Above 20,000 Hz','Below 20 Hz','Between 20-20000 Hz','Exactly 20000 Hz'],correct:0,explanation:'Ultrasound: frequency > 20,000 Hz (above human hearing range).'}
+{prompt:'Sound cannot travel through:',options:['Vacuum','Air','Water','Steel'],correct:0,explanation:'Sound needs material medium; cannot travel through vacuum.'},
+{prompt:'Speed of sound is maximum in:',options:['Solids','Liquids','Gases','Vacuum'],correct:0,explanation:'Sound fastest in solids (closely packed particles).'},
+{prompt:'Frequency determines:',options:['Pitch','Loudness','Quality','Speed'],correct:0,explanation:'Higher frequency = higher pitch.'},
+{prompt:'Echo is due to:',options:['Reflection of sound','Refraction','Diffraction','Interference'],correct:0,explanation:'Echo: repetition of sound due to reflection from surface.'},
+{prompt:'Ultrasound frequency:',options:['Above 20,000 Hz','Below 20 Hz','20-20000 Hz','Exactly 20000 Hz'],correct:0,explanation:'Ultrasound: frequency > 20,000 Hz.'},
+{prompt:'Human audible range:',options:['20 Hz to 20,000 Hz','0 to 20 Hz','20,000+ Hz','1 to 100 Hz'],correct:0,explanation:'Humans can hear frequencies between 20 Hz and 20,000 Hz.'},
+{prompt:'Sound waves are:',options:['Longitudinal mechanical waves','Transverse waves','Electromagnetic waves','Neither'],correct:0,explanation:'Sound: longitudinal wave needing medium for propagation.'},
+{prompt:'Amplitude determines:',options:['Loudness','Pitch','Quality','Speed'],correct:0,explanation:'Greater amplitude = louder sound.'},
+{prompt:'Speed of sound in air at 20C:',options:['About 343 m/s','About 1500 m/s','About 5000 m/s','About 3 x 10^8 m/s'],correct:0,explanation:'Speed of sound in air ~ 343 m/s (much less than light speed).'},
+{prompt:'Infrasound has frequency:',options:['Below 20 Hz','Above 20,000 Hz','20-20000 Hz','Exactly 20 Hz'],correct:0,explanation:'Infrasound: frequency < 20 Hz (below human hearing).'},
+{prompt:'SONAR uses:',options:['Ultrasonic waves','Infrared waves','Light waves','Radio waves'],correct:0,explanation:'SONAR uses ultrasound to detect underwater objects.'},
+{prompt:'Reverberation is caused by:',options:['Multiple reflections of sound in enclosed space','Single echo','Sound absorption','Sound diffraction'],correct:0,explanation:'Reverberation: persistence of sound due to repeated reflections.'}
 ],
 'Chemical Reactions and Equations':[
-{prompt:'A chemical equation is balanced to satisfy:',options:['Law of conservation of mass','Law of constant proportions','Law of multiple proportions','Avogadro law'],correct:0,explanation:'Balancing ensures atoms are conserved (mass is neither created nor destroyed).'},
-{prompt:'Rust formation is an example of:',options:['Oxidation (corrosion)','Reduction','Decomposition','Displacement'],correct:0,explanation:'Rusting: 4Fe + 3O2 + water -> 2Fe2O3.xH2O (iron is oxidized).'},
-{prompt:'In a decomposition reaction, one reactant forms:',options:['Two or more products','One product','No products','Same substance'],correct:0,explanation:'Decomposition: one compound breaks into two or more simpler substances.'},
-{prompt:'An exothermic reaction:',options:['Releases heat','Absorbs heat','No energy change','Absorbs light only'],correct:0,explanation:'Exothermic reactions release energy as heat to surroundings.'},
-{prompt:'Burning of magnesium in air is a:',options:['Combination reaction','Decomposition reaction','Displacement reaction','Double displacement'],correct:0,explanation:'2Mg + O2 -> 2MgO is a combination reaction.'},
-{prompt:'A redox reaction involves:',options:['Both oxidation and reduction','Only oxidation','Only reduction','Neither'],correct:0,explanation:'In redox reactions, one substance is oxidized while another is reduced simultaneously.'},
-{prompt:'Precipitation reaction produces:',options:['An insoluble solid','A gas','Only liquid','Heat only'],correct:0,explanation:'Precipitation forms an insoluble product (precipitate) from two soluble reactants.'},
-{prompt:'Which is an endothermic reaction?',options:['Photosynthesis','Burning of fuel','Respiration','Explosion'],correct:0,explanation:'Photosynthesis absorbs energy from sunlight, making it endothermic.'}
+{prompt:'Balanced equation satisfies:',options:['Law of conservation of mass','Law of gravity','Newtons law','Ohms law'],correct:0,explanation:'Balancing ensures atoms conserved (mass neither created nor destroyed).'},
+{prompt:'Rusting is:',options:['Oxidation (corrosion)','Reduction','Decomposition','Displacement'],correct:0,explanation:'Rusting: iron oxidized by oxygen and water.'},
+{prompt:'Decomposition reaction: one reactant gives:',options:['Two or more products','One product','No products','Same substance'],correct:0,explanation:'Decomposition: compound breaks into simpler substances.'},
+{prompt:'Exothermic reaction:',options:['Releases heat','Absorbs heat','No energy change','Absorbs light'],correct:0,explanation:'Exothermic: releases energy as heat.'},
+{prompt:'Burning magnesium in air is:',options:['Combination reaction','Decomposition','Displacement','Double displacement'],correct:0,explanation:'2Mg + O2 -> 2MgO is combination.'},
+{prompt:'Redox reaction involves:',options:['Both oxidation and reduction','Only oxidation','Only reduction','Neither'],correct:0,explanation:'Redox: one substance oxidized, another reduced.'},
+{prompt:'Precipitation produces:',options:['Insoluble solid','Gas','Only liquid','Heat only'],correct:0,explanation:'Precipitation forms insoluble product from soluble reactants.'},
+{prompt:'Photosynthesis is:',options:['Endothermic','Exothermic','Neither','Combustion'],correct:0,explanation:'Photosynthesis absorbs sunlight energy (endothermic).'},
+{prompt:'Displacement reaction: more reactive metal:',options:['Displaces less reactive from solution','Gets displaced','Does nothing','Dissolves'],correct:0,explanation:'More reactive displaces less reactive from its compound.'},
+{prompt:'Double displacement example:',options:['NaOH + HCl -> NaCl + H2O','Mg + O2 -> MgO','2H2O -> 2H2 + O2','Zn + CuSO4 -> ZnSO4 + Cu'],correct:0,explanation:'Double displacement: ions exchange between two compounds.'},
+{prompt:'Oxidation means:',options:['Loss of electrons / gain of oxygen','Gain of electrons','Loss of oxygen','Addition of hydrogen'],correct:0,explanation:'Oxidation: loss of electrons or gain of oxygen.'},
+{prompt:'Reduction means:',options:['Gain of electrons / loss of oxygen','Loss of electrons','Gain of oxygen','Loss of hydrogen'],correct:0,explanation:'Reduction: gain of electrons or loss of oxygen.'}
 ],
 'Acids Bases and Salts':[
-{prompt:'The pH of a neutral solution is:',options:['7','0','14','1'],correct:0,explanation:'pH 7 indicates a neutral solution (neither acidic nor basic).'},
-{prompt:'Litmus paper turns red in:',options:['Acidic solution','Basic solution','Neutral solution','Salt solution'],correct:0,explanation:'Blue litmus turns red in acidic solutions (pH < 7).'},
-{prompt:'The chemical formula of baking soda is:',options:['NaHCO3','Na2CO3','NaCl','NaOH'],correct:0,explanation:'Baking soda is sodium bicarbonate: NaHCO3.'},
-{prompt:'An acid reacts with a base to form:',options:['Salt and water','Only salt','Only water','Gas'],correct:0,explanation:'Neutralization: Acid + Base -> Salt + Water.'},
-{prompt:'The pH of stomach acid (HCl) is approximately:',options:['1-2','7','10','5-6'],correct:0,explanation:'Stomach produces HCl with pH around 1-2 (strongly acidic).'},
-{prompt:'Plaster of Paris formula is:',options:['CaSO4.1/2 H2O','CaSO4.2H2O','CaCO3','Ca(OH)2'],correct:0,explanation:'Plaster of Paris is calcium sulphate hemihydrate: CaSO4.1/2H2O.'},
-{prompt:'Strong acids have pH:',options:['Close to 0','Close to 7','Close to 14','Exactly 7'],correct:0,explanation:'Strong acids dissociate completely and have pH close to 0.'},
-{prompt:'Common salt (NaCl) is formed from:',options:['Strong acid + Strong base','Weak acid + Strong base','Strong acid + Weak base','Weak acid + Weak base'],correct:0,explanation:'NaCl forms from HCl (strong acid) + NaOH (strong base).'}
+{prompt:'pH of neutral solution:',options:['7','0','14','1'],correct:0,explanation:'pH 7 = neutral.'},
+{prompt:'Litmus turns red in:',options:['Acid','Base','Neutral','Salt only'],correct:0,explanation:'Blue litmus turns red in acidic solutions.'},
+{prompt:'Baking soda formula:',options:['NaHCO3','Na2CO3','NaCl','NaOH'],correct:0,explanation:'Baking soda = sodium bicarbonate NaHCO3.'},
+{prompt:'Acid + Base gives:',options:['Salt + Water','Only salt','Only water','Gas'],correct:0,explanation:'Neutralization: Acid + Base -> Salt + Water.'},
+{prompt:'pH of stomach acid:',options:['1-2','7','10','5-6'],correct:0,explanation:'Stomach HCl: strongly acidic, pH 1-2.'},
+{prompt:'Plaster of Paris:',options:['CaSO4.1/2H2O','CaSO4.2H2O','CaCO3','Ca(OH)2'],correct:0,explanation:'Plaster of Paris = calcium sulphate hemihydrate.'},
+{prompt:'Strong acids have pH:',options:['Close to 0','Close to 7','Close to 14','Exactly 7'],correct:0,explanation:'Strong acids fully dissociate, pH near 0.'},
+{prompt:'Common salt formed from:',options:['Strong acid + strong base','Weak acid + strong base','Strong acid + weak base','Weak acid + weak base'],correct:0,explanation:'NaCl: HCl (strong) + NaOH (strong).'},
+{prompt:'Washing soda formula:',options:['Na2CO3.10H2O','NaHCO3','NaCl','NaOH'],correct:0,explanation:'Washing soda = sodium carbonate decahydrate.'},
+{prompt:'Indicators change color based on:',options:['pH of solution','Temperature','Pressure','Volume'],correct:0,explanation:'Indicators show different colors in acidic vs basic solutions.'},
+{prompt:'Tooth decay is caused by:',options:['Acids produced by bacteria','Bases','Neutral substances','Salts only'],correct:0,explanation:'Bacterial acids erode tooth enamel (pH below 5.5).'},
+{prompt:'Antacids contain:',options:['Mild bases like Mg(OH)2','Strong acids','Neutral salts','Organic solvents'],correct:0,explanation:'Antacids neutralize excess stomach acid with mild base.'}
 ],
 'Metals and Non-metals':[
-{prompt:'Which metal is stored in kerosene?',options:['Sodium','Iron','Copper','Gold'],correct:0,explanation:'Sodium reacts vigorously with air and water, so it is stored in kerosene.'},
-{prompt:'The most reactive metal is:',options:['Potassium','Gold','Silver','Copper'],correct:0,explanation:'Potassium is at the top of the reactivity series (most reactive).'},
-{prompt:'Metals are generally:',options:['Good conductors of heat and electricity','Brittle','Non-lustrous','Insulators'],correct:0,explanation:'Metals have free electrons allowing conduction of heat and electricity.'},
-{prompt:'Anodising is done on:',options:['Aluminium','Iron','Copper','Gold'],correct:0,explanation:'Anodising forms a thick oxide layer on aluminium for protection.'},
-{prompt:'Non-metals are generally:',options:['Brittle and poor conductors','Malleable','Ductile','Sonorous'],correct:0,explanation:'Non-metals are typically brittle, dull, and poor conductors.'}
+{prompt:'Which metal stored in kerosene?',options:['Sodium','Iron','Copper','Gold'],correct:0,explanation:'Sodium reacts with air/water, stored in kerosene.'},
+{prompt:'Most reactive metal:',options:['Potassium','Gold','Silver','Copper'],correct:0,explanation:'Potassium tops the reactivity series.'},
+{prompt:'Metals are generally:',options:['Good conductors','Brittle','Non-lustrous','Insulators'],correct:0,explanation:'Metals: lustrous, malleable, ductile, good conductors.'},
+{prompt:'Anodising is done on:',options:['Aluminium','Iron','Copper','Gold'],correct:0,explanation:'Anodising: thick oxide layer on aluminium for protection.'},
+{prompt:'Non-metals are generally:',options:['Brittle and poor conductors','Malleable','Ductile','Sonorous'],correct:0,explanation:'Non-metals: brittle, dull, poor conductors (exceptions: graphite, diamond).'},
+{prompt:'Galvanisation protects iron by coating with:',options:['Zinc','Copper','Silver','Gold'],correct:0,explanation:'Galvanisation: zinc coating on iron prevents rusting.'},
+{prompt:'Alloys are:',options:['Homogeneous mixtures of metals','Pure metals','Non-metals','Compounds'],correct:0,explanation:'Alloys: mixture of two or more metals (or metal with non-metal).'},
+{prompt:'Reactivity series: which is least reactive?',options:['Gold','Iron','Zinc','Sodium'],correct:0,explanation:'Gold is at bottom of reactivity series (least reactive).'},
+{prompt:'Ionic compounds have:',options:['High melting points','Low melting points','No melting point','Variable melting points'],correct:0,explanation:'Strong electrostatic forces in ionic compounds give high melting points.'},
+{prompt:'Metal oxide + Water gives:',options:['Base (alkali)','Acid','Salt','Gas'],correct:0,explanation:'Metal oxides are basic. Na2O + H2O -> 2NaOH.'},
+{prompt:'Corrosion can be prevented by:',options:['Painting, oiling, galvanising','Exposing to air','Adding water','Heating'],correct:0,explanation:'Protective coatings prevent contact with air/moisture.'},
+{prompt:'Thermite reaction uses:',options:['Aluminium + iron oxide','Sodium + water','Copper + acid','Gold + silver'],correct:0,explanation:'Thermite: 2Al + Fe2O3 -> Al2O3 + 2Fe (highly exothermic).'}
 ],
 'Carbon and its Compounds':[
-{prompt:'Carbon forms bonds that are mostly:',options:['Covalent','Ionic','Metallic','Hydrogen'],correct:0,explanation:'Carbon has 4 valence electrons and shares them, forming covalent bonds.'},
-{prompt:'The simplest hydrocarbon is:',options:['Methane (CH4)','Ethane','Propane','Butane'],correct:0,explanation:'Methane CH4 is the simplest hydrocarbon with one carbon atom.'},
-{prompt:'Ethanol has the formula:',options:['C2H5OH','CH3OH','C3H7OH','C2H4'],correct:0,explanation:'Ethanol (drinking alcohol) formula is C2H5OH.'},
-{prompt:'Soap is made by:',options:['Saponification','Esterification','Polymerization','Combustion'],correct:0,explanation:'Saponification: fat/oil + NaOH -> soap + glycerol.'},
-{prompt:'Carbon can form long chains due to:',options:['Catenation property','High electronegativity','Ionic bonding','Metallic character'],correct:0,explanation:'Catenation is the ability of carbon to form bonds with other carbon atoms.'}
+{prompt:'Carbon forms mostly:',options:['Covalent bonds','Ionic bonds','Metallic bonds','Hydrogen bonds'],correct:0,explanation:'Carbon has 4 valence electrons, shares them (covalent bonds).'},
+{prompt:'Simplest hydrocarbon:',options:['Methane (CH4)','Ethane','Propane','Butane'],correct:0,explanation:'Methane CH4: one carbon, four hydrogens.'},
+{prompt:'Ethanol formula:',options:['C2H5OH','CH3OH','C3H7OH','C2H4'],correct:0,explanation:'Ethanol = C2H5OH (drinking alcohol).'},
+{prompt:'Soap made by:',options:['Saponification','Esterification','Polymerization','Combustion'],correct:0,explanation:'Saponification: fat + NaOH -> soap + glycerol.'},
+{prompt:'Catenation means:',options:['Carbon bonding with other carbons in chains','Ionic bonding','Metallic bonding','Hydrogen bonding'],correct:0,explanation:'Catenation: ability to form long chains/rings of same atoms.'},
+{prompt:'Homologous series differ by:',options:['CH2 group','CH3','C2H4','OH'],correct:0,explanation:'Each successive member differs by one -CH2- unit.'},
+{prompt:'Functional group of alcohols:',options:['-OH','=O','-COOH','-NH2'],correct:0,explanation:'Alcohols contain hydroxyl group (-OH).'},
+{prompt:'Ethanoic acid is:',options:['Vinegar (acetic acid)','Formic acid','Citric acid','Hydrochloric acid'],correct:0,explanation:'Ethanoic acid (CH3COOH) = acetic acid (vinegar).'},
+{prompt:'Saturated hydrocarbons have:',options:['Only single bonds','Double bonds','Triple bonds','No bonds'],correct:0,explanation:'Saturated: all C-C bonds are single bonds (alkanes).'},
+{prompt:'Combustion of hydrocarbons gives:',options:['CO2 and H2O','Only CO2','Only H2O','CO and H2'],correct:0,explanation:'Complete combustion: CxHy + O2 -> CO2 + H2O.'},
+{prompt:'Diamond and graphite are:',options:['Allotropes of carbon','Different elements','Isomers','Compounds'],correct:0,explanation:'Allotropes: same element, different structural arrangements.'},
+{prompt:'Detergents work in hard water because:',options:['They do not form scum with Ca/Mg ions','They are weaker','They dissolve faster','They contain more carbon'],correct:0,explanation:'Synthetic detergents do not precipitate with hard water ions.'}
 ],
 'Life Processes':[
-{prompt:'The site of photosynthesis in a cell is:',options:['Chloroplast','Mitochondria','Nucleus','Ribosome'],correct:0,explanation:'Chloroplasts contain chlorophyll where photosynthesis occurs.'},
-{prompt:'The end product of aerobic respiration is:',options:['CO2 and water','Ethanol','Lactic acid','Glucose'],correct:0,explanation:'Aerobic: C6H12O6 + 6O2 -> 6CO2 + 6H2O + ATP.'},
-{prompt:'In humans, digestion of starch begins in:',options:['Mouth','Stomach','Small intestine','Large intestine'],correct:0,explanation:'Salivary amylase in mouth begins starch digestion.'},
-{prompt:'Hemoglobin is present in:',options:['Red blood cells','White blood cells','Platelets','Plasma'],correct:0,explanation:'Hemoglobin in RBCs carries oxygen to body tissues.'},
-{prompt:'Nephrons are the functional unit of:',options:['Kidney','Heart','Liver','Lungs'],correct:0,explanation:'Nephrons filter blood and produce urine in the kidneys.'},
-{prompt:'Stomata are mainly found on:',options:['Underside of leaves','Roots','Stem bark','Flowers'],correct:0,explanation:'Stomata on leaf underside allow gas exchange and transpiration.'},
-{prompt:'The blood vessel that carries blood away from heart is:',options:['Artery','Vein','Capillary','Lymph vessel'],correct:0,explanation:'Arteries carry oxygenated blood away from the heart (except pulmonary artery).'},
-{prompt:'Which enzyme digests proteins in stomach?',options:['Pepsin','Amylase','Lipase','Trypsin'],correct:0,explanation:'Pepsin in gastric juice breaks down proteins into peptides.'}
+{prompt:'Site of photosynthesis:',options:['Chloroplast','Mitochondria','Nucleus','Ribosome'],correct:0,explanation:'Chloroplasts contain chlorophyll for photosynthesis.'},
+{prompt:'End products of aerobic respiration:',options:['CO2 and water','Ethanol','Lactic acid','Glucose'],correct:0,explanation:'Aerobic: C6H12O6 + 6O2 -> 6CO2 + 6H2O + ATP.'},
+{prompt:'Starch digestion begins in:',options:['Mouth','Stomach','Small intestine','Large intestine'],correct:0,explanation:'Salivary amylase in mouth starts starch digestion.'},
+{prompt:'Hemoglobin is in:',options:['Red blood cells','White blood cells','Platelets','Plasma'],correct:0,explanation:'Hemoglobin in RBCs carries oxygen.'},
+{prompt:'Nephrons are functional unit of:',options:['Kidney','Heart','Liver','Lungs'],correct:0,explanation:'Nephrons filter blood, produce urine in kidneys.'},
+{prompt:'Stomata found mainly on:',options:['Underside of leaves','Roots','Stem bark','Flowers'],correct:0,explanation:'Stomata on leaf underside for gas exchange and transpiration.'},
+{prompt:'Arteries carry blood:',options:['Away from heart','Towards heart','Within heart','To lungs only'],correct:0,explanation:'Arteries: blood away from heart (usually oxygenated).'},
+{prompt:'Pepsin digests:',options:['Proteins','Carbohydrates','Fats','Nucleic acids'],correct:0,explanation:'Pepsin breaks proteins into peptides in stomach.'},
+{prompt:'Villi increase:',options:['Surface area for absorption','Blood pressure','Heart rate','Breathing rate'],correct:0,explanation:'Intestinal villi increase surface area for nutrient absorption.'},
+{prompt:'Photosynthesis equation:',options:['6CO2 + 6H2O -> C6H12O6 + 6O2','C6H12O6 -> 2C2H5OH + 2CO2','2H2O -> 2H2 + O2','CO2 + H2O -> CH4 + O2'],correct:0,explanation:'6CO2 + 6H2O + light energy -> C6H12O6 + 6O2.'},
+{prompt:'Double circulation means:',options:['Blood passes through heart twice per circuit','Blood flows once','No circulation','Heart has one chamber'],correct:0,explanation:'In humans: pulmonary + systemic circulation = double circulation.'},
+{prompt:'Anaerobic respiration in muscles produces:',options:['Lactic acid','Ethanol','CO2 only','O2'],correct:0,explanation:'Muscle fatigue: glucose -> lactic acid (without O2).'}
 ],
 'Electricity':[
-{prompt:'The SI unit of electric current is:',options:['Ampere','Volt','Ohm','Watt'],correct:0,explanation:'Electric current is measured in Amperes (A).'},
-{prompt:'Ohms law states V equals:',options:['IR','I/R','R/I','I+R'],correct:0,explanation:'V = IR (voltage = current x resistance).'},
-{prompt:'Resistors in series have:',options:['Same current through all','Same voltage across all','Same power in all','Same resistance'],correct:0,explanation:'In series circuit, same current flows through all components.'},
-{prompt:'The unit of electrical resistance is:',options:['Ohm','Volt','Ampere','Watt'],correct:0,explanation:'Resistance is measured in Ohms (symbol: omega).'},
-{prompt:'Electric power P equals:',options:['VI','V/I','I/V','V+I'],correct:0,explanation:'Power = Voltage x Current = VI watts.'},
-{prompt:'1 kilowatt-hour is a unit of:',options:['Energy','Power','Current','Voltage'],correct:0,explanation:'kWh is a unit of energy (power x time).'},
-{prompt:'In parallel circuit, voltage across each resistor is:',options:['Same','Different','Zero','Doubled'],correct:0,explanation:'In parallel, all components share the same voltage.'},
-{prompt:'Fuse wire is made of:',options:['Low melting point alloy','Copper','Steel','Aluminium'],correct:0,explanation:'Fuse wire melts at low temperature to break circuit during overload.'}
+{prompt:'SI unit of current:',options:['Ampere','Volt','Ohm','Watt'],correct:0,explanation:'Current measured in Amperes (A).'},
+{prompt:'Ohms law: V = :',options:['IR','I/R','R/I','I+R'],correct:0,explanation:'V = IR (voltage = current x resistance).'},
+{prompt:'Series resistors have same:',options:['Current','Voltage','Power','Resistance'],correct:0,explanation:'In series: same current through all components.'},
+{prompt:'Unit of resistance:',options:['Ohm','Volt','Ampere','Watt'],correct:0,explanation:'Resistance in Ohms.'},
+{prompt:'Electric power P = :',options:['VI','V/I','I/V','V+I'],correct:0,explanation:'P = VI watts.'},
+{prompt:'kWh is unit of:',options:['Energy','Power','Current','Voltage'],correct:0,explanation:'kWh = energy unit (power x time).'},
+{prompt:'In parallel, voltage is:',options:['Same across all','Different for each','Zero','Doubled'],correct:0,explanation:'Parallel components share same voltage.'},
+{prompt:'Fuse wire has:',options:['Low melting point','High melting point','No melting point','Very high resistance'],correct:0,explanation:'Fuse melts at low temperature to break circuit.'},
+{prompt:'Equivalent resistance in series:',options:['R1 + R2 + R3','1/R1 + 1/R2','R1 x R2','R1 - R2'],correct:0,explanation:'Series: Req = R1 + R2 + R3 (add up).'},
+{prompt:'Equivalent resistance in parallel:',options:['1/Req = 1/R1 + 1/R2','R1 + R2','R1 x R2','R1 - R2'],correct:0,explanation:'Parallel: 1/Req = 1/R1 + 1/R2 + ... (reciprocals add).'},
+{prompt:'Heating effect of current used in:',options:['Electric heater, iron, toaster','Motor','Generator','Transformer'],correct:0,explanation:'H = I^2.R.t (Joules heating) used in heating appliances.'},
+{prompt:'LED stands for:',options:['Light Emitting Diode','Large Electric Device','Low Energy Display','Light Energy Detector'],correct:0,explanation:'LED: semiconductor device that emits light when current flows.'}
 ],
 'Light Reflection Refraction':[
-{prompt:'The angle of incidence equals the angle of:',options:['Reflection','Refraction','Diffraction','Dispersion'],correct:0,explanation:'Law of reflection: angle of incidence = angle of reflection.'},
-{prompt:'A concave mirror converges light at its:',options:['Focus','Center','Pole','Infinity'],correct:0,explanation:'Parallel rays converge at the focal point of a concave mirror.'},
-{prompt:'Snells law relates to:',options:['Refraction of light','Reflection only','Diffraction','Interference'],correct:0,explanation:'Snells law: n1.sin(i) = n2.sin(r) describes light refraction.'},
-{prompt:'Total internal reflection occurs when light goes from:',options:['Denser to rarer medium','Rarer to denser medium','Same medium','Vacuum to glass'],correct:0,explanation:'TIR occurs when light goes from denser to rarer medium at angle > critical angle.'},
-{prompt:'The speed of light in vacuum is approximately:',options:['3 x 10^8 m/s','3 x 10^6 m/s','3 x 10^10 m/s','3 x 10^5 m/s'],correct:0,explanation:'Speed of light c = 3 x 10^8 m/s in vacuum.'},
-{prompt:'Image formed by a plane mirror is:',options:['Virtual and laterally inverted','Real and inverted','Virtual and magnified','Real and same size'],correct:0,explanation:'Plane mirror forms virtual, erect, laterally inverted, same-size image.'},
-{prompt:'Convex lens is also called:',options:['Converging lens','Diverging lens','Plane lens','Concave lens'],correct:0,explanation:'Convex lens converges parallel light rays to a focus.'},
-{prompt:'The refractive index of a medium is the ratio of:',options:['Speed of light in vacuum to speed in medium','Speed in medium to speed in vacuum','Wavelength in medium to wavelength in vacuum','Frequency ratio'],correct:0,explanation:'n = c/v where c is speed in vacuum and v is speed in medium.'}
+{prompt:'Angle of incidence = angle of:',options:['Reflection','Refraction','Diffraction','Dispersion'],correct:0,explanation:'Law of reflection: angle i = angle r.'},
+{prompt:'Concave mirror converges light at:',options:['Focus','Center','Pole','Infinity'],correct:0,explanation:'Parallel rays converge at focal point of concave mirror.'},
+{prompt:'Snells law relates to:',options:['Refraction','Reflection only','Diffraction','Interference'],correct:0,explanation:'n1.sin(i) = n2.sin(r) describes refraction.'},
+{prompt:'Total internal reflection: light from:',options:['Denser to rarer medium','Rarer to denser','Same medium','Any direction'],correct:0,explanation:'TIR: denser to rarer, angle > critical angle.'},
+{prompt:'Speed of light in vacuum:',options:['3 x 10^8 m/s','3 x 10^6 m/s','3 x 10^10 m/s','3 x 10^5 m/s'],correct:0,explanation:'c = 3 x 10^8 m/s in vacuum.'},
+{prompt:'Plane mirror image is:',options:['Virtual, laterally inverted, same size','Real, inverted','Virtual, magnified','Real, same size'],correct:0,explanation:'Plane mirror: virtual, erect, laterally inverted, same size.'},
+{prompt:'Convex lens is:',options:['Converging lens','Diverging lens','Plane lens','Concave lens'],correct:0,explanation:'Convex lens converges parallel rays to focus.'},
+{prompt:'Refractive index = :',options:['Speed in vacuum / speed in medium','Speed in medium / speed in vacuum','Wavelength ratio','Frequency ratio'],correct:0,explanation:'n = c/v.'},
+{prompt:'Dispersion of white light produces:',options:['Seven colors (VIBGYOR)','One color','Two colors','No colors'],correct:0,explanation:'White light disperses into spectrum: violet to red.'},
+{prompt:'Power of lens measured in:',options:['Dioptre','Metre','Watt','Newton'],correct:0,explanation:'P = 1/f (in metres). Unit: dioptre (D).'},
+{prompt:'Myopia (short-sightedness) corrected by:',options:['Concave lens','Convex lens','Cylindrical lens','No lens'],correct:0,explanation:'Myopia: image before retina. Concave lens diverges rays.'},
+{prompt:'Hypermetropia corrected by:',options:['Convex lens','Concave lens','Prism','No lens'],correct:0,explanation:'Hypermetropia: image behind retina. Convex lens converges rays.'}
 ],
 'Heredity and Evolution':[
-{prompt:'The father of genetics is:',options:['Gregor Mendel','Charles Darwin','Lamarck','Hugo de Vries'],correct:0,explanation:'Gregor Mendel established laws of inheritance using pea plants.'},
-{prompt:'DNA stands for:',options:['Deoxyribonucleic acid','Diribonucleic acid','Deoxyribose acid','Dinucleic acid'],correct:0,explanation:'DNA = Deoxyribonucleic acid, the hereditary material.'},
-{prompt:'The number of chromosomes in human cells is:',options:['46','23','44','48'],correct:0,explanation:'Humans have 46 chromosomes (23 pairs) in each body cell.'},
-{prompt:'Sex of a child is determined by:',options:['Fathers chromosome','Mothers chromosome','Both equally','Random chance'],correct:0,explanation:'Father contributes either X or Y chromosome determining sex.'},
-{prompt:'A dominant trait is expressed in:',options:['Both homozygous and heterozygous','Only homozygous','Only heterozygous','Neither condition'],correct:0,explanation:'Dominant alleles express in both AA (homozygous) and Aa (heterozygous).'}
+{prompt:'Father of genetics:',options:['Gregor Mendel','Darwin','Lamarck','Hugo de Vries'],correct:0,explanation:'Mendel established laws of inheritance using pea plants.'},
+{prompt:'DNA stands for:',options:['Deoxyribonucleic acid','Diribonucleic acid','Deoxyribose acid','Dinucleic acid'],correct:0,explanation:'DNA = Deoxyribonucleic acid.'},
+{prompt:'Human chromosome number:',options:['46','23','44','48'],correct:0,explanation:'Humans: 46 chromosomes (23 pairs) per body cell.'},
+{prompt:'Sex determined by:',options:['Fathers chromosome','Mothers chromosome','Both equally','Random'],correct:0,explanation:'Father: X or Y. XX = female, XY = male.'},
+{prompt:'Dominant trait expressed in:',options:['Both homozygous and heterozygous','Only homozygous','Only heterozygous','Neither'],correct:0,explanation:'Dominant: expressed in AA and Aa both.'},
+{prompt:'Mendels law of segregation:',options:['Alleles separate during gamete formation','Genes are linked','All traits blend','Mutations are inherited'],correct:0,explanation:'Each gamete receives only one allele of each gene.'},
+{prompt:'Genotype ratio in monohybrid cross F2:',options:['1:2:1','3:1','1:1','9:3:3:1'],correct:0,explanation:'F2 genotype: 1 AA : 2 Aa : 1 aa.'},
+{prompt:'Phenotype ratio in monohybrid F2:',options:['3:1','1:2:1','1:1','9:3:3:1'],correct:0,explanation:'F2 phenotype: 3 dominant : 1 recessive.'},
+{prompt:'Evolution means:',options:['Gradual change in species over generations','Sudden creation','No change','Only growth'],correct:0,explanation:'Evolution: accumulation of heritable changes over many generations.'},
+{prompt:'Analogous organs have:',options:['Different origin but similar function','Same origin, different function','Same everything','No function'],correct:0,explanation:'Analogous: similar function, different evolutionary origin.'},
+{prompt:'Homologous organs have:',options:['Same origin but may differ in function','Different origin','Same function always','No relation'],correct:0,explanation:'Homologous: same ancestral origin, may serve different functions.'},
+{prompt:'Natural selection was proposed by:',options:['Charles Darwin','Mendel','Lamarck','Watson'],correct:0,explanation:'Darwin proposed natural selection as mechanism of evolution.'}
 ],
 'Magnetic Effects of Current':[
-{prompt:'A current-carrying conductor produces:',options:['Magnetic field around it','Electric field only','Gravitational field','No field'],correct:0,explanation:'Current creates a magnetic field around the conductor (Oersted discovery).'},
-{prompt:'The device that converts electrical energy to mechanical is:',options:['Electric motor','Generator','Transformer','Battery'],correct:0,explanation:'Electric motor converts electrical energy into rotational mechanical energy.'},
-{prompt:'Flemings left hand rule is used for:',options:['Direction of force on current-carrying conductor in magnetic field','Direction of induced current','Direction of magnetic field','Direction of electron flow'],correct:0,explanation:'Left hand rule: thumb=force, index=field, middle=current direction.'},
-{prompt:'An electromagnet is made of:',options:['Soft iron core with coil','Steel permanent magnet','Copper bar','Aluminium rod'],correct:0,explanation:'Soft iron core magnetizes easily and loses magnetism when current stops.'},
-{prompt:'The SI unit of magnetic field is:',options:['Tesla','Weber','Henry','Gauss'],correct:0,explanation:'Magnetic field strength (flux density) is measured in Tesla (T).'}
+{prompt:'Current-carrying conductor produces:',options:['Magnetic field','Electric field only','Gravitational field','No field'],correct:0,explanation:'Current creates magnetic field (Oersted discovery).'},
+{prompt:'Electric motor converts:',options:['Electrical to mechanical energy','Mechanical to electrical','Heat to light','Chemical to electrical'],correct:0,explanation:'Motor: electrical energy -> rotational mechanical energy.'},
+{prompt:'Flemings left hand rule for:',options:['Force on current in magnetic field','Induced current direction','Magnetic field direction','Electron flow'],correct:0,explanation:'Left hand: thumb=force, index=field, middle=current.'},
+{prompt:'Electromagnet core is:',options:['Soft iron','Steel','Copper','Aluminium'],correct:0,explanation:'Soft iron: magnetizes easily, loses magnetism when current stops.'},
+{prompt:'SI unit of magnetic field:',options:['Tesla','Weber','Henry','Gauss'],correct:0,explanation:'Magnetic flux density in Tesla (T).'},
+{prompt:'Generator converts:',options:['Mechanical to electrical energy','Electrical to mechanical','Heat to electrical','Chemical to mechanical'],correct:0,explanation:'Generator converts mechanical energy into electrical energy.'},
+{prompt:'Flemings right hand rule is for:',options:['Direction of induced current (generator)','Force on conductor','Magnetic field of solenoid','Electron velocity'],correct:0,explanation:'Right hand rule: for generators (electromagnetic induction).'},
+{prompt:'Solenoid behaves like:',options:['Bar magnet','Electric motor','Battery','Resistor'],correct:0,explanation:'Current-carrying solenoid has N and S poles like a bar magnet.'},
+{prompt:'AC stands for:',options:['Alternating Current','Always Current','Arranged Current','Average Current'],correct:0,explanation:'AC: current that reverses direction periodically.'},
+{prompt:'DC stands for:',options:['Direct Current','Dynamic Current','Delayed Current','Double Current'],correct:0,explanation:'DC: current flowing in one direction only.'},
+{prompt:'Domestic supply in India is:',options:['220V, 50Hz AC','110V, 60Hz AC','220V DC','440V, 50Hz'],correct:0,explanation:'India: 220V, 50Hz alternating current for domestic use.'},
+{prompt:'Fuse protects against:',options:['Overcurrent/short circuit','Low voltage','High frequency','Magnetic fields'],correct:0,explanation:'Fuse melts and breaks circuit when current exceeds safe limit.'}
 ],
 'Our Environment':[
-{prompt:'Which of the following is biodegradable?',options:['Paper','Plastic','Glass','Aluminium can'],correct:0,explanation:'Paper is made from wood and can be decomposed by microorganisms.'},
-{prompt:'Ozone layer is present in:',options:['Stratosphere','Troposphere','Mesosphere','Thermosphere'],correct:0,explanation:'Ozone layer in stratosphere protects from UV radiation.'},
-{prompt:'In a food chain, energy flow is:',options:['Unidirectional','Bidirectional','Circular','Random'],correct:0,explanation:'Energy flows in one direction: producers -> consumers -> decomposers.'},
-{prompt:'The 10% law of energy transfer was given by:',options:['Lindeman','Odum','Tansley','Darwin'],correct:0,explanation:'Lindeman stated only 10% energy transfers to next trophic level.'},
-{prompt:'CFCs deplete:',options:['Ozone layer','Oxygen','Nitrogen','Carbon dioxide'],correct:0,explanation:'CFCs (chlorofluorocarbons) break down ozone molecules in stratosphere.'}
+{prompt:'Biodegradable material:',options:['Paper','Plastic','Glass','Aluminium'],correct:0,explanation:'Paper decomposes by microorganisms.'},
+{prompt:'Ozone layer is in:',options:['Stratosphere','Troposphere','Mesosphere','Thermosphere'],correct:0,explanation:'Ozone in stratosphere protects from UV.'},
+{prompt:'Energy flow in food chain:',options:['Unidirectional','Bidirectional','Circular','Random'],correct:0,explanation:'Energy flows one way: producers -> consumers.'},
+{prompt:'10% law by:',options:['Lindeman','Odum','Tansley','Darwin'],correct:0,explanation:'Only 10% energy transfers to next trophic level.'},
+{prompt:'CFCs deplete:',options:['Ozone layer','Oxygen','Nitrogen','CO2'],correct:0,explanation:'CFCs break down ozone in stratosphere.'},
+{prompt:'Decomposers are:',options:['Bacteria and fungi','Herbivores','Carnivores','Producers'],correct:0,explanation:'Decomposers break down dead organic matter.'},
+{prompt:'Non-biodegradable example:',options:['Plastic','Food waste','Paper','Cotton'],correct:0,explanation:'Plastic persists in environment (non-biodegradable).'},
+{prompt:'First trophic level:',options:['Producers (plants)','Primary consumers','Secondary consumers','Decomposers'],correct:0,explanation:'Producers form the first (base) trophic level.'},
+{prompt:'Maximum energy is at:',options:['Producer level','Top carnivore','Secondary consumer','Decomposer'],correct:0,explanation:'Energy decreases at each level; maximum at producers.'},
+{prompt:'Biological magnification:',options:['Increase in toxin concentration up food chain','Decrease in toxins','No change','Only in water'],correct:0,explanation:'Non-degradable chemicals concentrate more at higher trophic levels.'},
+{prompt:'Depletion of ozone causes:',options:['Increased UV radiation reaching Earth','Global cooling','Increased rainfall','Better photosynthesis'],correct:0,explanation:'Less ozone = more harmful UV reaches surface (skin cancer, crop damage).'},
+{prompt:'Ecosystem includes:',options:['Both biotic and abiotic components','Only animals','Only plants','Only non-living things'],correct:0,explanation:'Ecosystem = living organisms + their physical environment interacting together.'}
 ]
 };
 
-// ============== PHYSICS CHAPTER POOLS (Class 11-12) ==============
 var PHYSICS_POOLS = {
 'Units and Measurements':[
 {prompt:'The SI unit of luminous intensity is:',options:['Candela','Lumen','Lux','Watt'],correct:0,explanation:'Candela (cd) is the SI base unit of luminous intensity.'},
@@ -1184,6 +1469,152 @@ var ECONOMICS_POOLS = {
 
 // ============== CHAPTER-SPECIFIC ROUTING LOGIC ==============
 // This is the KEY FIX: routes each chapter to its SPECIFIC generator/pool
+
+
+// ============== ADDITIONAL PHYSICS QUESTIONS (expanding pools) ==============
+PHYSICS_POOLS['Thermodynamics'] = [
+{prompt:'First law of thermodynamics is:',options:['Law of conservation of energy','Second law','Zeroth law','Third law'],correct:0,explanation:'First law: energy cannot be created or destroyed, only transformed.'},
+{prompt:'Entropy always increases in:',options:['Irreversible process in isolated system','Reversible process','Any process','No process'],correct:0,explanation:'Second law: entropy of isolated system increases for irreversible processes.'},
+{prompt:'Isothermal process occurs at:',options:['Constant temperature','Constant pressure','Constant volume','Constant entropy'],correct:0,explanation:'Isothermal: temperature remains constant throughout.'},
+{prompt:'Adiabatic process has:',options:['No heat exchange','No work done','Constant temperature','Constant pressure'],correct:0,explanation:'Adiabatic: no heat enters or leaves the system (Q=0).'},
+{prompt:'Carnot engine efficiency depends on:',options:['Temperature of source and sink','Size of engine','Type of fuel','Speed of engine'],correct:0,explanation:'Carnot efficiency = 1 - T_cold/T_hot (temperatures in Kelvin).'},
+{prompt:'Internal energy of ideal gas depends on:',options:['Temperature only','Pressure only','Volume only','All three'],correct:0,explanation:'For ideal gas, internal energy is function of temperature alone.'},
+{prompt:'Work done in isobaric process:',options:['P x delta V','0','nRT ln(V2/V1)','Cv x delta T'],correct:0,explanation:'At constant pressure: W = P(V2-V1) = P.dV.'},
+{prompt:'In isochoric process, work done is:',options:['Zero','Maximum','PdV','nRT'],correct:0,explanation:'Isochoric: constant volume, so W = integral PdV = 0.'},
+{prompt:'Heat capacity at constant pressure Cp is:',options:['Greater than Cv','Less than Cv','Equal to Cv','Zero'],correct:0,explanation:'Cp = Cv + R for ideal gas. Cp > Cv because work done at constant P.'},
+{prompt:'Reversible process is:',options:['Quasi-static process that can be reversed','Very fast process','Irreversible process','Process at high temperature'],correct:0,explanation:'Reversible: infinitely slow, system always in equilibrium, can retrace path.'}
+];
+PHYSICS_POOLS['Waves'] = [
+{prompt:'Transverse waves have particle motion:',options:['Perpendicular to wave direction','Along wave direction','Circular','No motion'],correct:0,explanation:'Transverse: particles vibrate perpendicular to wave propagation.'},
+{prompt:'Longitudinal waves have particle motion:',options:['Along wave direction','Perpendicular','Circular','Random'],correct:0,explanation:'Longitudinal: particles vibrate parallel to direction of wave travel.'},
+{prompt:'Speed of wave = :',options:['Frequency x wavelength','Frequency / wavelength','Wavelength / frequency','Frequency + wavelength'],correct:0,explanation:'v = f x lambda (wave equation).'},
+{prompt:'Superposition principle states:',options:['Net displacement = sum of individual displacements','Waves cancel always','Waves add to infinity','Only one wave exists'],correct:0,explanation:'When waves overlap, resultant = algebraic sum of individual displacements.'},
+{prompt:'Standing waves form between:',options:['Two opposite traveling waves','Single wave','No waves','Only longitudinal waves'],correct:0,explanation:'Standing wave = superposition of two waves traveling in opposite directions.'},
+{prompt:'Fundamental frequency is:',options:['Lowest resonant frequency','Highest frequency','Average frequency','Zero'],correct:0,explanation:'Fundamental (first harmonic): lowest frequency of vibration.'},
+{prompt:'Doppler effect changes perceived:',options:['Frequency','Amplitude','Wavelength at source','Speed of wave'],correct:0,explanation:'Relative motion changes observed frequency (Doppler effect).'},
+{prompt:'Nodes in standing waves have:',options:['Zero displacement','Maximum displacement','Maximum velocity','Random displacement'],correct:0,explanation:'Nodes: points of zero amplitude in standing waves.'},
+{prompt:'Antinodes have:',options:['Maximum displacement','Zero displacement','Zero velocity always','No energy'],correct:0,explanation:'Antinodes: points of maximum amplitude in standing waves.'},
+{prompt:'Resonance occurs when:',options:['Driving frequency equals natural frequency','Any frequency applied','No force applied','Damping is maximum'],correct:0,explanation:'Resonance: maximum amplitude when external frequency matches natural frequency.'}
+];
+PHYSICS_POOLS['Oscillations'] = [
+{prompt:'Time period of simple pendulum:',options:['T = 2pi.sqrt(L/g)','T = 2pi.sqrt(g/L)','T = L/g','T = g/L'],correct:0,explanation:'Simple pendulum: T = 2pi.sqrt(L/g). Independent of mass.'},
+{prompt:'SHM has restoring force proportional to:',options:['Displacement from mean position','Velocity','Acceleration only','Mass only'],correct:0,explanation:'SHM: F = -kx (force proportional and opposite to displacement).'},
+{prompt:'In SHM, velocity is maximum at:',options:['Mean position','Extreme position','Halfway','Varies randomly'],correct:0,explanation:'At mean position: all energy is kinetic, velocity is maximum.'},
+{prompt:'In SHM, acceleration is maximum at:',options:['Extreme position','Mean position','Halfway','Never maximum'],correct:0,explanation:'At extreme: maximum displacement, maximum restoring force, maximum acceleration.'},
+{prompt:'Frequency of oscillation:',options:['f = 1/T','f = T','f = 2pi/T','f = T/2pi'],correct:0,explanation:'Frequency = reciprocal of time period: f = 1/T.'},
+{prompt:'Energy in SHM is:',options:['Constant (KE + PE = constant)','Only KE','Only PE','Zero'],correct:0,explanation:'Total mechanical energy in SHM remains constant (conservation of energy).'},
+{prompt:'Spring constant k has units:',options:['N/m','N.m','kg/s','m/s^2'],correct:0,explanation:'F = kx, so k = F/x. Units: N/m.'},
+{prompt:'Damped oscillation:',options:['Amplitude decreases over time','Amplitude increases','Amplitude constant','Frequency increases'],correct:0,explanation:'Damping: energy lost to friction/resistance, amplitude gradually decreases.'},
+{prompt:'Angular frequency omega = :',options:['2pi/T','T/2pi','1/T','T'],correct:0,explanation:'omega = 2pi f = 2pi/T (in rad/s).'},
+{prompt:'Phase in SHM determines:',options:['Position and direction of motion at a given time','Only frequency','Only amplitude','Color of wave'],correct:0,explanation:'Phase tells the state of oscillation (position + velocity direction) at any instant.'}
+];
+
+// ============== ADDITIONAL BIOLOGY QUESTIONS ==============
+BIOLOGY_POOLS['Molecular Basis of Inheritance'] = [
+{prompt:'DNA replication is:',options:['Semi-conservative','Conservative','Dispersive','Random'],correct:0,explanation:'Each new DNA has one old strand and one new strand (semi-conservative).'},
+{prompt:'Central dogma of molecular biology:',options:['DNA -> RNA -> Protein','Protein -> RNA -> DNA','RNA -> DNA -> Protein','Protein -> DNA -> RNA'],correct:0,explanation:'Information flows: DNA (transcription) -> RNA (translation) -> Protein.'},
+{prompt:'Transcription produces:',options:['mRNA from DNA template','DNA from RNA','Protein from mRNA','DNA from DNA'],correct:0,explanation:'Transcription: DNA -> mRNA using RNA polymerase.'},
+{prompt:'Translation occurs at:',options:['Ribosomes','Nucleus','Mitochondria','Golgi body'],correct:0,explanation:'Translation (protein synthesis) happens at ribosomes.'},
+{prompt:'Codon is sequence of:',options:['3 nucleotides on mRNA','2 nucleotides','1 nucleotide','4 nucleotides'],correct:0,explanation:'Codon: triplet of bases on mRNA coding for one amino acid.'},
+{prompt:'Start codon is:',options:['AUG','UAA','UAG','UGA'],correct:0,explanation:'AUG = methionine = start codon (initiation of translation).'},
+{prompt:'DNA is made of:',options:['Nucleotides (sugar + phosphate + base)','Amino acids','Fatty acids','Monosaccharides'],correct:0,explanation:'DNA monomer = nucleotide (deoxyribose + phosphate + nitrogenous base).'},
+{prompt:'Complementary base pair A-T has:',options:['2 hydrogen bonds','3 hydrogen bonds','1 hydrogen bond','4 hydrogen bonds'],correct:0,explanation:'A-T: 2 H-bonds. G-C: 3 H-bonds.'},
+{prompt:'Human genome project mapped:',options:['All human genes and DNA sequences','Only chromosome 1','Only mitochondrial DNA','Protein structure'],correct:0,explanation:'HGP determined complete sequence of human DNA (~3 billion base pairs).'},
+{prompt:'Genetic code is:',options:['Universal (same in all organisms)','Different for each species','Only for humans','Only for bacteria'],correct:0,explanation:'Genetic code is universal - same codons code same amino acids in all life.'}
+];
+BIOLOGY_POOLS['Cell Cycle and Division'] = [
+{prompt:'Mitosis produces:',options:['2 identical diploid cells','4 haploid cells','1 cell','8 cells'],correct:0,explanation:'Mitosis: one cell -> two genetically identical diploid daughter cells.'},
+{prompt:'Meiosis produces:',options:['4 haploid cells','2 diploid cells','1 cell','4 diploid cells'],correct:0,explanation:'Meiosis: one diploid cell -> four haploid cells (gametes).'},
+{prompt:'Crossing over occurs in:',options:['Prophase I of meiosis','Metaphase','Anaphase','Telophase'],correct:0,explanation:'Crossing over: exchange of segments between homologous chromosomes in prophase I.'},
+{prompt:'G1, S, G2 phases are part of:',options:['Interphase','M phase','Cytokinesis','G0 phase'],correct:0,explanation:'Interphase (G1 + S + G2): cell growth and DNA replication before division.'},
+{prompt:'DNA replication occurs in:',options:['S phase','G1 phase','G2 phase','M phase'],correct:0,explanation:'S (synthesis) phase: DNA replicates.'},
+{prompt:'Cytokinesis is:',options:['Division of cytoplasm','Division of nucleus','DNA replication','Chromosome condensation'],correct:0,explanation:'Cytokinesis: cytoplasm divides to form two separate cells.'},
+{prompt:'Cancer is caused by:',options:['Uncontrolled cell division','No cell division','Slow division','Normal division'],correct:0,explanation:'Cancer: cells divide uncontrollably due to mutations in growth genes.'},
+{prompt:'Chromosomes align at equator in:',options:['Metaphase','Prophase','Anaphase','Telophase'],correct:0,explanation:'Metaphase: chromosomes line up at cell equator (metaphase plate).'},
+{prompt:'Sister chromatids separate in:',options:['Anaphase','Prophase','Metaphase','Telophase'],correct:0,explanation:'Anaphase: centromeres split, sister chromatids pulled to opposite poles.'},
+{prompt:'Significance of meiosis:',options:['Genetic variation and maintains chromosome number','No significance','Only growth','Only repair'],correct:0,explanation:'Meiosis: halves chromosome number for gametes and creates genetic diversity.'}
+];
+
+// ============== ADDITIONAL SST QUESTIONS ==============
+SST_POOLS['Federalism'] = [
+{prompt:'Federalism means:',options:['Power divided between central and state governments','All power with center','All power with states','No government'],correct:0,explanation:'Federal system: governmental authority divided between levels of government.'},
+{prompt:'India has:',options:['Three-tier federal structure','Only central government','Only state governments','Two-tier system'],correct:0,explanation:'India: Central, State, and Local (Panchayat/Municipal) governments.'},
+{prompt:'Concurrent list subjects:',options:['Both center and state can legislate','Only center','Only state','Neither'],correct:0,explanation:'Concurrent list: both Parliament and state legislatures can make laws.'},
+{prompt:'Residuary powers in India belong to:',options:['Central government','State government','Local government','Judiciary'],correct:0,explanation:'Subjects not in any list: Parliament has power to legislate (residuary).'},
+{prompt:'Union list includes:',options:['Defence, foreign affairs, currency','Police, hospitals','Agriculture, irrigation','Land, water supply'],correct:0,explanation:'Union list: subjects of national importance (defence, banking, foreign affairs).'},
+{prompt:'State list includes:',options:['Police, agriculture, health','Defence','Currency','Foreign affairs'],correct:0,explanation:'State list: subjects of local/regional importance.'},
+{prompt:'Panchayati Raj is:',options:['Local self-government in rural areas','Central government system','State government type','Military rule'],correct:0,explanation:'Panchayati Raj: three-tier local governance in rural India.'},
+{prompt:'73rd Amendment relates to:',options:['Panchayati Raj institutions','Supreme Court','Parliament','President'],correct:0,explanation:'73rd Amendment (1992): constitutional status to Panchayati Raj.'},
+{prompt:'Decentralisation means:',options:['Power distributed to lower levels of government','Concentrating all power at center','Removing government','Military control'],correct:0,explanation:'Decentralisation: shifting power from central to local bodies.'},
+{prompt:'India became federal because:',options:['Unity in diversity requires power sharing','It is small','Only one language exists','All states are same'],correct:0,explanation:'India federal system accommodates linguistic, cultural, and regional diversity.'}
+];
+SST_POOLS['Sectors of Indian Economy'] = [
+{prompt:'Primary sector includes:',options:['Agriculture, fishing, mining','Manufacturing','Services','IT sector'],correct:0,explanation:'Primary sector: directly uses natural resources (agriculture, forestry, fishing).'},
+{prompt:'Secondary sector includes:',options:['Manufacturing and industry','Agriculture','Banking','Teaching'],correct:0,explanation:'Secondary sector: transforms raw materials into finished goods (factories).'},
+{prompt:'Tertiary sector includes:',options:['Services (banking, transport, IT)','Farming','Mining','Manufacturing'],correct:0,explanation:'Tertiary/service sector: provides services rather than goods.'},
+{prompt:'GDP contribution in India is highest from:',options:['Tertiary (service) sector','Primary sector','Secondary sector','All equal'],correct:0,explanation:'Service sector contributes most to India GDP (over 50%).'},
+{prompt:'Employment in India is highest in:',options:['Primary sector','Tertiary sector','Secondary sector','All equal'],correct:0,explanation:'Most workers still in agriculture/primary sector despite lower GDP share.'},
+{prompt:'Organised sector has:',options:['Regular terms of employment and benefits','No job security','No salary','No laws'],correct:0,explanation:'Organised: registered, follows labor laws, provides benefits.'},
+{prompt:'MGNREGA guarantees:',options:['100 days of employment per year','365 days work','Free food','Free housing'],correct:0,explanation:'MGNREGA: 100 days guaranteed wage employment in rural areas.'},
+{prompt:'Disguised unemployment means:',options:['More workers than needed for a task','No work at all','Full employment','High wages'],correct:0,explanation:'Disguised unemployment: removing some workers would not reduce output.'},
+{prompt:'IT industry belongs to:',options:['Tertiary sector','Primary sector','Secondary sector','None'],correct:0,explanation:'IT and software services are part of the tertiary (service) sector.'},
+{prompt:'Which sector grows fastest in India currently?',options:['Service/Tertiary','Agriculture','Mining','All declining'],correct:0,explanation:'Service sector growing fastest: IT, banking, telecom, tourism.'}
+];
+
+// ============== ADDITIONAL ENGLISH QUESTIONS ==============
+ENGLISH_POOLS['Subject Verb Agreement'] = [
+{prompt:'The team ___ playing well.',options:['is','are','were','am'],correct:0,explanation:'Collective nouns (team) usually take singular verb.'},
+{prompt:'Neither he nor his friends ___ coming.',options:['are','is','was','am'],correct:0,explanation:'Neither...nor: verb agrees with nearest subject (friends = plural = are).'},
+{prompt:'Each of the students ___ a book.',options:['has','have','are having','had'],correct:0,explanation:'Each/Every takes singular verb: each... has.'},
+{prompt:'Mathematics ___ my favorite subject.',options:['is','are','were','have been'],correct:0,explanation:'Subject names ending in -s but singular (Mathematics, Physics) take singular verb.'},
+{prompt:'The news ___ disturbing.',options:['is','are','were','have'],correct:0,explanation:'News is uncountable/singular: news is.'},
+{prompt:'Either the cat or the dogs ___ responsible.',options:['are','is','was','am'],correct:0,explanation:'Either...or: verb agrees with nearest (dogs = plural).'},
+{prompt:'Everyone ___ their own opinion.',options:['has','have','are having','were having'],correct:0,explanation:'Everyone/everybody = singular: has.'},
+{prompt:'A number of students ___ absent.',options:['were','was','is','has'],correct:0,explanation:'A number of = many (plural meaning): were absent.'},
+{prompt:'The number of students ___ increasing.',options:['is','are','were','have'],correct:0,explanation:'The number of = singular concept: is increasing.'},
+{prompt:'Bread and butter ___ my breakfast.',options:['is','are','were','have been'],correct:0,explanation:'When two nouns form one idea (bread and butter), singular verb.'}
+];
+ENGLISH_POOLS['Modals'] = [
+{prompt:'You ___ see a doctor immediately. (strong advice)',options:['must','might','could','would'],correct:0,explanation:'Must: strong obligation/advice.'},
+{prompt:'___ I borrow your pen? (permission)',options:['May','Must','Should','Will'],correct:0,explanation:'May: polite request for permission.'},
+{prompt:'She ___ swim when she was five. (past ability)',options:['could','can','may','must'],correct:0,explanation:'Could: past ability.'},
+{prompt:'You ___ not park here. (prohibition)',options:['must','may','can','should'],correct:0,explanation:'Must not: prohibition (strictly not allowed).'},
+{prompt:'It ___ rain today. (possibility)',options:['might','must','shall','will definitely'],correct:0,explanation:'Might: possibility (uncertain).'},
+{prompt:'We ___ respect our elders. (moral duty)',options:['should','might','could','would'],correct:0,explanation:'Should: advice, moral obligation.'},
+{prompt:'___ you help me? (polite request)',options:['Could','Must','Shall','Ought'],correct:0,explanation:'Could you: polite request.'},
+{prompt:'He ___ be at home now. (certainty)',options:['must','might','could','may'],correct:0,explanation:'Must be: strong certainty/deduction.'},
+{prompt:'You ___ to study harder. (advice)',options:['ought','must','can','will'],correct:0,explanation:'Ought to: advice (less forceful than must).'},
+{prompt:'I ___ finish this by tomorrow. (determination)',options:['will','might','could','may'],correct:0,explanation:'Will: determination, promise, or future certainty.'}
+];
+
+// ============== ADDITIONAL ACCOUNTS QUESTIONS ==============
+ACCOUNTS_POOLS['Financial Statements'] = [
+{prompt:'Balance Sheet shows:',options:['Financial position at a specific date','Profit for the year','Cash flow','Sales figures'],correct:0,explanation:'Balance Sheet: snapshot of assets, liabilities, and equity at a date.'},
+{prompt:'Income Statement shows:',options:['Profit or loss over a period','Assets and liabilities','Cash balance','Equity only'],correct:0,explanation:'Income Statement (P&L): revenues - expenses = net income for a period.'},
+{prompt:'Assets = :',options:['Liabilities + Equity','Liabilities only','Equity only','Revenue'],correct:0,explanation:'Accounting equation: Assets = Liabilities + Owners Equity.'},
+{prompt:'Current assets include:',options:['Cash, debtors, stock','Land, building','Goodwill','Long-term investments'],correct:0,explanation:'Current assets: converted to cash within one year.'},
+{prompt:'Fixed assets include:',options:['Land, building, machinery','Cash','Stock','Debtors'],correct:0,explanation:'Fixed assets: long-term assets used in business operations.'},
+{prompt:'Working capital = :',options:['Current Assets - Current Liabilities','Fixed Assets - Liabilities','Total Assets','Revenue - Expenses'],correct:0,explanation:'Working capital shows short-term financial health.'},
+{prompt:'Depreciation is:',options:['Decrease in value of asset over time','Increase in value','Same as profit','Tax payment'],correct:0,explanation:'Depreciation: systematic allocation of asset cost over useful life.'},
+{prompt:'Gross Profit = :',options:['Sales - Cost of Goods Sold','Sales - All Expenses','Net Profit + Tax','Revenue only'],correct:0,explanation:'Gross Profit = Revenue - Direct costs (COGS).'},
+{prompt:'Net Profit = :',options:['Gross Profit - Operating Expenses','Sales only','Assets - Liabilities','Revenue'],correct:0,explanation:'Net Profit = Gross Profit - all other expenses (rent, salary, etc.).'},
+{prompt:'Capital is:',options:['Owners investment in business','Money owed to others','Daily expenses','Sales revenue'],correct:0,explanation:'Capital = amount invested by owner in the business.'}
+];
+
+// ============== ADDITIONAL ECONOMICS QUESTIONS ==============
+ECONOMICS_POOLS['Government Budget'] = [
+{prompt:'Revenue expenditure is:',options:['Day-to-day expenses that do not create assets','Capital spending','Investment in roads','Loan repayment'],correct:0,explanation:'Revenue expenditure: recurring expenses (salaries, interest) not creating assets.'},
+{prompt:'Capital expenditure is:',options:['Spending that creates assets or reduces liabilities','Salary payment','Interest payment','Daily expenses'],correct:0,explanation:'Capital expenditure: builds infrastructure, acquires assets, or repays debt.'},
+{prompt:'Fiscal deficit = :',options:['Total expenditure - Total receipts (excluding borrowing)','Revenue - Expenses','Exports - Imports','Savings - Investment'],correct:0,explanation:'Fiscal deficit = how much government needs to borrow.'},
+{prompt:'Revenue deficit = :',options:['Revenue expenditure - Revenue receipts','Total deficit','Primary deficit','Trade deficit'],correct:0,explanation:'Revenue deficit: government spending more than earning on revenue account.'},
+{prompt:'Primary deficit = :',options:['Fiscal deficit - Interest payments','Revenue deficit','Total expenditure','GDP - GNP'],correct:0,explanation:'Primary deficit shows borrowing need excluding interest obligations.'},
+{prompt:'Direct tax example:',options:['Income tax','GST','Excise duty','Customs duty'],correct:0,explanation:'Direct tax: paid directly by person on whom it is levied (income tax, corporate tax).'},
+{prompt:'Indirect tax example:',options:['GST (Goods and Services Tax)','Income tax','Wealth tax','Corporate tax'],correct:0,explanation:'Indirect tax: collected from consumer via seller (GST, excise).'},
+{prompt:'Union Budget is presented by:',options:['Finance Minister','Prime Minister','President','RBI Governor'],correct:0,explanation:'Finance Minister presents Union Budget in Parliament.'},
+{prompt:'Budget deficit leads to:',options:['Government borrowing','Surplus','No effect','Deflation'],correct:0,explanation:'When spending > revenue, government must borrow to cover deficit.'},
+{prompt:'Progressive tax means:',options:['Higher income pays higher tax rate','Everyone pays same','Lower income pays more','No tax'],correct:0,explanation:'Progressive: tax rate increases with income level.'}
+];
+
 
 function getMathGenerator(chapter) {
   var ch = chapter.toLowerCase();
