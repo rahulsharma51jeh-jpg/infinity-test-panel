@@ -260,17 +260,25 @@ async function startTestWithAI(subj,ch,diff,n){
   pg='quiz';
   quiz={title:`${subj} · ${ch}`,questions:[],subj,ch};
   ans={};results=null;curQ=0;
-  document.getElementById('app').innerHTML=navHTML()+`<div class="max-w-xl mx-auto p-10 text-center fade"><div class="animate-pulse"><div class="text-4xl">🤖</div><p class="mt-3 text-slate-600 font-medium">Generating questions with AI...</p><p class="text-xs text-slate-400 mt-1">Using OpenAI GPT-4o-mini</p></div></div>`;
-  try {
-    const qs=await aiGenerateOpenAI(subj,ch,diff,n);
-    quiz.questions=qs;
-    timer=qs.length*60;render();startTimer();
-  } catch(e){
-    // Fallback to offline
-    const qs=aiGenerateOffline(subj,ch,diff,n);
-    quiz.questions=qs;
-    timer=qs.length*60;render();startTimer();
+  const hasKey=!!getApiKey();
+  document.getElementById('app').innerHTML=navHTML()+`<div class="max-w-xl mx-auto p-10 text-center fade"><div class="animate-pulse"><div class="text-4xl">🤖</div><p class="mt-3 text-slate-600 font-medium">${hasKey?'Generating with OpenAI GPT-4o-mini...':'Generating questions (offline mode)...'}</p><p class="text-xs text-slate-400 mt-1">${hasKey?'Creating accurate, chapter-specific questions':'Add API key in AI Generator for better questions'}</p></div></div>`;
+
+  let qs, usedAI=false;
+  if(hasKey){
+    try {
+      qs=await aiGenerateOpenAI(subj,ch,diff,n);
+      usedAI=true;
+    } catch(e){
+      console.error('OpenAI failed:',e.message);
+      qs=null;
+    }
   }
+  if(!qs){
+    qs=aiGenerateOffline(subj,ch,diff,n);
+  }
+  quiz.title=`${usedAI?'🤖 AI':'📝'} ${subj} · ${ch}`;
+  quiz.questions=qs;
+  timer=qs.length*60;render();startTimer();
 }
 
 // ===== AI GENERATOR PAGE =====
@@ -302,26 +310,65 @@ function aiHTML(){
       <p class="text-xs text-slate-400 text-center">${hasKey?'Powered by OpenAI GPT-4o-mini':'Offline mode (add API key for real questions)'}</p>
     </div>
     <div id="ai_output" class="border rounded-2xl bg-white p-10 grid place-items-center min-h-[300px] text-slate-400 text-center"><div><div class="text-4xl">🤖</div><p class="mt-3 text-sm">Configure and hit Generate.</p></div></div>
-  </div></div>
+  </div></div>`;
+}
 
-  <!-- API Key Modal (hidden) -->
-  <div id="api_modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" style="display:none">
+function showApiKeyModal(){
+  // Create modal dynamically so it persists across renders
+  let m=document.getElementById('api_modal_global');
+  if(!m){
+    m=document.createElement('div');
+    m.id='api_modal_global';
+    document.body.appendChild(m);
+  }
+  m.innerHTML=`<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onclick="if(event.target===this)closeApiModal()">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
       <h3 class="text-lg font-bold">OpenAI API Key</h3>
-      <p class="text-sm text-slate-500 mt-1">Get a free key from <a href="https://platform.openai.com/api-keys" target="_blank" class="text-brand-600 underline">platform.openai.com</a>. Your key stays in your browser only (localStorage).</p>
-      <input id="api_key_input" type="password" class="w-full border rounded-lg px-3 py-2.5 text-sm mt-4" placeholder="sk-..." value="${getApiKey()}">
+      <p class="text-sm text-slate-500 mt-1">Get your key from <a href="https://platform.openai.com/api-keys" target="_blank" class="text-brand-600 underline">platform.openai.com</a>. Stored only in your browser.</p>
+      <input id="api_key_input_g" type="text" class="w-full border rounded-lg px-3 py-2.5 text-sm mt-4 font-mono" placeholder="sk-proj-..." value="${getApiKey()}">
+      <p id="key_status" class="text-xs mt-2 text-slate-400"></p>
       <div class="flex gap-2 mt-4">
-        <button onclick="saveApiKey()" class="flex-1 bg-brand-600 text-white font-semibold py-2 rounded-lg hover:bg-brand-700 text-sm">Save</button>
-        <button onclick="document.getElementById('api_modal').style.display='none'" class="flex-1 border py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">Cancel</button>
+        <button onclick="doSaveKey()" class="flex-1 bg-brand-600 text-white font-semibold py-2 rounded-lg hover:bg-brand-700 text-sm">Save & Test</button>
+        <button onclick="closeApiModal()" class="flex-1 border py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">Cancel</button>
       </div>
-      <button onclick="clearApiKey()" class="w-full mt-2 text-xs text-red-500 hover:underline">Remove stored key</button>
+      <button onclick="doClearKey()" class="w-full mt-2 text-xs text-red-500 hover:underline">Remove stored key</button>
     </div>
   </div>`;
 }
-
-function showApiKeyModal(){document.getElementById('api_modal').style.display='flex';}
-function saveApiKey(){const k=document.getElementById('api_key_input').value.trim();if(k){setApiKey(k);document.getElementById('api_modal').style.display='none';pg='ai';render();}else{alert('Please enter a valid API key');}}
-function clearApiKey(){localStorage.removeItem('openai_api_key');document.getElementById('api_modal').style.display='none';pg='ai';render();}
+function closeApiModal(){const m=document.getElementById('api_modal_global');if(m)m.innerHTML='';}
+async function doSaveKey(){
+  const inp=document.getElementById('api_key_input_g');
+  const k=inp?inp.value.trim():'';
+  if(!k||!k.startsWith('sk-')){document.getElementById('key_status').textContent='❌ Key must start with sk-';document.getElementById('key_status').className='text-xs mt-2 text-red-500';return;}
+  // Test the key with a tiny request
+  document.getElementById('key_status').textContent='Testing key...';
+  document.getElementById('key_status').className='text-xs mt-2 text-blue-500';
+  try{
+    const res=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+k}});
+    if(res.ok){
+      setApiKey(k);
+      document.getElementById('key_status').textContent='✓ Key valid! Saving...';
+      document.getElementById('key_status').className='text-xs mt-2 text-green-600';
+      setTimeout(()=>{closeApiModal();render();},600);
+    } else if(res.status===401){
+      document.getElementById('key_status').textContent='❌ Invalid key. Check and try again.';
+      document.getElementById('key_status').className='text-xs mt-2 text-red-500';
+    } else {
+      // Non-401 error but key format is ok, save anyway
+      setApiKey(k);
+      document.getElementById('key_status').textContent='⚠️ Could not verify, but saved.';
+      document.getElementById('key_status').className='text-xs mt-2 text-amber-500';
+      setTimeout(()=>{closeApiModal();render();},800);
+    }
+  }catch(e){
+    // Network error, save anyway
+    setApiKey(k);
+    document.getElementById('key_status').textContent='⚠️ Network issue, key saved anyway.';
+    document.getElementById('key_status').className='text-xs mt-2 text-amber-500';
+    setTimeout(()=>{closeApiModal();render();},800);
+  }
+}
+function doClearKey(){localStorage.removeItem('openai_api_key');closeApiModal();render();}
 
 let aiDiff='MEDIUM';
 function setDiff(el,d){aiDiff=d;el.parentElement.querySelectorAll('button').forEach(b=>{b.className='border rounded-lg px-3 py-2 text-xs font-semibold hover:bg-brand-50';});el.className='border rounded-lg px-3 py-2 text-xs font-semibold bg-brand-50 border-brand-500 text-brand-700';}
