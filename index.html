@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Infinity Test - BSEB Class 6-12 AI Test Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{brand:{50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3'}}}}}</script>
+<style>*{box-sizing:border-box}body{font-family:system-ui,sans-serif}.fade{animation:f .3s ease-out}@keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}</style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+<div id="app"></div>
+<script>
+// ===== BSEB CATALOG (Classes 6-12, All Subjects & Chapters) =====
+const C={
+6:{"Mathematics":["Knowing Our Numbers","Whole Numbers","Playing with Numbers","Basic Geometrical Ideas","Understanding Elementary Shapes","Integers","Fractions","Decimals","Data Handling","Mensuration","Algebra","Ratio and Proportion","Symmetry","Practical Geometry"],"Science":["Food: Where Does It Come From?","Components of Food","Fibre to Fabric","Sorting Materials","Separation of Substances","Changes Around Us","Getting to Know Plants","Body Movements","Living Organisms & Surroundings","Motion & Measurement","Light, Shadows & Reflections","Electricity & Circuits","Fun with Magnets","Water","Air Around Us"],"Social Science":["What, Where, How and When?","Hunting-Gathering to Growing Food","In the Earliest Cities","Kingdoms & Early Republic","Earth in Solar System","Globe: Latitudes & Longitudes","Motions of Earth","Maps","Understanding Diversity","What is Government?"],"English":["Honeysuckle: Prose","Honeysuckle: Poetry","A Pact with the Sun","Grammar & Composition"],"Hindi":["वसंत: गद्य","वसंत: पद्य","बाल राम कथा","व्याकरण"]},
+7:{"Mathematics":["Integers","Fractions and Decimals","Data Handling","Simple Equations","Lines and Angles","Triangle & Properties","Comparing Quantities","Rational Numbers","Perimeter and Area","Algebraic Expressions","Exponents and Powers","Symmetry","Visualising Solid Shapes"],"Science":["Nutrition in Plants","Nutrition in Animals","Heat","Acids, Bases & Salts","Physical & Chemical Changes","Respiration in Organisms","Transportation in Animals & Plants","Reproduction in Plants","Motion and Time","Electric Current & Effects","Light","Water: A Precious Resource","Forests: Our Lifeline"],"Social Science":["Tracing Changes Through 1000 Years","New Kings & Kingdoms","The Delhi Sultans","The Mughal Empire","Environment","Inside Our Earth","Our Changing Earth","On Equality","Role of Government in Health"],"English":["Honeycomb: Prose","Honeycomb: Poetry","An Alien Hand","Grammar"],"Hindi":["वसंत: गद्य","वसंत: पद्य","महाभारत","व्याकरण"]},
+8:{"Mathematics":["Rational Numbers","Linear Equations in One Variable","Understanding Quadrilaterals","Data Handling","Squares & Square Roots","Cubes & Cube Roots","Comparing Quantities","Algebraic Expressions & Identities","Mensuration","Exponents & Powers","Direct & Inverse Proportions","Factorisation","Introduction to Graphs"],"Science":["Crop Production & Management","Microorganisms: Friend & Foe","Coal and Petroleum","Combustion & Flame","Conservation of Plants & Animals","Reproduction in Animals","Reaching Age of Adolescence","Force & Pressure","Friction","Sound","Chemical Effects of Electric Current","Some Natural Phenomena","Light"],"Social Science":["How, When & Where","From Trade to Territory","Ruling the Countryside","The Indian Constitution","Understanding Secularism","Resources","Land, Soil, Water","Mineral & Power Resources","Agriculture","Industries"],"English":["Honeydew: Prose","Honeydew: Poetry","It So Happened","Grammar"],"Hindi":["वसंत: गद्य","वसंत: पद्य","भारत की खोज","व्याकरण"]},
+9:{"Mathematics":["Number Systems","Polynomials","Coordinate Geometry","Linear Equations in Two Variables","Euclid's Geometry","Lines and Angles","Triangles","Quadrilaterals","Circles","Heron's Formula","Surface Areas & Volumes","Statistics"],"Science":["Matter in Our Surroundings","Is Matter Around Us Pure","Atoms and Molecules","Structure of the Atom","Fundamental Unit of Life","Tissues","Motion","Force & Laws of Motion","Gravitation","Work and Energy","Sound","Improvement in Food Resources"],"Social Science":["The French Revolution","Socialism in Europe","Nazism & Rise of Hitler","India - Size & Location","Physical Features of India","Drainage","Climate","What is Democracy?","Constitutional Design","Electoral Politics","Story of Village Palampur","People as Resource"],"English":["Beehive: Prose","Beehive: Poetry","Moments","Grammar & Writing"],"Hindi":["क्षितिज: गद्य","क्षितिज: काव्य","कृतिका","व्याकरण"]},
+10:{"Mathematics":["Real Numbers","Polynomials","Pair of Linear Equations","Quadratic Equations","Arithmetic Progressions","Triangles","Coordinate Geometry","Introduction to Trigonometry","Applications of Trigonometry","Circles","Areas Related to Circles","Surface Areas & Volumes","Statistics","Probability"],"Science":["Chemical Reactions & Equations","Acids, Bases & Salts","Metals & Non-metals","Carbon & its Compounds","Life Processes","Control & Coordination","How do Organisms Reproduce?","Heredity & Evolution","Light - Reflection & Refraction","Human Eye & Colourful World","Electricity","Magnetic Effects of Electric Current","Our Environment"],"Social Science":["Rise of Nationalism in Europe","Nationalism in India","Making of a Global World","Resources & Development","Water Resources","Agriculture","Minerals & Energy Resources","Power Sharing","Federalism","Democracy & Diversity","Development","Sectors of Indian Economy","Money and Credit"],"English":["First Flight: Prose","First Flight: Poetry","Footprints Without Feet","Grammar & Writing"],"Hindi":["क्षितिज: गद्य","क्षितिज: काव्य","कृतिका","व्याकरण"]},
+11:{"Physics":["Units & Measurements","Motion in a Straight Line","Motion in a Plane","Laws of Motion","Work, Energy & Power","Rotational Motion","Gravitation","Mechanical Properties of Solids","Mechanical Properties of Fluids","Thermal Properties of Matter","Thermodynamics","Kinetic Theory","Oscillations","Waves"],"Chemistry":["Basic Concepts of Chemistry","Structure of Atom","Classification of Elements","Chemical Bonding","Thermodynamics","Equilibrium","Redox Reactions","Organic Chemistry Basics","Hydrocarbons"],"Biology":["The Living World","Biological Classification","Plant Kingdom","Animal Kingdom","Morphology of Flowering Plants","Anatomy of Flowering Plants","Cell: Unit of Life","Biomolecules","Cell Cycle & Division","Photosynthesis","Respiration in Plants"],"Mathematics":["Sets","Relations & Functions","Trigonometric Functions","Complex Numbers","Linear Inequalities","Permutations & Combinations","Binomial Theorem","Sequences & Series","Straight Lines","Conic Sections","3D Geometry","Limits & Derivatives","Statistics","Probability"],"Accountancy":["Introduction to Accounting","Theory Base of Accounting","Recording Transactions","Bank Reconciliation","Trial Balance","Depreciation & Reserves","Financial Statements"],"Economics":["Intro to Statistics","Collection of Data","Central Tendency","Indian Economy 1947","Indian Economy 1950-90","LPG Reforms"],"English":["Hornbill: Prose","Hornbill: Poetry","Snapshots","Writing Skills"]},
+12:{"Physics":["Electric Charges & Fields","Electrostatic Potential","Current Electricity","Moving Charges & Magnetism","Magnetism & Matter","Electromagnetic Induction","Alternating Current","EM Waves","Ray Optics","Wave Optics","Dual Nature of Radiation","Atoms","Nuclei","Semiconductor Electronics"],"Chemistry":["Solutions","Electrochemistry","Chemical Kinetics","d- and f-Block Elements","Coordination Compounds","Haloalkanes","Alcohols & Ethers","Aldehydes & Ketones","Amines","Biomolecules"],"Biology":["Sexual Reproduction in Plants","Human Reproduction","Reproductive Health","Inheritance & Variation","Molecular Basis of Inheritance","Evolution","Human Health & Disease","Microbes in Human Welfare","Biotechnology Principles","Biotechnology Applications","Ecosystem","Biodiversity"],"Mathematics":["Relations & Functions","Inverse Trig Functions","Matrices","Determinants","Continuity & Differentiability","Application of Derivatives","Integrals","Application of Integrals","Differential Equations","Vector Algebra","3D Geometry","Linear Programming","Probability"],"Accountancy":["Partnership Fundamentals","Admission of Partner","Retirement of Partner","Dissolution","Share Capital","Debentures","Financial Statement Analysis","Cash Flow Statement"],"Economics":["Macroeconomics Intro","National Income","Money & Banking","Income & Employment","Government Budget","Open Economy"],"History":["Harappan Civilisation","Kings & Farmers","Kinship & Caste","Thinkers & Beliefs","Travellers' Eyes","Bhakti-Sufi Traditions","Colonialism","Gandhi & Nationalism","Framing Constitution"],"Political Science":["Cold War Era","End of Bipolarity","US Hegemony","Alternative Power Centres","South Asia","Nation Building","One-Party Dominance","Planned Development"],"English":["Flamingo: Prose","Flamingo: Poetry","Vistas","Writing Skills"]}
+};
+
+// ===== STATE =====
+let pg='landing',usr=null,quiz=null,ans={},timer=0,tid=null,results=null,genQs=null;
+
+// ===== OPENAI-POWERED AI QUESTION GENERATOR =====
+// Uses OpenAI GPT-4o-mini (cheapest model, very accurate for MCQs).
+// User provides their own API key, stored in localStorage.
+
+function getApiKey(){ return localStorage.getItem('openai_api_key')||''; }
+function setApiKey(k){ localStorage.setItem('openai_api_key',k); }
+
+async function aiGenerateOpenAI(subj,chap,diff,n){
+  const key=getApiKey();
+  if(!key) throw new Error('NO_KEY');
+
+  const prompt=`You are an expert NCERT exam question author for Bihar Board (BSEB), India.
+
+Generate exactly ${n} multiple-choice questions for:
+- Subject: ${subj}
+- Chapter: ${chap}
+- Class Level: ${usr?usr.cls:10}
+- Difficulty: ${diff}
+
+Rules:
+1. Questions MUST be directly related to the specific chapter "${chap}" in ${subj}
+2. Questions must be factually accurate and NCERT-aligned
+3. Each question must have exactly 4 options with exactly 1 correct answer
+4. Include a brief explanation for each answer
+5. Vary question types (conceptual, application, factual, analytical)
+
+Return ONLY valid JSON in this exact format (no markdown, no extra text):
+{"questions":[{"text":"question text","options":["A","B","C","D"],"correctOption":0,"explanation":"why this is correct"}]}
+
+correctOption is the 0-based index of the correct answer in the options array.`;
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({
+      model:'gpt-4o-mini',
+      temperature:0.7,
+      messages:[{role:'system',content:'You generate NCERT-aligned MCQ questions for Indian school students. Return only strict JSON.'},{role:'user',content:prompt}],
+      response_format:{type:'json_object'}
+    })
+  });
+
+  if(!res.ok){
+    const err=await res.text();
+    if(res.status===401) throw new Error('INVALID_KEY');
+    if(res.status===429) throw new Error('RATE_LIMIT');
+    throw new Error('API_ERROR: '+err.slice(0,100));
+  }
+
+  const json=await res.json();
+  const content=json.choices?.[0]?.message?.content||'{}';
+  const parsed=JSON.parse(content);
+  if(!parsed.questions||!Array.isArray(parsed.questions)) throw new Error('BAD_RESPONSE');
+
+  return parsed.questions.map((q,i)=>({
+    id:'q'+i,
+    text:q.text,
+    opts:q.options,
+    cor:q.correctOption,
+    exp:q.explanation||'',
+    diff:diff
+  }));
+}
+
+// Fallback offline generator (used when no API key)
+function aiGenerateOffline(subj,chap,diff,n){
+  function rng(s,i){s=s+i*7919;s=((s^(s<<13))>>>0);s=((s^(s>>17))>>>0);s=((s^(s<<5))>>>0);return(s>>>0)/4294967296;}
+  function hashStr(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return Math.abs(h);}
+  const seed=hashStr(subj+chap+diff+Date.now());
+  const qs=[];
+  for(let i=0;i<n;i++){
+    const r=v=>rng(seed,i*100+v);
+    const kind=Math.floor(r(0)*5);
+    let q;
+    if(kind===0){const a=10+Math.floor(r(1)*90),b=2+Math.floor(r(2)*12),ans2=a*b;q={text:`[${chap}] What is ${a} × ${b}?`,opts:[`${ans2}`,`${ans2+b}`,`${ans2-a}`,`${ans2+7}`],cor:0,exp:`${a} × ${b} = ${ans2}`};}
+    else if(kind===1){const a=5+Math.floor(r(3)*95),b=5+Math.floor(r(4)*95),ans2=a+b;q={text:`[${chap}] Calculate ${a} + ${b}`,opts:[`${ans2}`,`${ans2+1}`,`${ans2-2}`,`${ans2+10}`],cor:0,exp:`${a}+${b}=${ans2}`};}
+    else if(kind===2){const st=2+Math.floor(r(5)*8),d=2+Math.floor(r(6)*6),seq=[st,st+d,st+2*d,st+3*d],ans2=st+4*d;q={text:`[${chap}] Next: ${seq.join(', ')}, ?`,opts:[`${ans2}`,`${ans2+d}`,`${ans2-1}`,`${ans2+2}`],cor:0,exp:`Diff=${d}, next=${ans2}`};}
+    else if(kind===3){const a=2+Math.floor(r(7)*12),ans2=a*a;q={text:`[${chap}] What is ${a}²?`,opts:[`${ans2}`,`${ans2+a}`,`${ans2-1}`,`${a*2}`],cor:0,exp:`${a}²=${ans2}`};}
+    else{q={text:`Key concept in "${chap}" (${subj})?`,opts:[chap,'General Knowledge','Random Topic','Other'],cor:0,exp:`"${chap}" is correct.`};}
+    const cAns=q.opts[q.cor];
+    for(let j=q.opts.length-1;j>0;j--){const k=Math.floor(r(i*50+j+10)*(j+1));[q.opts[j],q.opts[k]]=[q.opts[k],q.opts[j]];}
+    q.cor=q.opts.indexOf(cAns);q.id='q'+i;q.diff=diff;qs.push(q);
+  }
+  return qs;
+}
+
+// ===== ICON MAP =====
+const icons={Mathematics:'🧮',Science:'🔬','Social Science':'🌏',English:'📘',Hindi:'📕',Physics:'🧲',Chemistry:'⚗️',Biology:'🧬',Accountancy:'📊',Economics:'💹',History:'🏛️','Political Science':'⚖️'};
+function ico(s){return icons[s]||'📘';}
+
+// ===== RENDER =====
+function render(){
+  const a=document.getElementById('app');
+  if(pg==='landing')a.innerHTML=landingHTML();
+  else if(pg==='login')a.innerHTML=loginHTML();
+  else if(pg==='dashboard')a.innerHTML=navHTML()+dashHTML();
+  else if(pg==='tests')a.innerHTML=navHTML()+testsHTML();
+  else if(pg==='ai')a.innerHTML=navHTML()+aiHTML();
+  else if(pg==='quiz')a.innerHTML=navHTML()+quizHTML();
+  else if(pg==='results')a.innerHTML=navHTML()+resultsHTML();
+  else a.innerHTML=navHTML()+'<div class="max-w-5xl mx-auto p-6"><p>Page not found</p></div>';
+}
+
+// ===== LANDING PAGE =====
+function landingHTML(){return `
+<div class="min-h-screen bg-white">
+<header class="max-w-6xl mx-auto flex items-center justify-between px-4 py-5">
+  <div class="flex items-center gap-2 font-bold text-lg"><span class="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-white text-sm">∞</span><span class="tracking-tight">Infinity<span class="text-brand-600">Test</span></span></div>
+  <div class="flex gap-2"><button onclick="pg='login';render()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Login</button><button onclick="pg='login';render()" class="px-4 py-2 text-sm font-semibold bg-brand-600 text-white rounded-lg hover:bg-brand-700">Get Started</button></div>
+</header>
+<section class="text-center py-20 px-4 bg-gradient-to-b from-brand-50 to-white">
+  <span class="inline-block px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-medium">For Bihar Board (BSEB) Students</span>
+  <h1 class="mt-5 text-4xl sm:text-5xl font-extrabold text-slate-900 max-w-3xl mx-auto">Practice smarter. <span class="text-brand-600">Score higher.</span></h1>
+  <p class="mt-5 text-lg text-slate-600 max-w-2xl mx-auto">Complete BSEB syllabus for classes 6-12 with an AI that creates unlimited practice tests for any chapter.</p>
+  <div class="mt-8 flex justify-center gap-3"><button onclick="pg='login';render()" class="px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-700">Start practicing free</button></div>
+  <div class="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
+    <div class="text-center"><p class="text-3xl font-extrabold text-brand-600">6-12</p><p class="text-sm text-slate-500">Classes</p></div>
+    <div class="text-center"><p class="text-3xl font-extrabold text-brand-600">60+</p><p class="text-sm text-slate-500">Subjects</p></div>
+    <div class="text-center"><p class="text-3xl font-extrabold text-brand-600">400+</p><p class="text-sm text-slate-500">Chapters</p></div>
+    <div class="text-center"><p class="text-3xl font-extrabold text-brand-600">∞</p><p class="text-sm text-slate-500">AI Tests</p></div>
+  </div>
+</section>
+<section class="max-w-6xl mx-auto px-4 py-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div class="border rounded-2xl p-6"><div class="text-3xl">📚</div><h3 class="mt-4 font-semibold text-lg">Every Subject & Chapter</h3><p class="mt-2 text-sm text-slate-600">Complete NCERT-aligned BSEB syllabus.</p></div>
+  <div class="border rounded-2xl p-6"><div class="text-3xl">🤖</div><h3 class="mt-4 font-semibold text-lg">AI Test Generator</h3><p class="mt-2 text-sm text-slate-600">Fresh tests for any chapter in seconds.</p></div>
+  <div class="border rounded-2xl p-6"><div class="text-3xl">⚡</div><h3 class="mt-4 font-semibold text-lg">Instant Grading</h3><p class="mt-2 text-sm text-slate-600">Auto-graded with explanations.</p></div>
+  <div class="border rounded-2xl p-6"><div class="text-3xl">📈</div><h3 class="mt-4 font-semibold text-lg">Track Progress</h3><p class="mt-2 text-sm text-slate-600">See scores and weak areas.</p></div>
+</section>
+<footer class="border-t py-8 text-center text-sm text-slate-500">© 2025 Infinity Test · Built for BSEB learners</footer>
+</div>`;}
+
+// ===== LOGIN =====
+function loginHTML(){return `
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-brand-50 to-white p-4">
+<div class="w-full max-w-md">
+  <div class="flex justify-center mb-6"><div class="flex items-center gap-2 font-bold text-lg"><span class="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-white text-sm">∞</span><span>Infinity<span class="text-brand-600">Test</span></span></div></div>
+  <div class="bg-white border rounded-2xl p-8 shadow-sm fade">
+    <h1 class="text-2xl font-bold">Welcome</h1>
+    <p class="text-sm text-slate-500 mt-1">Select your class to start practicing.</p>
+    <div class="mt-6 space-y-4">
+      <div><label class="block text-sm font-medium mb-1">Your Name</label><input id="uname" class="w-full border rounded-lg px-3 py-2.5 text-sm" placeholder="Enter your name" value="Student"></div>
+      <div><label class="block text-sm font-medium mb-1">Class</label><select id="uclass" class="w-full border rounded-lg px-3 py-2.5 text-sm"><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10" selected>Class 10</option><option value="11">Class 11</option><option value="12">Class 12</option></select></div>
+      <button onclick="doLogin()" class="w-full bg-brand-600 text-white font-semibold py-2.5 rounded-lg hover:bg-brand-700">Start Learning</button>
+    </div>
+  </div>
+  <p class="text-center mt-4 text-sm text-slate-500"><button onclick="pg='landing';render()" class="text-brand-600 font-medium hover:underline">← Back to home</button></p>
+</div></div>`;}
+
+function doLogin(){
+  const name=document.getElementById('uname').value||'Student';
+  const cls=parseInt(document.getElementById('uclass').value);
+  usr={name,cls,attempts:[],score:0,total:0};
+  pg='dashboard';render();
+}
+
+// ===== NAV =====
+function navHTML(){return `
+<header class="sticky top-0 z-30 border-b bg-white/90 backdrop-blur">
+<div class="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
+  <div class="flex items-center gap-6">
+    <div class="flex items-center gap-2 font-bold"><span class="grid h-7 w-7 place-items-center rounded-lg bg-brand-600 text-white text-xs">∞</span><span class="hidden sm:inline text-sm">Infinity<span class="text-brand-600">Test</span></span></div>
+    <nav class="flex gap-1">
+      <button onclick="pg='dashboard';render()" class="px-3 py-2 text-sm font-medium rounded-lg ${pg==='dashboard'?'bg-brand-50 text-brand-700':'text-slate-600 hover:bg-slate-100'}">Dashboard</button>
+      <button onclick="pg='tests';render()" class="px-3 py-2 text-sm font-medium rounded-lg ${pg==='tests'?'bg-brand-50 text-brand-700':'text-slate-600 hover:bg-slate-100'}">Tests</button>
+      <button onclick="pg='ai';render()" class="px-3 py-2 text-sm font-medium rounded-lg ${pg==='ai'?'bg-brand-50 text-brand-700':'text-slate-600 hover:bg-slate-100'}">⚡ AI Generator</button>
+    </nav>
+  </div>
+  <div class="flex items-center gap-3">
+    <span class="text-sm font-medium text-slate-700 hidden sm:inline">${usr?usr.name:''} · Class ${usr?usr.cls:''}</span>
+    <button onclick="usr=null;pg='landing';render()" class="px-3 py-1.5 text-xs border rounded-lg text-slate-600 hover:bg-slate-50">Logout</button>
+  </div>
+</div></header>`;}
+
+// ===== DASHBOARD =====
+function dashHTML(){
+  const subjs=Object.keys(C[usr.cls]||{});
+  const totalCh=subjs.reduce((a,s)=>a+C[usr.cls][s].length,0);
+  const avgPct=usr.total>0?Math.round(usr.score/usr.total*100):0;
+  return `<div class="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 fade">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div><h1 class="text-2xl font-bold">Hi ${usr.name.split(' ')[0]} 👋</h1><p class="text-slate-500">Class ${usr.cls} · BSEB Board</p></div>
+    <button onclick="pg='ai';render()" class="px-4 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700">⚡ Generate AI Test</button>
+  </div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="border rounded-2xl bg-white p-5"><div class="text-2xl">📚</div><p class="mt-3 text-3xl font-extrabold">${subjs.length}</p><p class="text-sm text-slate-500">Subjects</p></div>
+    <div class="border rounded-2xl bg-white p-5"><div class="text-2xl">📑</div><p class="mt-3 text-3xl font-extrabold">${totalCh}</p><p class="text-sm text-slate-500">Chapters</p></div>
+    <div class="border rounded-2xl bg-white p-5"><div class="text-2xl">📝</div><p class="mt-3 text-3xl font-extrabold">${usr.attempts.length}</p><p class="text-sm text-slate-500">Tests taken</p></div>
+    <div class="border rounded-2xl bg-white p-5"><div class="text-2xl">📈</div><p class="mt-3 text-3xl font-extrabold">${avgPct}%</p><p class="text-sm text-slate-500">Avg score</p></div>
+  </div>
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 border rounded-2xl bg-white p-6">
+      <div class="flex justify-between items-center mb-4"><h2 class="font-semibold text-lg">Your Subjects</h2><button onclick="pg='tests';render()" class="text-sm text-brand-600 font-medium hover:underline">Browse all →</button></div>
+      <div class="grid sm:grid-cols-2 gap-3">${subjs.map(s=>`<button onclick="startSubjectTest('${s.replace(/'/g,"\\'")}')" class="flex items-center gap-3 border rounded-xl p-3 hover:bg-slate-50 text-left"><span class="text-2xl">${ico(s)}</span><div><p class="font-medium text-sm">${s}</p><p class="text-xs text-slate-400">${C[usr.cls][s].length} chapters</p></div></button>`).join('')}</div>
+    </div>
+    <div class="border rounded-2xl bg-brand-600 text-white p-6 flex flex-col justify-between">
+      <div><h2 class="font-semibold text-lg">AI Test Generator</h2><p class="mt-2 text-sm text-brand-100">Pick subject, chapter & difficulty. Get instant MCQ test.</p></div>
+      <button onclick="pg='ai';render()" class="mt-6 px-4 py-2.5 bg-white text-brand-700 font-semibold rounded-lg hover:bg-brand-50 text-sm">Generate now →</button>
+    </div>
+  </div>
+  ${usr.attempts.length?`<div class="border rounded-2xl bg-white p-6"><h2 class="font-semibold text-lg mb-3">Recent Results</h2><div class="divide-y">${usr.attempts.slice(-5).reverse().map(a=>`<div class="flex justify-between items-center py-3"><div><p class="text-sm font-medium">${a.title}</p><p class="text-xs text-slate-400">${a.date}</p></div><span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${a.pct>=60?'bg-green-100 text-green-700':a.pct>=35?'bg-amber-100 text-amber-700':'bg-red-100 text-red-700'}">${a.pct}%</span></div>`).join('')}</div></div>`:''}
+</div>`;
+}
+
+function startSubjectTest(subj){
+  const chapters=C[usr.cls][subj];
+  const ch=chapters[Math.floor(Math.random()*chapters.length)];
+  startTestWithAI(subj,ch,'MEDIUM',10);
+}
+
+// ===== TESTS BROWSER =====
+function testsHTML(){
+  const subjs=Object.keys(C[usr.cls]||{});
+  return `<div class="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 fade">
+  <div><h1 class="text-2xl font-bold">Practice Tests</h1><p class="text-slate-500">Pick any subject and chapter to start a test.</p></div>
+  <div class="space-y-4">${subjs.map(s=>`
+    <details class="border rounded-2xl bg-white group">
+      <summary class="flex items-center gap-3 p-5 cursor-pointer hover:bg-slate-50 rounded-2xl">
+        <span class="text-2xl">${ico(s)}</span>
+        <div class="flex-1"><p class="font-semibold">${s}</p><p class="text-xs text-slate-400">${C[usr.cls][s].length} chapters</p></div>
+        <span class="text-slate-400 group-open:rotate-180 transition">▼</span>
+      </summary>
+      <div class="px-5 pb-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-2">${C[usr.cls][s].map((ch,i)=>`<button onclick="startChapterTest('${s.replace(/'/g,"\\'")}','${ch.replace(/'/g,"\\'")}')" class="text-left border rounded-xl px-4 py-3 hover:bg-brand-50 hover:border-brand-300 transition text-sm"><span class="font-medium">${i+1}. ${ch}</span></button>`).join('')}</div>
+    </details>`).join('')}
+  </div></div>`;
+}
+
+function startChapterTest(subj,ch){
+  startTestWithAI(subj,ch,'MEDIUM',10);
+}
+
+// Unified test starter: tries OpenAI first, falls back to offline
+async function startTestWithAI(subj,ch,diff,n){
+  pg='quiz';
+  quiz={title:`${subj} · ${ch}`,questions:[],subj,ch};
+  ans={};results=null;curQ=0;
+  const hasKey=!!getApiKey();
+  document.getElementById('app').innerHTML=navHTML()+`<div class="max-w-xl mx-auto p-10 text-center fade"><div class="animate-pulse"><div class="text-4xl">🤖</div><p class="mt-3 text-slate-600 font-medium">${hasKey?'Generating with OpenAI GPT-4o-mini...':'Generating questions (offline mode)...'}</p><p class="text-xs text-slate-400 mt-1">${hasKey?'Creating accurate, chapter-specific questions':'Add API key in AI Generator for better questions'}</p></div></div>`;
+
+  let qs, usedAI=false;
+  if(hasKey){
+    try {
+      qs=await aiGenerateOpenAI(subj,ch,diff,n);
+      usedAI=true;
+    } catch(e){
+      console.error('OpenAI failed:',e.message);
+      qs=null;
+    }
+  }
+  if(!qs){
+    qs=aiGenerateOffline(subj,ch,diff,n);
+  }
+  quiz.title=`${usedAI?'🤖 AI':'📝'} ${subj} · ${ch}`;
+  quiz.questions=qs;
+  timer=qs.length*60;render();startTimer();
+}
+
+// ===== AI GENERATOR PAGE =====
+function aiHTML(){
+  const subjs=Object.keys(C[usr.cls]||{});
+  const hasKey=!!getApiKey();
+  return `<div class="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 fade">
+  <div><h1 class="text-2xl font-bold flex items-center gap-2">⚡ AI Test Generator</h1><p class="text-slate-500">Generate accurate, subject-specific MCQ tests using OpenAI GPT-4o-mini.</p></div>
+
+  <!-- API Key Banner -->
+  <div class="border rounded-xl p-4 ${hasKey?'bg-green-50 border-green-200':'bg-amber-50 border-amber-200'}">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="font-medium text-sm ${hasKey?'text-green-800':'text-amber-800'}">${hasKey?'✓ OpenAI API Key configured':'⚠️ Add your OpenAI API Key for accurate questions'}</p>
+        <p class="text-xs ${hasKey?'text-green-600':'text-amber-600'}">${hasKey?'Using GPT-4o-mini for real subject-specific questions':'Without a key, only basic math questions are generated (offline mode)'}</p>
+      </div>
+      <button onclick="showApiKeyModal()" class="px-3 py-1.5 text-xs font-semibold border rounded-lg ${hasKey?'bg-white text-green-700 border-green-300 hover:bg-green-50':'bg-white text-amber-700 border-amber-300 hover:bg-amber-50'}">${hasKey?'Change Key':'Add API Key'}</button>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-[360px_1fr] gap-6">
+    <div class="border rounded-2xl bg-white p-6 space-y-4 h-fit">
+      <div><label class="block text-sm font-medium mb-1">Class</label><select id="ai_cls" onchange="aiUpdateSubjects()" class="w-full border rounded-lg px-3 py-2.5 text-sm">${[6,7,8,9,10,11,12].map(c=>`<option value="${c}" ${c===usr.cls?'selected':''}>Class ${c}</option>`).join('')}</select></div>
+      <div><label class="block text-sm font-medium mb-1">Subject</label><select id="ai_subj" onchange="aiUpdateChapters()" class="w-full border rounded-lg px-3 py-2.5 text-sm"><option value="">Select...</option>${subjs.map(s=>`<option value="${s}">${ico(s)} ${s}</option>`).join('')}</select></div>
+      <div><label class="block text-sm font-medium mb-1">Chapter</label><select id="ai_ch" class="w-full border rounded-lg px-3 py-2.5 text-sm"><option value="">Select subject first</option></select></div>
+      <div><label class="block text-sm font-medium mb-1">Difficulty</label><div class="grid grid-cols-3 gap-2"><button onclick="setDiff(this,'EASY')" class="border rounded-lg px-3 py-2 text-xs font-semibold hover:bg-brand-50" data-d="EASY">Easy</button><button onclick="setDiff(this,'MEDIUM')" class="border rounded-lg px-3 py-2 text-xs font-semibold bg-brand-50 border-brand-500 text-brand-700" data-d="MEDIUM">Medium</button><button onclick="setDiff(this,'HARD')" class="border rounded-lg px-3 py-2 text-xs font-semibold hover:bg-brand-50" data-d="HARD">Hard</button></div></div>
+      <div><label class="block text-sm font-medium mb-1">Questions: <span id="ai_n_lbl">10</span></label><input type="range" id="ai_n" min="5" max="20" value="10" oninput="document.getElementById('ai_n_lbl').textContent=this.value" class="w-full accent-brand-600"></div>
+      <button onclick="doAiGenerate()" class="w-full bg-brand-600 text-white font-semibold py-2.5 rounded-lg hover:bg-brand-700">⚡ Generate Test</button>
+      <p class="text-xs text-slate-400 text-center">${hasKey?'Powered by OpenAI GPT-4o-mini':'Offline mode (add API key for real questions)'}</p>
+    </div>
+    <div id="ai_output" class="border rounded-2xl bg-white p-10 grid place-items-center min-h-[300px] text-slate-400 text-center"><div><div class="text-4xl">🤖</div><p class="mt-3 text-sm">Configure and hit Generate.</p></div></div>
+  </div></div>`;
+}
+
+function showApiKeyModal(){
+  // Create modal dynamically so it persists across renders
+  let m=document.getElementById('api_modal_global');
+  if(!m){
+    m=document.createElement('div');
+    m.id='api_modal_global';
+    document.body.appendChild(m);
+  }
+  m.innerHTML=`<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onclick="if(event.target===this)closeApiModal()">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+      <h3 class="text-lg font-bold">OpenAI API Key</h3>
+      <p class="text-sm text-slate-500 mt-1">Get your key from <a href="https://platform.openai.com/api-keys" target="_blank" class="text-brand-600 underline">platform.openai.com</a>. Stored only in your browser.</p>
+      <input id="api_key_input_g" type="text" class="w-full border rounded-lg px-3 py-2.5 text-sm mt-4 font-mono" placeholder="sk-proj-..." value="${getApiKey()}">
+      <p id="key_status" class="text-xs mt-2 text-slate-400"></p>
+      <div class="flex gap-2 mt-4">
+        <button onclick="doSaveKey()" class="flex-1 bg-brand-600 text-white font-semibold py-2 rounded-lg hover:bg-brand-700 text-sm">Save & Test</button>
+        <button onclick="closeApiModal()" class="flex-1 border py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">Cancel</button>
+      </div>
+      <button onclick="doClearKey()" class="w-full mt-2 text-xs text-red-500 hover:underline">Remove stored key</button>
+    </div>
+  </div>`;
+}
+function closeApiModal(){const m=document.getElementById('api_modal_global');if(m)m.innerHTML='';}
+async function doSaveKey(){
+  const inp=document.getElementById('api_key_input_g');
+  const k=inp?inp.value.trim():'';
+  if(!k||!k.startsWith('sk-')){document.getElementById('key_status').textContent='❌ Key must start with sk-';document.getElementById('key_status').className='text-xs mt-2 text-red-500';return;}
+  // Test the key with a tiny request
+  document.getElementById('key_status').textContent='Testing key...';
+  document.getElementById('key_status').className='text-xs mt-2 text-blue-500';
+  try{
+    const res=await fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+k}});
+    if(res.ok){
+      setApiKey(k);
+      document.getElementById('key_status').textContent='✓ Key valid! Saving...';
+      document.getElementById('key_status').className='text-xs mt-2 text-green-600';
+      setTimeout(()=>{closeApiModal();render();},600);
+    } else if(res.status===401){
+      document.getElementById('key_status').textContent='❌ Invalid key. Check and try again.';
+      document.getElementById('key_status').className='text-xs mt-2 text-red-500';
+    } else {
+      // Non-401 error but key format is ok, save anyway
+      setApiKey(k);
+      document.getElementById('key_status').textContent='⚠️ Could not verify, but saved.';
+      document.getElementById('key_status').className='text-xs mt-2 text-amber-500';
+      setTimeout(()=>{closeApiModal();render();},800);
+    }
+  }catch(e){
+    // Network error, save anyway
+    setApiKey(k);
+    document.getElementById('key_status').textContent='⚠️ Network issue, key saved anyway.';
+    document.getElementById('key_status').className='text-xs mt-2 text-amber-500';
+    setTimeout(()=>{closeApiModal();render();},800);
+  }
+}
+function doClearKey(){localStorage.removeItem('openai_api_key');closeApiModal();render();}
+
+let aiDiff='MEDIUM';
+function setDiff(el,d){aiDiff=d;el.parentElement.querySelectorAll('button').forEach(b=>{b.className='border rounded-lg px-3 py-2 text-xs font-semibold hover:bg-brand-50';});el.className='border rounded-lg px-3 py-2 text-xs font-semibold bg-brand-50 border-brand-500 text-brand-700';}
+function aiUpdateSubjects(){const cls=parseInt(document.getElementById('ai_cls').value);const subjs=Object.keys(C[cls]||{});document.getElementById('ai_subj').innerHTML='<option value="">Select...</option>'+subjs.map(s=>`<option value="${s}">${ico(s)} ${s}</option>`).join('');document.getElementById('ai_ch').innerHTML='<option value="">Select subject first</option>';}
+function aiUpdateChapters(){const cls=parseInt(document.getElementById('ai_cls').value);const subj=document.getElementById('ai_subj').value;const chs=C[cls]&&C[cls][subj]?C[cls][subj]:[];document.getElementById('ai_ch').innerHTML='<option value="">All chapters</option>'+chs.map(c=>`<option value="${c}">${c}</option>`).join('');}
+async function doAiGenerate(){
+  const cls=parseInt(document.getElementById('ai_cls').value);
+  const subj=document.getElementById('ai_subj').value;
+  const ch=document.getElementById('ai_ch').value;
+  const n=parseInt(document.getElementById('ai_n').value);
+  if(!subj){document.getElementById('ai_output').innerHTML='<p class="text-red-500 text-sm">Please select a subject.</p>';return;}
+  const chapter=ch||C[cls][subj][Math.floor(Math.random()*C[cls][subj].length)];
+  const hasKey=!!getApiKey();
+
+  // show loading
+  document.getElementById('ai_output').innerHTML=`<div class="animate-pulse text-center"><div class="text-4xl">✨</div><p class="mt-3 text-sm text-slate-500">Generating ${n} questions${hasKey?' with OpenAI...' : ' (offline mode)...'}</p></div>`;
+
+  let qs, provider='offline';
+  try {
+    if(hasKey){
+      qs=await aiGenerateOpenAI(subj,chapter,aiDiff,n);
+      provider='OpenAI GPT-4o-mini';
+    } else {
+      qs=aiGenerateOffline(subj,chapter,aiDiff,n);
+    }
+  } catch(e){
+    if(e.message==='NO_KEY'){
+      qs=aiGenerateOffline(subj,chapter,aiDiff,n);
+    } else if(e.message==='INVALID_KEY'){
+      document.getElementById('ai_output').innerHTML='<div class="text-center p-6"><div class="text-4xl">🔑</div><p class="mt-3 text-red-600 font-medium">Invalid API Key</p><p class="text-sm text-slate-500 mt-1">Please update your OpenAI API key.</p><button onclick="showApiKeyModal()" class="mt-3 px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-semibold">Update Key</button></div>';
+      return;
+    } else if(e.message==='RATE_LIMIT'){
+      document.getElementById('ai_output').innerHTML='<div class="text-center p-6"><div class="text-4xl">⏳</div><p class="mt-3 text-amber-600 font-medium">Rate Limited</p><p class="text-sm text-slate-500 mt-1">OpenAI rate limit hit. Using offline mode.</p></div>';
+      qs=aiGenerateOffline(subj,chapter,aiDiff,n);
+    } else {
+      document.getElementById('ai_output').innerHTML=`<div class="text-center p-6"><div class="text-4xl">⚠️</div><p class="mt-3 text-red-600 font-medium">Error</p><p class="text-sm text-slate-500 mt-1">${e.message}</p><p class="text-xs text-slate-400 mt-2">Falling back to offline mode...</p></div>`;
+      await new Promise(r=>setTimeout(r,1500));
+      qs=aiGenerateOffline(subj,chapter,aiDiff,n);
+      provider='offline (fallback)';
+    }
+  }
+
+  genQs=qs;
+  let html=`<div class="w-full space-y-4 text-left fade"><div class="flex flex-wrap items-center justify-between gap-3 p-4 bg-green-50 border border-green-200 rounded-xl"><div><p class="font-semibold text-green-800">Generated ${qs.length} questions</p><p class="text-xs text-green-600">Provider: ${provider} · ${subj} · ${chapter} · ${aiDiff}</p></div><button onclick="startGenTest('${subj.replace(/'/g,"\\'")}','${chapter.replace(/'/g,"\\'")}')" class="px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700">Take this test →</button></div>`;
+  qs.forEach((q,i)=>{
+    html+=`<div class="border rounded-xl p-5"><div class="flex justify-between"><p class="font-medium text-sm">${i+1}. ${q.text}</p><span class="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-500">${q.diff.toLowerCase()}</span></div><div class="mt-3 space-y-2">${q.opts.map((o,oi)=>`<div class="flex items-center gap-2 border rounded-lg px-3 py-2 text-sm ${oi===q.cor?'border-green-300 bg-green-50 text-green-800':''}"><span class="font-semibold">${String.fromCharCode(65+oi)}.</span> ${o} ${oi===q.cor?'<span class="ml-auto text-xs font-semibold">✓</span>':''}</div>`).join('')}</div>${q.exp?`<p class="mt-3 bg-slate-50 rounded-lg px-3 py-2 text-xs text-slate-600"><b>Explanation:</b> ${q.exp}</p>`:''}</div>`;
+  });
+  html+='</div>';
+  document.getElementById('ai_output').innerHTML=html;
+}
+
+function startGenTest(subj,ch){
+  quiz={title:`AI · ${subj} · ${ch}`,questions:genQs,subj,ch};
+  ans={};timer=genQs.length*60;results=null;pg='quiz';render();startTimer();
+}
+
+// ===== QUIZ PAGE =====
+let curQ=0;
+function startTimer(){if(tid)clearInterval(tid);tid=setInterval(()=>{timer--;if(timer<=0){clearInterval(tid);submitQuiz();}document.getElementById('timer')&&(document.getElementById('timer').textContent=Math.floor(timer/60).toString().padStart(2,'0')+':'+((timer%60).toString().padStart(2,'0')));},1000);}
+
+function quizHTML(){
+  if(!quiz)return'';
+  const q=quiz.questions[curQ];
+  const answered=Object.keys(ans).length;
+  const mm=Math.floor(timer/60).toString().padStart(2,'0');
+  const ss=(timer%60).toString().padStart(2,'0');
+  return `<div class="max-w-6xl mx-auto p-4 sm:p-6 fade">
+  <div class="grid lg:grid-cols-[1fr_220px] gap-6">
+    <div class="space-y-5">
+      <div class="flex items-center justify-between">
+        <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">Q ${curQ+1} / ${quiz.questions.length}</span>
+        <span id="timer" class="px-2.5 py-1 rounded-full text-xs font-mono font-medium ${timer<60?'bg-red-100 text-red-700':'bg-brand-100 text-brand-700'}">⏱ ${mm}:${ss}</span>
+      </div>
+      <div class="border rounded-2xl bg-white p-6">
+        <p class="text-lg font-medium">${q.text}</p>
+        <div class="mt-5 space-y-3">${q.opts.map((o,i)=>`<button onclick="selectAns(${i})" class="flex w-full items-center gap-3 border rounded-xl px-4 py-3 text-left text-sm transition ${ans[q.id]===i?'border-brand-500 bg-brand-50 ring-1 ring-brand-300':'hover:border-slate-300 hover:bg-slate-50'}"><span class="grid h-6 w-6 shrink-0 place-items-center rounded-full border text-xs font-semibold ${ans[q.id]===i?'bg-brand-600 text-white border-brand-500':'border-slate-300 text-slate-500'}">${String.fromCharCode(65+i)}</span>${o}</button>`).join('')}</div>
+      </div>
+      <div class="flex justify-between">
+        <button onclick="curQ=Math.max(0,curQ-1);render()" ${curQ===0?'disabled':''} class="px-4 py-2.5 border rounded-lg text-sm font-semibold ${curQ===0?'opacity-50 cursor-not-allowed':'hover:bg-slate-50'}">← Previous</button>
+        ${curQ<quiz.questions.length-1?`<button onclick="curQ++;render()" class="px-4 py-2.5 bg-brand-600 text-white rounded-lg text-sm font-semibold hover:bg-brand-700">Next →</button>`:`<button onclick="submitQuiz()" class="px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700">Submit Test</button>`}
+      </div>
+    </div>
+    <aside class="border rounded-2xl bg-white p-5 h-fit">
+      <p class="text-sm font-semibold text-slate-700 mb-3">${answered}/${quiz.questions.length} answered</p>
+      <div class="grid grid-cols-5 gap-2">${quiz.questions.map((qq,i)=>`<button onclick="curQ=${i};render()" class="grid h-9 w-9 place-items-center rounded-lg text-sm font-medium ${i===curQ?'ring-2 ring-brand-400':''} ${ans[qq.id]!==undefined?'bg-brand-600 text-white':'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${i+1}</button>`).join('')}</div>
+      <button onclick="submitQuiz()" class="mt-4 w-full px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700">Submit</button>
+    </aside>
+  </div></div>`;
+}
+
+function selectAns(i){ans[quiz.questions[curQ].id]=i;render();}
+
+function submitQuiz(){
+  if(tid)clearInterval(tid);tid=null;
+  let score=0;
+  const review=quiz.questions.map(q=>{
+    const sel=ans[q.id]!==undefined?ans[q.id]:null;
+    const correct=sel===q.cor;
+    if(correct)score++;
+    return{...q,sel,correct};
+  });
+  const pct=Math.round(score/quiz.questions.length*100);
+  results={score,total:quiz.questions.length,pct,review,title:quiz.title};
+  usr.attempts.push({title:quiz.title,score,total:quiz.questions.length,pct,date:new Date().toLocaleDateString()});
+  usr.score+=score;usr.total+=quiz.questions.length;
+  curQ=0;pg='results';render();
+}
+
+// ===== RESULTS PAGE =====
+function resultsHTML(){
+  if(!results)return'';
+  const p=results.pct;
+  const col=p>=60?'text-green-600':p>=35?'text-amber-600':'text-red-600';
+  return `<div class="max-w-4xl mx-auto p-4 sm:p-6 space-y-6 fade">
+  <div class="border rounded-2xl bg-white p-8 text-center">
+    <p class="text-sm font-medium text-slate-500">Your Score</p>
+    <p class="mt-2 text-5xl font-extrabold ${col}">${p}%</p>
+    <p class="mt-2 text-slate-600">${results.score} of ${results.total} correct</p>
+    <p class="text-sm text-slate-400 mt-1">${results.title}</p>
+    <div class="mt-6 flex justify-center gap-3">
+      <button onclick="pg='tests';render()" class="px-4 py-2.5 border rounded-lg text-sm font-semibold hover:bg-slate-50">Back to tests</button>
+      <button onclick="pg='dashboard';render()" class="px-4 py-2.5 bg-brand-600 text-white rounded-lg text-sm font-semibold hover:bg-brand-700">Dashboard</button>
+    </div>
+  </div>
+  <h2 class="text-lg font-semibold">Answer Review</h2>
+  <div class="space-y-4">${results.review.map((r,i)=>`
+    <div class="border rounded-xl bg-white p-5">
+      <p class="font-medium text-sm">${i+1}. ${r.text}</p>
+      <div class="mt-3 space-y-2">${r.opts.map((o,oi)=>{
+        const isC=oi===r.cor,isP=oi===r.sel;
+        const cls=isC?'border-green-300 bg-green-50 text-green-800':(!isC&&isP?'border-red-300 bg-red-50 text-red-800':'');
+        return `<div class="flex items-center gap-2 border rounded-lg px-3 py-2 text-sm ${cls}">${o}${isC?' <span class="ml-auto text-xs font-semibold">✓ Correct</span>':''}${!isC&&isP?' <span class="ml-auto text-xs font-semibold">Your answer</span>':''}</div>`;
+      }).join('')}</div>
+      ${r.exp?`<p class="mt-3 bg-slate-50 rounded-lg px-3 py-2 text-xs text-slate-600"><b>Explanation:</b> ${r.exp}</p>`:''}
+    </div>`).join('')}
+  </div></div>`;
+}
+
+// ===== INIT =====
+render();
+</script>
+</body>
+</html>
